@@ -1,4 +1,5 @@
 import sys
+import uuid
 from functools import wraps
 
 from fasthtml.common import *
@@ -15,7 +16,7 @@ __all__ = [
     "Alert",
     "AlertTitle",
     "AlertDescription",
-    "Icon",
+    "Lucide",
 ]
 
 
@@ -26,6 +27,7 @@ def ShadHead():
 
     tw_config = """
     tailwind.config = {
+    darkMode: 'selector',
     theme: {
     container: {
       center: true,
@@ -113,34 +115,7 @@ def ShadHead():
     --chart-5: 27 87% 67%;
 }
 
-html[data-theme="light"] {
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 220.9 39.3% 11%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 224 71.4% 4.1%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-}
-
-html[data-theme="dark"] {
+.dark {
     --background: 224 71.4% 4.1%;
     --foreground: 210 20% 98%;
     --card: 224 71.4% 4.1%;
@@ -177,13 +152,27 @@ html[data-theme="dark"] {
   }
 }
 """
+    theme_toggle = """
+    function toggleTheme() { 
+
+    const html = document.documentElement;
+    const theme = html.getAttribute('class');
+    const icon = document.getElementById("theme-toggle-icon");
+
+    html.setAttribute('class', theme === 'light' ? 'dark' : 'light');
+    icon.setAttribute('data-lucide', theme === 'light' ? 'moon' : 'sun');
+    }
+
+    setTimeout(lucide.createIcons(), 200);
+    """
+    load_lucide="""window.addEventListener('DOMContentLoaded', function() {lucide.createIcons(); document.body.addEventListener('htmx:afterSettle', function(evt) {lucide.createIcons(); console.log("htmxSettle:fired")})});"""
     return (
         Script(src=tw_import),
         Script(src=lucide_import),
         Script(tw_config),
         Style(tw_globals, type="text/tailwindcss"),
-        Script(code="function toggleTheme() {const html = document.documentElement; html.setAttribute('data-theme', (html.getAttribute('data-theme') === 'light' ? 'dark' : 'light'))}"),
-    )
+        Script(code=theme_toggle),
+        Script(code=load_lucide))
 
 
 btn_variants = {
@@ -345,7 +334,7 @@ def AlertTitle(title: str = None, cls=None, **kwargs):
 
 
 def AlertDescription(description: str = None, cls=None, **kwargs):
-    new_cls = alert_cls["title"]
+    new_cls = alert_cls["description"]
     if cls:
         new_cls += f" {cls}"
 
@@ -360,17 +349,16 @@ def Alert(
     variant: str = None,
     cls=None,
     standard=False,
-    icon=False,
+    icon:str=None,
     **kwargs,
 ):
     new_cls = alert_cls["alert"]
-    icon_v = ""
+    icon_v = "chevrons-right"
     headers = []
     if variant == "default" or variant == None:
-        icon_v = "chev_right"
         new_cls += f" {alert_variants_cls["default"]}"
     if variant == "destructive":
-        icon_v = "alert"
+        icon_v = "circle-alert"
         new_cls += f" {alert_variants_cls["destructive"]}"
 
     if cls:
@@ -380,7 +368,9 @@ def Alert(
     if standard:
         return Div(*c, **kwargs)
     if icon:
-        headers.append(Icon(icon=icon_v, cls="size-4"))
+        headers.append(Lucide(icon=icon_v, cls="size-4", id=f"alert-icon-{uuid.uuid4()}"))
+    else:
+        headers.append(Lucide(icon=icon, cls="size-4", id=f"alert-icon-{uuid.uuid4()}"))
     if title:
         headers.append(AlertTitle(title))
     if description:
@@ -390,38 +380,23 @@ def Alert(
     return Div(*headers, *c, **kwargs)
 
 
-# def Svg(*c, path_str: str = None, cls: str = None, **kwargs):
-#     if cls:
-#         kwargs["cls"] += cls
-#     if path_str:
-#         return ft_hx(NotStr(Icons_Dict["alert"] % cls), **kwargs)
-#     return ft_hx("svg", *c, **kwargs)
+def Lucide(icon:str=None ,cls=None, id=None, **kwargs):
+    df_id=None
+    df_cls=None
 
+    if id == None:
+        df_id=f"icon-{uuid.uuid4()}"
 
-def Icon(*c, icon: str = None, cls=None, **kwargs):
-    new_cls = None
-    if cls and icon:
-        svg = NotStr(Icons_Dict[icon] % cls)
-        return svg
-    if cls:
-        new_cls = cls
-        kwargs["cls"] += new_cls
+    if cls==None:
+        df_cls="size-5"
+
+    df_id=id
+    df_cls=cls
+    kwargs["cls"] = df_cls
     if icon:
-        svg = NotStr(Icons_Dict[icon])
-        return svg
-    return I(*c, **kwargs)
-
-
-Icons_Dict = {
-    "alert": """<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="%s">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
-</svg>
-""",
-    "chev_right": """<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="%s">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
-</svg>
-""",
-}
+        return I(**{'data-lucide':icon},id=df_id, **kwargs)
+    else:
+        return I(**{'data-lucide':"accessibility"}, id=df_id, **kwargs)
 
 
 component_map = [Button, Input, Card]

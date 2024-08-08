@@ -11,9 +11,9 @@ You can render it using the familiar fasthtml format:
 
 `return Card("Content goes here", header="Header title", description="Card description", footer="Footer here")`
 
-Alternatively, if you're more comfortable following the original shadcn component syntax, then you can do that too:
+Alternatively, if you're more comfortable following the original shadcn component syntax, then you can do that too using the standard=True kw:
 
-`return Card(CardHeader(CardTitle("Title Here"), CardDescription("Description Here")), CardContent("Content Here"), CardFooter("Footer Here"))`
+`return Card(CardHeader(CardTitle("Title Here"), CardDescription("Description Here")), CardContent("Content Here"), CardFooter("Footer Here"), standard=True)`
 
 Whichever option you prefer is available, so its your choice as to which you prefer. I am currently working on porting the entire components library over, along with hopefully some extra components and functionality that will prove useful in full scale UI boilerplating and enhancement, out of the box.
 

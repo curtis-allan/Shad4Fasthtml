@@ -2,8 +2,11 @@ import sys
 import uuid
 from functools import wraps
 
+from fastcore.meta import delegates
+
 from fasthtml.common import *
 from fasthtml.components import Button as OgButton
+from fasthtml.components import Hr as OgHr
 from fasthtml.components import Input as OgInput
 
 __all__ = [
@@ -17,10 +20,12 @@ __all__ = [
     "AlertTitle",
     "AlertDescription",
     "Lucide",
+    "Badge",
+    "Separator"
 ]
 
 
-def ShadHead():
+def ShadHead(lucid=False):
     tw_import = "https://cdn.tailwindcss.com"
 
     lucide_import = "https://unpkg.com/lucide@latest/dist/umd/lucide.js"
@@ -160,19 +165,26 @@ def ShadHead():
     const icon = document.getElementById("theme-toggle-icon");
 
     html.setAttribute('class', theme === 'light' ? 'dark' : 'light');
-    icon.setAttribute('data-lucide', theme === 'light' ? 'moon' : 'sun');
     }
-
-    setTimeout(lucide.createIcons(), 200);
     """
-    load_lucide="""window.addEventListener('DOMContentLoaded', function() {lucide.createIcons(); document.body.addEventListener('htmx:afterSettle', function(evt) {lucide.createIcons(); console.log("htmxSettle:fired")})});"""
-    return (
-        Script(src=tw_import),
-        Script(src=lucide_import),
-        Script(tw_config),
-        Style(tw_globals, type="text/tailwindcss"),
-        Script(code=theme_toggle),
-        Script(code=load_lucide))
+    load_lucide="""htmx.onLoad(() => lucide.createIcons());"""
+
+    if lucid:
+        return (
+            Script(src=tw_import),
+            # Script(src=tw_merge, type="module"),
+            Script(src=lucide_import),
+            Script(tw_config),
+            Style(tw_globals, type="text/tailwindcss"),
+            Script(code=theme_toggle),
+            Script(code=load_lucide))
+    else:
+        return (
+            Script(src=tw_import),
+            Script(tw_config),
+            Style(tw_globals, type="text/tailwindcss"),
+            Script(code=theme_toggle),
+            Script(code=load_lucide))
 
 
 btn_variants = {
@@ -208,17 +220,23 @@ alert_variants_cls = {
     "default": "bg-background text-foreground [&>svg]:text-foreground",
     "destructive": "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
 }
+badge_cls = "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+badge_variants_cls = {
+        "default":
+          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+        "secondary":
+          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        "destructive":
+          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+        "outline": "text-foreground",
+}
+sep_cls = "shrink-0 bg-border"
+sep_variant_cls={"horizontal": "h-[1px] w-full", "vertical": "self-stretch w-[1px]"}
 
-
-@wraps(OgButton)
-def Button(*c, size=None, variant=None, cls=None, **kwargs):
+def Button(*c, size='default', variant='default', cls=None, **kwargs):
     new_cls = btn_base_cls
 
-    # Add variant class
-    new_cls += f" {btn_variants.get(variant, btn_variants['default'])}"
-
-    # Add size class
-    new_cls += f" {btn_sizes.get(size, btn_sizes['default'])}"
+    new_cls += f" {btn_variants[variant]} {btn_sizes[size]}"
 
     # If cls was provided, append it to the new_cls
     if cls:
@@ -228,8 +246,6 @@ def Button(*c, size=None, variant=None, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return OgButton(*c, **kwargs)
 
-
-@wraps(OgInput)
 def Input(*c, cls=None, **kwargs):
     new_cls = input_base_cls
     if cls:
@@ -368,9 +384,9 @@ def Alert(
     if standard:
         return Div(*c, **kwargs)
     if icon:
-        headers.append(Lucide(icon=icon_v, cls="size-4", id=f"alert-icon-{uuid.uuid4()}"))
-    else:
         headers.append(Lucide(icon=icon, cls="size-4", id=f"alert-icon-{uuid.uuid4()}"))
+    else:
+        headers.append(Lucide(icon=icon_v, cls="size-4", id=f"alert-icon-{uuid.uuid4()}"))
     if title:
         headers.append(AlertTitle(title))
     if description:
@@ -378,7 +394,6 @@ def Alert(
 
 
     return Div(*headers, *c, **kwargs)
-
 
 def Lucide(icon:str=None ,cls=None, id=None, **kwargs):
     df_id=None
@@ -398,6 +413,34 @@ def Lucide(icon:str=None ,cls=None, id=None, **kwargs):
     else:
         return I(**{'data-lucide':"accessibility"}, id=df_id, **kwargs)
 
+def Badge(*c, variant:str=None, cls=None, **kwargs):
+    new_cls = badge_cls
+    if cls:
+        new_cls += f" {cls}"
+    if variant == 'default' or variant == None:
+        new_cls += f" {badge_variants_cls['default']}"
+    if variant == 'secondary':
+        new_cls += f" {badge_variants_cls['secondary']}"
+    if variant == 'destructive':
+        new_cls += f" {badge_variants_cls['destructive']}"
+    if variant == 'outline':
+        new_cls += f" {badge_variants_cls['outline']}"
+    kwargs["cls"] = new_cls
+    return Div(*c, **kwargs)
+
+def Separator(orientation:str='horizontal', cls=None, **kwargs):
+    new_cls = sep_cls
+
+    if orientation == 'horizontal' or orientation == None:
+        new_cls += f" {sep_variant_cls["horizontal"]}"
+    if orientation == 'vertical':
+        new_cls += f" {sep_variant_cls['vertical']}"
+
+    if cls:
+        new_cls += f" {cls}"
+    
+    kwargs["cls"] = new_cls
+    return Div(decorative=True, **kwargs)
 
 component_map = [Button, Input, Card]
 

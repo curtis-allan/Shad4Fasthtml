@@ -25,7 +25,7 @@ __all__ = [
 ]
 
 
-def ShadHead(lucid=False):
+def ShadHead(lucid=True):
     tw_import = "https://cdn.tailwindcss.com"
 
     lucide_import = "https://unpkg.com/lucide@latest/dist/umd/lucide.js"
@@ -149,7 +149,7 @@ def ShadHead(lucid=False):
 }
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border antialiased;
   }
   body {
     @apply bg-background text-foreground;
@@ -231,7 +231,7 @@ badge_variants_cls = {
         "outline": "text-foreground",
 }
 sep_cls = "shrink-0 bg-border"
-sep_variant_cls={"horizontal": "h-[1px] w-full", "vertical": "self-stretch w-[1px]"}
+sep_variant_cls={"horizontal": "h-[1.5px] w-full", "vertical": "self-stretch w-[1.5px]"}
 
 def Button(*c, size='default', variant='default', cls=None, **kwargs):
     new_cls = btn_base_cls

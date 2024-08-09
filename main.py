@@ -1,3 +1,5 @@
+import uuid
+
 from fasthtml.common import *
 from shadcn import *
 
@@ -36,13 +38,15 @@ HtmxStyles = Style(
 app, rt = fast_app(
     pico=False,
     hdrs=(
-        ShadHead(lucid=True),
+        ShadHead(),
         HighlightJS(langs=["python"]),
     ),
     live=True,
     debug=True,
     htmlkw={"cls": "dark"},
 )
+
+setup_toasts(app)
 
 code = {
     "card1": """Card(
@@ -60,6 +64,7 @@ code = {
         Button("Submit"),
             cls="flex w-full justify-end gap-2",
             ),
+            cls="w-[90%]",
         ),""",
     "card2": """Card(
     CardHeader(
@@ -78,6 +83,7 @@ code = {
             text-sm",
         ),
     ),
+    cls="w-[90%]",
     standard=True,
 )
 """,
@@ -88,23 +94,54 @@ code = {
         "Open your messages section to view more details."
     ),
     standard=True,
-    cls="!w-[400px]",
+    cls="max-w-[90%]",
 )
 """,
     "alert2": """Alert(
     title="Error",
     variant="destructive",
     description="Your session has expired. Please log in again.",
-    cls="!w-[400px]",
+    cls="max-w-[90%]",
 )
+""",
+    "separator": """H1(
+    "Welcome back",
+    cls="text-3xl font-bold tracking-tight leading-loose",
+    ),
+    Separator(cls="my-2 max-w-[90%]"),
+    Div(
+        Button("Profile", variant="secondary"),
+        Separator(orientation="vertical"),
+        Button("Messages", variant="secondary"),
+        Separator(orientation="vertical"),
+        Button("Settings", variant="secondary"),
+        cls="flex gap-3 p-3",
+    ),
+""",
+    "badge": """Div(
+    H1(
+        "Shad4FastHtml",
+        cls="text-2xl font-semibold tracking-tight leading-loose",
+    ),
+    Badge("v2.0", variant="default"),
+    cls="flex gap-1.5 items-center justify-center",
+),
 """,
 }
 
-state = {"card1": False, "card2": False, "alert1": False, "alert2": False}
+state = {
+    "card1": False,
+    "card2": False,
+    "alert1": False,
+    "alert2": False,
+    "toast1": False,
+    "separator": False,
+    "badge": False,
+}
 
 
 def Block(*c, name=None, id="default", **kwargs):
-    cls = "relative mx-auto w-full max-w-xl flex flex-col rounded-md bg-muted/40 shadow-md"
+    cls = "relative mx-auto w-full max-w-xl flex flex-col rounded-md bg-muted/40 shadow"
     if name == None:
         return (
             Div(
@@ -122,7 +159,7 @@ def Block(*c, name=None, id="default", **kwargs):
     title = Div(
         H1(
             name,
-            cls="text-4xl font-medium text-muted-foreground tracking-tight leading-loose",
+            cls="text-3xl font-semibold text-muted-foreground tracking-tight leading-loose",
         ),
         cls="flex items-center justify-center",
     )
@@ -227,7 +264,7 @@ def get():
                         Button("Submit"),
                         cls="flex w-full justify-end gap-2",
                     ),
-                    cls="w-[400px]",
+                    cls="w-[90%]",
                 ),
                 name="Card",
                 id="card1",
@@ -250,7 +287,7 @@ def get():
                             cls="text-muted-foreground text-center text-sm",
                         ),
                     ),
-                    cls="w-[400px]",
+                    cls="w-[90%]",
                     standard=True,
                 ),
                 name="Card: Standard",
@@ -261,7 +298,7 @@ def get():
                     title="Error",
                     variant="destructive",
                     description="Your session has expired. Please log in again.",
-                    cls="!w-[400px]",
+                    cls="!w-[90%]",
                 ),
                 id="alert1",
                 name="Alert",
@@ -274,15 +311,57 @@ def get():
                         "Open your messages section to view more details."
                     ),
                     standard=True,
-                    cls="!w-[400px]",
+                    cls="!w-[90%]",
                 ),
                 id="alert2",
                 name="Alert: Standard",
             ),
+            Block(
+                Button("Add email", hx_get="/toast", hx_swap="none"),
+                name="Toast",
+                id="toast1",
+            ),
+            Block(
+                H1(
+                    "Welcome back",
+                    cls="text-3xl font-bold tracking-tight leading-loose",
+                ),
+                Separator(cls="my-2 max-w-[90%]"),
+                Div(
+                    Button("Profile", variant="secondary"),
+                    Separator(orientation="vertical"),
+                    Button("Messages", variant="secondary"),
+                    Separator(orientation="vertical"),
+                    Button("Settings", variant="secondary"),
+                    cls="flex gap-3 p-3",
+                ),
+                name="Separator",
+                id="separator",
+            ),
+            Block(
+                Div(
+                    H1(
+                        "Shad4FastHtml",
+                        cls="text-2xl font-semibold tracking-tight leading-loose",
+                    ),
+                    Badge("v2.0"),
+                    cls="flex gap-1.5 items-center justify-center",
+                ),
+                name="Badge",
+                id="badge",
+            ),
+            render_toasts,
             cls="flex flex-col gap-6 p-8",
         ),
         cls="max-w-4xl container",
     )
+
+
+@rt("/toast")
+def get(session):
+    if "id" not in session:
+        session["id"] = str(uuid.uuid4())
+    add_toast(session, typ="info", message="WORKED!")
 
 
 @rt("/{prevIcon}")
@@ -303,69 +382,6 @@ def get(prevIcon: str):
             cls="flex-none",
         ),
     )
-
-
-@rt("/blocks/cards/{id}")
-def get(id: str):
-    if id == "card1":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return Block(
-                Card(
-                    Input(
-                        type="text",
-                        placeholder="Enter some text...",
-                    ),
-                    title="Create a post",
-                    description="Enter your post related information below",
-                    footer=Div(
-                        Button(
-                            "Cancel",
-                            variant="outline",
-                        ),
-                        Button("Submit"),
-                        cls="flex w-full justify-end gap-2",
-                    ),
-                    cls="w-[400px]",
-                ),
-                id=id,
-            )
-    if id == "card2":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    Card(
-                        CardHeader(
-                            CardTitle("New Card :)"),
-                            CardDescription("This is a new card :0"),
-                        ),
-                        CardContent(
-                            P(
-                                "Lots of awesome content aka oanwdo woadn owndiaonwi. wodn wodin donwd onida ondwoai",
-                                cls="text-balance",
-                            ),
-                        ),
-                        CardFooter(
-                            P(
-                                "This is the footer :D",
-                                cls="text-muted-foreground text-center text-sm",
-                            ),
-                        ),
-                        standard=True,
-                        cls="w-[400px]",
-                    ),
-                    id=id,
-                ),
-            )
-    else:
-        return H1("Didnt work :()")
 
 
 @rt("/switch/{id}")
@@ -460,6 +476,49 @@ def get(id: str):
                         cls="w-[400px]",
                     ),
                     id=id,
+                ),
+            )
+    if id == "separator":
+        if not state[id]:
+            state[id] = True
+            return CodeBlock(id)
+        else:
+            state[id] = False
+            return (
+                Block(
+                    H1(
+                        "Welcome back",
+                        cls="text-3xl font-bold tracking-tight leading-loose",
+                    ),
+                    Separator(cls="my-2 max-w-[90%]"),
+                    Div(
+                        Button("Profile", variant="secondary"),
+                        Separator(orientation="vertical"),
+                        Button("Messages", variant="secondary"),
+                        Separator(orientation="vertical"),
+                        Button("Settings", variant="secondary"),
+                        cls="flex gap-3 p-3",
+                    ),
+                    id="separator",
+                ),
+            )
+    if id == "badge":
+        if not state[id]:
+            state[id] = True
+            return CodeBlock(id)
+        else:
+            state[id] = False
+            return (
+                Block(
+                    Div(
+                        H1(
+                            "Shad4FastHtml",
+                            cls="text-2xl font-semibold tracking-tight leading-loose",
+                        ),
+                        Badge("v2.0", variant="default"),
+                        cls="flex gap-1.5 items-center justify-center",
+                    ),
+                    id="badge",
                 ),
             )
     return H1("Didnt work :()")

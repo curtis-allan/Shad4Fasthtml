@@ -2,12 +2,10 @@ import sys
 import uuid
 from functools import wraps
 
-from fastcore.meta import delegates
-
 from fasthtml.common import *
 from fasthtml.components import Button as OgButton
-from fasthtml.components import Hr as OgHr
 from fasthtml.components import Input as OgInput
+from fasthtml.toaster import *
 
 __all__ = [
     "CardHeader",
@@ -21,7 +19,12 @@ __all__ = [
     "AlertDescription",
     "Lucide",
     "Badge",
-    "Separator"
+    "Separator",
+    "Progress",
+    "ProgressInner",
+    "toast",
+    "Toaster",
+    "toast_setup"
 ]
 
 
@@ -157,7 +160,7 @@ def ShadHead(lucid=True):
   }
 }
 """
-    theme_toggle = """
+    shad_scripts = """
     function toggleTheme() { 
 
     const html = document.documentElement;
@@ -172,18 +175,17 @@ def ShadHead(lucid=True):
     if lucid:
         return (
             Script(src=tw_import),
-            # Script(src=tw_merge, type="module"),
             Script(src=lucide_import),
             Script(tw_config),
             Style(tw_globals, type="text/tailwindcss"),
-            Script(code=theme_toggle),
+            Script(code=shad_scripts),
             Script(code=load_lucide))
     else:
         return (
             Script(src=tw_import),
             Script(tw_config),
             Style(tw_globals, type="text/tailwindcss"),
-            Script(code=theme_toggle),
+            Script(code=shad_scripts),
             Script(code=load_lucide))
 
 
@@ -232,6 +234,14 @@ badge_variants_cls = {
 }
 sep_cls = "shrink-0 bg-border"
 sep_variant_cls={"horizontal": "h-[1.5px] w-full", "vertical": "self-stretch w-[1.5px]"}
+progress_cls = "relative h-4 w-full overflow-hidden rounded-full bg-secondary"
+progress_inner_cls = "h-full w-full flex-1 bg-primary transition-all"
+toast_container_cls = "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px] transition-transform duration-300"
+toast_base_cls = "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg toast"
+toast_variants_cls = {"default": "border bg-background text-foreground", "destructive":"destructive group border-destructive bg-destructive text-destructive-foreground"}
+toast_closeBtn_cls = "toast-close-button cursor-pointer active:ring absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600"
+toast_title_cls = "text-sm font-semibold"
+toast_description_cls = "text-sm opacity-90"
 
 def Button(*c, size='default', variant='default', cls=None, **kwargs):
     new_cls = btn_base_cls
@@ -253,12 +263,6 @@ def Input(*c, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return OgInput(*c, **kwargs)
 
-
-# Used for the structing of the card element, can be used as you would in structuring
-# a shadcn-ui card normally or by using the
-# title, description and footer variables on the Card FT itself.
-
-
 def CardHeader(*c, cls=None, **kwargs):
     new_cls = card_cls["head"]
     if cls:
@@ -266,7 +270,6 @@ def CardHeader(*c, cls=None, **kwargs):
 
     kwargs["cls"] = new_cls
     return Div(*c, **kwargs)
-
 
 def CardTitle(*c, cls=None, **kwargs):
     new_cls = card_cls["title"]
@@ -276,7 +279,6 @@ def CardTitle(*c, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return H1(*c, **kwargs)
 
-
 def CardDescription(*c, cls=None, **kwargs):
     new_cls = card_cls["description"]
     if cls:
@@ -284,7 +286,6 @@ def CardDescription(*c, cls=None, **kwargs):
 
     kwargs["cls"] = new_cls
     return P(*c, **kwargs)
-
 
 def CardContent(*c, cls=None, **kwargs):
     new_cls = card_cls["content"]
@@ -294,7 +295,6 @@ def CardContent(*c, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Div(*c, **kwargs)
 
-
 def CardFooter(*c, cls=None, **kwargs):
     new_cls = card_cls["footer"]
     if cls:
@@ -302,7 +302,6 @@ def CardFooter(*c, cls=None, **kwargs):
 
     kwargs["cls"] = new_cls
     return Div(*c, **kwargs)
-
 
 def Card(
     *c,
@@ -339,7 +338,6 @@ def Card(
 
     return Div(header, CardContent(*c), footer, **kwargs)
 
-
 def AlertTitle(title: str = None, cls=None, **kwargs):
     new_cls = alert_cls["title"]
     if cls:
@@ -348,7 +346,6 @@ def AlertTitle(title: str = None, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return H1(title, **kwargs)
 
-
 def AlertDescription(description: str = None, cls=None, **kwargs):
     new_cls = alert_cls["description"]
     if cls:
@@ -356,7 +353,6 @@ def AlertDescription(description: str = None, cls=None, **kwargs):
 
     kwargs["cls"] = new_cls
     return P(description, **kwargs)
-
 
 def Alert(
     *c,
@@ -442,7 +438,146 @@ def Separator(orientation:str='horizontal', cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Div(decorative=True, **kwargs)
 
-component_map = [Button, Input, Card]
+def ProgressInner(id:str=None):
+    style = "transform: translateX(-101%)"
+    return Div(style=style, id=id, cls=progress_inner_cls)
+
+def Progress(*c,id:str=None,cls=None, **kwargs):
+    new_cls = progress_cls
+    script = Script("""function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function handleClick() {
+    const total = 100;
+    const progress = htmx.find("#progress-inner");
+    for (let i = 20; i <= total; i+=20) {
+        progress.style.transform = `translateX(-${100-i}%)`;
+        await sleep(700);
+    }
+}""")
+    if cls:
+        new_cls += f" { cls}"
+    kwargs["cls"] = new_cls
+    return Div(*c, script, id=id, **kwargs)
+
+toast_script = """
+export function proc_htmx(sel, func) {
+  htmx.onLoad(elt => {
+    const elements = any(sel, elt, false);
+    if (elt.matches && elt.matches(sel)) elements.unshift(elt);
+    elements.forEach(func);
+  });
+}
+
+proc_htmx('#toast-container', function(toast) {
+  let dismissTimeout;
+  const closeButton = toast.querySelector('.toast-close-button');
+  const duration = 6000;
+
+  function dismissToast() {
+    clearTimeout(dismissTimeout);
+    toast.style.transform = 'translateX(100%)';
+    setTimeout(() => toast.remove(), 300);
+  }
+
+  function resetTimer() {
+    clearTimeout(dismissTimeout);
+    dismissTimeout = setTimeout(dismissToast, duration);
+  }
+
+  // Mouse drag functionality
+  let isDragging = false;
+  let startX;
+  let originalTransform;
+  const threshold = 100;
+
+  toast.addEventListener('mousedown', e => {
+    e.preventDefault(); // Prevent text selection
+    toast.style.transition = 'none';
+    isDragging = true;
+    startX = e.clientX;
+    originalTransform = window.getComputedStyle(toast).transform;
+
+  });
+
+  toast.addEventListener('mousemove', e => {
+    if (!isDragging) return
+    resetTimer();
+    let deltaX = e.clientX - startX;
+    if (deltaX > 0) {
+      toast.style.transform = `translateX(${deltaX}px)`;
+    }
+  });
+
+  toast.addEventListener('mouseup', e => {
+    if (!isDragging) return;
+    toast.style.transition = 'transform 0.2s';
+    isDragging = false;
+    let deltaX = e.clientX - startX;
+    if (deltaX >= threshold) {
+      dismissToast();
+    } else {
+      toast.style.transform = 'translateX(0)';
+    }
+  });
+
+if (closeButton) closeButton.addEventListener('click', dismissToast);
+
+  toast.addEventListener('mouseleave', resetTimer);
+
+  resetTimer();
+});
+"""
+
+toast_styles = """@keyframes slideInFromTop {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes slideInFromBottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.toast {
+  animation-duration: 0.2s;
+  animation-fill-mode: forwards;
+}
+
+@media (max-width: 640px) {
+  .toast {
+    animation-name: slideInFromTop;
+  }
+}
+
+@media (min-width: 641px) {
+  .toast {
+    animation-name: slideInFromBottom;
+  }
+}
+"""
+
+def toast(sess, title, description, variant="default"):
+    assert variant in ("default", "destructive"), '`variant` not in ("default", "destructive")'
+    sess.setdefault(sk, []).append((title, description, variant))
+
+def Toaster(sess):
+    closeBtn = Div(Lucide(icon="x", cls="size-4"), cls=toast_closeBtn_cls)
+    toasts = [Div(P(title, cls=toast_title_cls),P(description, cls=toast_description_cls), closeBtn, cls=f"{toast_base_cls} {toast_variants_cls[variant]}") for title,description,variant in sess.pop(sk, [])]
+    return Div(Div(*toasts, cls=toast_container_cls, id="toast-container"),
+               hx_swap_oob="afterbegin:body")
+
+def toast_setup(app):
+    app.router.hdrs += (Style(toast_styles), Script(toast_script, type="module"))
+    app.router.after.append(after_toast)
+
+def after_toast(resp, req, sess):
+    if sk in sess: req.injects.append(Toaster(sess))
+
+
+
+component_map = [Button, Input, Card, Progress]
 
 
 def override_components():

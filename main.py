@@ -1,39 +1,7 @@
-import uuid
+from starlette.responses import StreamingResponse
 
 from fasthtml.common import *
 from shadcn import *
-
-HtmxStyles = Style(
-    """
-    @keyframes fade-in {
-     from { opacity: 0; }
-   }
-
-   @keyframes fade-out {
-     to { opacity: 0; }
-   }
-
-   @keyframes slide-to-right {
-     from { transform: translateX(-90px); }
-   }
-
-    @keyframes slide-from-right {
-     from { transform: translateX(90px); }
-   }
-
-   .slide-it {
-     view-transition-name: slide-it;
-   }
-
-   ::view-transition-old(slide-it) {
-     animation: 180ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
-     600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-right;
-   }
-   ::view-transition-new(slide-it) {
-     animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
-     600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-right;
-   }"""
-)
 
 app, rt = fast_app(
     pico=False,
@@ -46,7 +14,7 @@ app, rt = fast_app(
     htmlkw={"cls": "dark"},
 )
 
-setup_toasts(app)
+toast_setup(app)
 
 code = {
     "card1": """Card(
@@ -127,6 +95,32 @@ code = {
     cls="flex gap-1.5 items-center justify-center",
 ),
 """,
+    "progress": """Div(
+    Button(
+        "Start",
+        onclick="handleClick()",
+        cls="max-w-fit",
+    ),
+    Progress(
+        ProgressInner(id="progress-inner"),
+        ),
+        cls="flex flex-col gap-3 w-[80%] items-center justify-center",
+    ),""",
+    "toast": """
+    // import statements + app setup
+
+    toast_setup(app)
+
+    // route setup
+
+    Button("Send email", hx_get="/toast", hx_swap="none"),
+
+    // rest of code
+    
+    @rt("/toast")
+    def get(sess):
+        toast(sess=sess, title="Sent!", description="Email has been sent successfully.")
+""",
 }
 
 state = {
@@ -134,9 +128,10 @@ state = {
     "card2": False,
     "alert1": False,
     "alert2": False,
-    "toast1": False,
+    "toast": False,
     "separator": False,
     "badge": False,
+    "progress": False,
 }
 
 
@@ -214,12 +209,12 @@ def CodeBlock(id: str = None):
 
 
 @rt("/")
-def get():
+def get(sess):
     return Title("Shadcn components in FastHtml"), Main(
         Header(
             H1(
                 "Shadcn-ui components, made for FastHtml",
-                cls="text-6xl font-bold tracking-tight text-center",
+                cls="relative text-6xl font-bold tracking-tight text-center",
             ),
             cls="pt-20 text-balance",
         ),
@@ -317,9 +312,9 @@ def get():
                 name="Alert: Standard",
             ),
             Block(
-                Button("Add email", hx_get="/toast", hx_swap="none"),
+                Button("Send email", hx_get="/toast", hx_swap="none"),
                 name="Toast",
-                id="toast1",
+                id="toast",
             ),
             Block(
                 H1(
@@ -350,7 +345,21 @@ def get():
                 name="Badge",
                 id="badge",
             ),
-            render_toasts,
+            Block(
+                Div(
+                    Button(
+                        "Start",
+                        onclick="handleClick()",
+                        cls="max-w-fit",
+                    ),
+                    Progress(
+                        ProgressInner(id="progress-inner"),
+                    ),
+                    cls="flex flex-col gap-3 w-[80%] items-center justify-center",
+                ),
+                name="Progress Bar",
+                id="progress",
+            ),
             cls="flex flex-col gap-6 p-8",
         ),
         cls="max-w-4xl container",
@@ -358,10 +367,8 @@ def get():
 
 
 @rt("/toast")
-def get(session):
-    if "id" not in session:
-        session["id"] = str(uuid.uuid4())
-    add_toast(session, typ="info", message="WORKED!")
+def get(sess):
+    toast(sess=sess, title="Sent!", description="Email has been sent successfully.")
 
 
 @rt("/{prevIcon}")
@@ -519,6 +526,40 @@ def get(id: str):
                         cls="flex gap-1.5 items-center justify-center",
                     ),
                     id="badge",
+                ),
+            )
+    if id == "progress":
+        if not state[id]:
+            state[id] = True
+            return CodeBlock(id)
+        else:
+            state[id] = False
+            return (
+                Block(
+                    Div(
+                        Button(
+                            "Start",
+                            onclick="handleClick()",
+                            cls="max-w-fit",
+                        ),
+                        Progress(
+                            ProgressInner(id="progress-inner"),
+                        ),
+                        cls="flex flex-col gap-3 w-[80%] items-center justify-center",
+                    ),
+                    id="progress",
+                ),
+            )
+    if id == "toast":
+        if not state[id]:
+            state[id] = True
+            return CodeBlock(id)
+        else:
+            state[id] = False
+            return (
+                Block(
+                    Button("Send email", hx_get="/toast", hx_swap="none"),
+                    id="toast",
                 ),
             )
     return H1("Didnt work :()")

@@ -24,7 +24,16 @@ __all__ = [
     "ProgressInner",
     "toast",
     "Toaster",
-    "toast_setup"
+    "toast_setup",
+    "Dialog",
+    "DialogHeader",
+    "DialogTitle",
+    "DialogDescription",
+    "DialogContent",
+    "DialogFooter",
+    "DialogTrigger",
+    "Button",
+    "Input",
 ]
 
 
@@ -34,6 +43,12 @@ def ShadHead(lucid=True):
     lucide_import = "https://unpkg.com/lucide@latest/dist/umd/lucide.js"
 
     tw_config = """
+    function filterDefault(values) {
+	return Object.fromEntries(
+		Object.entries(values).filter(([key]) => key !== "DEFAULT"),
+	)
+}
+
     tailwind.config = {
     darkMode: 'selector',
     theme: {
@@ -45,6 +60,77 @@ def ShadHead(lucid=True):
       },
     },
     extend: {
+        animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+        animationDelay: ({ theme }) => ({
+					...theme("transitionDelay"),
+				}),
+				animationDuration: ({ theme }) => ({
+					0: "0ms",
+					...theme("transitionDuration"),
+				}),
+				animationTimingFunction: ({ theme }) => ({
+					...theme("transitionTimingFunction"),
+				}),
+				animationFillMode: {
+					none: "none",
+					forwards: "forwards",
+					backwards: "backwards",
+					both: "both",
+				},
+				animationDirection: {
+					normal: "normal",
+					reverse: "reverse",
+					alternate: "alternate",
+					"alternate-reverse": "alternate-reverse",
+				},
+				animationOpacity: ({ theme }) => ({
+					DEFAULT: 0,
+					...theme("opacity"),
+				}),
+				animationTranslate: ({ theme }) => ({
+					DEFAULT: "100%",
+					...theme("translate"),
+				}),
+				animationScale: ({ theme }) => ({
+					DEFAULT: 0,
+					...theme("scale"),
+				}),
+				animationRotate: ({ theme }) => ({
+					DEFAULT: "30deg",
+					...theme("rotate"),
+				}),
+				animationRepeat: {
+					0: "0",
+					1: "1",
+					infinite: "infinite",
+				},
+				keyframes: {
+					enter: {
+						from: {
+							opacity: "var(--tw-enter-opacity, 1)",
+							transform:
+								"translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0))",
+						},
+					},
+					exit: {
+						to: {
+							opacity: "var(--tw-exit-opacity, 1)",
+							transform:
+								"translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0))",
+						},
+					},
+          "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+				},
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -87,6 +173,121 @@ def ShadHead(lucid=True):
       },
       },
   },
+  plugins: [
+	function ({ addUtilities, matchUtilities, theme }) {
+		addUtilities({
+			"@keyframes enter": theme("keyframes.enter"),
+			"@keyframes exit": theme("keyframes.exit"),
+			".animate-in": {
+				animationName: "enter",
+				animationDuration: theme("animationDuration.DEFAULT"),
+				"--tw-enter-opacity": "initial",
+				"--tw-enter-scale": "initial",
+				"--tw-enter-rotate": "initial",
+				"--tw-enter-translate-x": "initial",
+				"--tw-enter-translate-y": "initial",
+			},
+			".animate-out": {
+				animationName: "exit",
+				animationDuration: theme("animationDuration.DEFAULT"),
+				"--tw-exit-opacity": "initial",
+				"--tw-exit-scale": "initial",
+				"--tw-exit-rotate": "initial",
+				"--tw-exit-translate-x": "initial",
+				"--tw-exit-translate-y": "initial",
+			},
+		})
+
+		matchUtilities(
+			{
+				"fade-in": (value) => ({ "--tw-enter-opacity": value }),
+				"fade-out": (value) => ({ "--tw-exit-opacity": value }),
+			},
+			{ values: theme("animationOpacity") },
+		)
+
+		matchUtilities(
+			{
+				"zoom-in": (value) => ({ "--tw-enter-scale": value }),
+				"zoom-out": (value) => ({ "--tw-exit-scale": value }),
+			},
+			{ values: theme("animationScale") },
+		)
+
+		matchUtilities(
+			{
+				"spin-in": (value) => ({ "--tw-enter-rotate": value }),
+				"spin-out": (value) => ({ "--tw-exit-rotate": value }),
+			},
+			{ values: theme("animationRotate") },
+		)
+
+		matchUtilities(
+			{
+				"slide-in-from-top": (value) => ({
+					"--tw-enter-translate-y": `-${value}`,
+				}),
+				"slide-in-from-bottom": (value) => ({
+					"--tw-enter-translate-y": value,
+				}),
+				"slide-in-from-left": (value) => ({
+					"--tw-enter-translate-x": `-${value}`,
+				}),
+				"slide-in-from-right": (value) => ({
+					"--tw-enter-translate-x": value,
+				}),
+				"slide-out-to-top": (value) => ({
+					"--tw-exit-translate-y": `-${value}`,
+				}),
+				"slide-out-to-bottom": (value) => ({
+					"--tw-exit-translate-y": value,
+				}),
+				"slide-out-to-left": (value) => ({
+					"--tw-exit-translate-x": `-${value}`,
+				}),
+				"slide-out-to-right": (value) => ({
+					"--tw-exit-translate-x": value,
+				}),
+			},
+			{ values: theme("animationTranslate") },
+		)
+
+		matchUtilities(
+			{ duration: (value) => ({ animationDuration: value }) },
+			{ values: filterDefault(theme("animationDuration")) },
+		)
+
+		matchUtilities(
+			{ delay: (value) => ({ animationDelay: value }) },
+			{ values: theme("animationDelay") },
+		)
+
+		matchUtilities(
+			{ ease: (value) => ({ animationTimingFunction: value }) },
+			{ values: filterDefault(theme("animationTimingFunction")) },
+		)
+
+		addUtilities({
+			".running": { animationPlayState: "running" },
+			".paused": { animationPlayState: "paused" },
+		})
+
+		matchUtilities(
+			{ "fill-mode": (value) => ({ animationFillMode: value }) },
+			{ values: theme("animationFillMode") },
+		)
+
+		matchUtilities(
+			{ direction: (value) => ({ animationDirection: value }) },
+			{ values: theme("animationDirection") },
+		)
+
+		matchUtilities(
+			{ repeat: (value) => ({ animationIterationCount: value }) },
+			{ values: theme("animationRepeat") },
+		)
+	},
+  ],
 }"""
 
     tw_globals = """
@@ -94,61 +295,62 @@ def ShadHead(lucid=True):
     @tailwind components;
     @tailwind utilities;
     
+
 @layer base {
-    :root {
+  :root {
     --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
+    --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 220.9 39.3% 11%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 224 71.4% 4.1%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-}
+  }
 
-.dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 210 20% 98%;
-    --primary-foreground: 220.9 39.3% 11%;
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 216 12.2% 83.9%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-}
+  }
 }
 @layer base {
   * {
@@ -179,14 +381,15 @@ def ShadHead(lucid=True):
             Script(tw_config),
             Style(tw_globals, type="text/tailwindcss"),
             Script(code=shad_scripts),
-            Script(code=load_lucide))
+            Script(code=load_lucide),
+            Script(code=dialog_script),)
     else:
         return (
             Script(src=tw_import),
             Script(tw_config),
             Style(tw_globals, type="text/tailwindcss"),
             Script(code=shad_scripts),
-            Script(code=load_lucide))
+            Script(code=dialog_script),)
 
 
 btn_variants = {
@@ -242,6 +445,15 @@ toast_variants_cls = {"default": "border bg-background text-foreground", "destru
 toast_closeBtn_cls = "toast-close-button cursor-pointer active:ring absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600"
 toast_title_cls = "text-sm font-semibold"
 toast_description_cls = "text-sm opacity-90"
+dialog_overlay_cls = "dialog-overlay fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+dialog_content_cls= "dialog-content fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg"
+dialog_closeBtn_cls = "dialog-close-btn cursor-pointer active:ring absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+dialog_title_cls = "text-lg font-semibold leading-none tracking-tight"
+dialog_description_cls = "text-sm text-muted-foreground"
+dialog_header_cls = "flex flex-col space-y-1.5 text-center sm:text-left"
+dialog_footer_cls =  "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
+
+
 
 def Button(*c, size='default', variant='default', cls=None, **kwargs):
     new_cls = btn_base_cls
@@ -575,10 +787,101 @@ def toast_setup(app):
 def after_toast(resp, req, sess):
     if sk in sess: req.injects.append(Toaster(sess))
 
+def DialogHeader(*c,cls=None, **kwargs):
+    new_cls = dialog_header_cls
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Div(*c, **kwargs)
 
+def DialogFooter(*c, cls=None, **kwargs):
+    new_cls = dialog_footer_cls
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Div(*c, **kwargs)
 
-component_map = [Button, Input, Card, Progress]
+def DialogTitle(*c,cls=None, **kwargs):
+    new_cls = dialog_title_cls
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return H1(*c, **kwargs)
 
+def DialogDescription(*c,cls=None, **kwargs):
+    new_cls = dialog_description_cls
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return P(*c, **kwargs)
+
+def DialogContent(*c,cls=None, **kwargs):
+    closeBtn = Div(Lucide(icon='x', cls=f'size-4'), Span("Close", cls='sr-only'),cls=dialog_closeBtn_cls)
+    new_cls = dialog_content_cls
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Div(*c,closeBtn, data_state='open', **kwargs)
+
+def DialogTrigger(*c, cls=None,target=None, **kwargs):
+    new_cls = ''
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Button(*c ,hx_get=f"/{target}", hx_swap="beforeend", hx_target="body", **kwargs)
+
+dialog_script = """
+  function proc_htmx(sel, func) {
+  htmx.onLoad(elt => {
+    const elements = any(sel, elt, false);
+    if (elt.matches && elt.matches(sel)) elements.unshift(elt);
+    elements.forEach(func);
+  });
+}
+
+  proc_htmx('.dialog', function(dialog) {
+    const overlay = dialog.querySelector('.dialog-overlay');
+    const closeBtn = dialog.querySelector('.dialog-close-btn');
+    const content = dialog.querySelector('.dialog-content');
+
+    function toggleClose() {
+    content.dataset.state = 'closed';
+    overlay.dataset.state = 'closed';
+    setTimeout(() => dialog.remove(), 110);
+    }
+
+    if(closeBtn) closeBtn.addEventListener('click', toggleClose);
+    if(overlay) overlay.addEventListener('click', toggleClose);
+  })
+"""
+
+def Dialog(*c,footer=None, title=None, description=None, standard=False,cls=None, **kwargs):
+    overlay = Div(cls=dialog_overlay_cls, data_state="open")
+
+    new_cls = 'dialog'
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+
+    if standard:
+        return Div(overlay, *c, **kwargs)
+
+    header_content = []
+    if title:
+      header_content.append(DialogTitle(title))
+    if description:
+      header_content.append(DialogDescription(description))
+    if footer:
+        footer = DialogFooter(footer)
+
+    if header_content:
+        header = DialogHeader(
+            *header_content,
+        )
+
+    return Div(overlay, DialogContent(header, *c, footer), **kwargs)
+
+component_map = [Button, Input, Card, Progress, Dialog]
 
 def override_components():
     module_name = "fasthtml.common"

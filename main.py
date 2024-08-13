@@ -1,5 +1,3 @@
-from starlette.responses import StreamingResponse
-
 from fasthtml.common import *
 from shadcn import *
 
@@ -121,6 +119,77 @@ code = {
     def get(sess):
         toast(sess=sess, title="Sent!", description="Email has been sent successfully.")
 """,
+    "dialog1": """
+// import statements + app setup
+
+@rt('/')
+def get():
+    return DialogTrigger("Toggle Dialog", target="modal"),
+    id="dialog1",
+    ),
+
+@rt('/modal')
+def get():
+    return
+        Dialog(
+            Div(
+                P(
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla viverra orci, non ullamcorper quam rhoncus eget. Proin finibus turpis a sapien egestas eleifend.",
+                    cls="text-pretty",
+                ),
+            cls="sm:max-w-[425px]",
+            ),
+            title="Dialog example",
+            description="An example of a dialog component, press 'x' to close.",
+            footer=P(
+                "Powered by htmx, fasthtml, and vanillaJS",
+                cls="text-center text-sm text-muted-foreground tracking-tight w-full",
+            ),
+        )""",
+    "dialog2": """
+// import statements + app setup
+
+@rt('/')
+def get():
+    return DialogTrigger("Toggle Dialog", target="modal-standard"),
+    id="dialog2",
+    ),
+
+@rt("/modal-standard")
+def get():
+    return (Dialog(
+            DialogContent(
+                DialogHeader(
+                    DialogTitle("Edit Profile"),
+                    DialogDescription(
+                    "Make changes to your profile here. Click save when you're done."
+                ),
+            ),
+            Div(
+                Div(
+                    Label("Name", cls="text-right"),
+                    Input(
+                        value="John",
+                        cls="col-span-3",
+                        autofocus="true",
+                        onfocus="this.select()",
+                    ),
+                    cls="grid grid-cols-4 items-center gap-4",
+                ),
+                Div(
+                    Label("Email", cls="text-right"),
+                    Input(type="email", value="john@gmail.com", cls="col-span-3"),
+                    cls="grid grid-cols-4 items-center gap-4",
+                ),
+                cls="grid gap-4 py-4",
+            ),
+            DialogFooter(Button("Save changes")),
+            cls="sm:max-w-[425px]",
+        ),
+        standard=True,
+    )
+)
+""",
 }
 
 state = {
@@ -132,6 +201,8 @@ state = {
     "separator": False,
     "badge": False,
     "progress": False,
+    "dialog1": False,
+    "dialog2": False,
 }
 
 
@@ -209,7 +280,7 @@ def CodeBlock(id: str = None):
 
 
 @rt("/")
-def get(sess):
+def get():
     return Title("Shadcn components in FastHtml"), Main(
         Header(
             H1(
@@ -360,6 +431,16 @@ def get(sess):
                 name="Progress Bar",
                 id="progress",
             ),
+            Block(
+                DialogTrigger("Toggle Dialog", target="modal"),
+                id="dialog1",
+                name="Dialog",
+            ),
+            Block(
+                DialogTrigger("Toggle Dialog", target="modal-standard"),
+                id="dialog2",
+                name="Dialog: standard",
+            ),
             cls="flex flex-col gap-6 p-8",
         ),
         cls="max-w-4xl container",
@@ -369,6 +450,60 @@ def get(sess):
 @rt("/toast")
 def get(sess):
     toast(sess=sess, title="Sent!", description="Email has been sent successfully.")
+
+
+@rt("/modal")
+def get():
+    return Dialog(
+        Div(
+            P(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla viverra orci, non ullamcorper quam rhoncus eget. Proin finibus turpis a sapien egestas eleifend.",
+                cls="text-pretty",
+            ),
+            cls="sm:max-w-[425px]",
+        ),
+        title="Dialog example",
+        description="An example of a dialog component, press 'x' to close.",
+        footer=P(
+            "Powered by htmx, fasthtml, and vanillaJS",
+            cls="text-center text-sm text-muted-foreground tracking-tight w-full",
+        ),
+    )
+
+
+@rt("/modal-standard")
+def get():
+    return Dialog(
+        DialogContent(
+            DialogHeader(
+                DialogTitle("Edit Profile"),
+                DialogDescription(
+                    "Make changes to your profile here. Click save when you're done."
+                ),
+            ),
+            Div(
+                Div(
+                    Label("Name", cls="text-right"),
+                    Input(
+                        value="John",
+                        cls="col-span-3",
+                        autofocus="true",
+                        onfocus="this.select()",
+                    ),
+                    cls="grid grid-cols-4 items-center gap-4",
+                ),
+                Div(
+                    Label("Email", cls="text-right"),
+                    Input(type="email", value="john@gmail.com", cls="col-span-3"),
+                    cls="grid grid-cols-4 items-center gap-4",
+                ),
+                cls="grid gap-4 py-4",
+            ),
+            DialogFooter(Button("Save changes")),
+            cls="sm:max-w-[425px]",
+        ),
+        standard=True,
+    )
 
 
 @rt("/{prevIcon}")
@@ -560,6 +695,31 @@ def get(id: str):
                 Block(
                     Button("Send email", hx_get="/toast", hx_swap="none"),
                     id="toast",
+                ),
+            )
+
+    if id == "dialog1":
+        if not state[id]:
+            state[id] = True
+            return CodeBlock(id)
+        else:
+            state[id] = False
+            return (
+                Block(
+                    DialogTrigger("Toggle Dialog", target="modal"),
+                    id="dialog1",
+                ),
+            )
+    if id == "dialog2":
+        if not state[id]:
+            state[id] = True
+            return CodeBlock(id)
+        else:
+            state[id] = False
+            return (
+                Block(
+                    DialogTrigger("Toggle Dialog", target="modal-standard"),
+                    id="dialog2",
                 ),
             )
     return H1("Didnt work :()")

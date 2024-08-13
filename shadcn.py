@@ -5,6 +5,7 @@ from fasthtml.common import *
 from fasthtml.components import Button as OgButton
 from fasthtml.components import Input as OgInput
 from fasthtml.components import Label as OgLabel
+from fasthtml.components import Table as OgTable
 from fasthtml.components import Textarea as OgTextarea
 from fasthtml.toaster import *
 
@@ -38,6 +39,15 @@ __all__ = [
     "Textarea",
     "Label",
     "Switch",
+    "Table",
+    "TableHeader",
+    "TableBody",
+    "TableFooter",
+    "TableHead",
+    "TableRow",
+    "TableCell",
+    "TableCaption",
+
 ]
 
 
@@ -460,6 +470,13 @@ textarea_cls = "flex min-h-[80px] w-full rounded-md border border-input bg-backg
 label_cls = "select-none text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 switch_base_cls = "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
 switch_thumb_cls="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+table_base_cls = "w-full caption-bottom text-sm"
+table_head_cls = "[&_tr]:border-b"
+table_body_cls = "[&_tr:last-child]:border-0"
+table_footer_cls = "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0"
+table_row_cls = "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+table_head_cls="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
+table_cell_cls="p-4 align-middle [&:has([role=checkbox])]:pr-0"
 
 
 def Button(*c, size='default', variant='default', cls=None, **kwargs):
@@ -911,6 +928,62 @@ def Switch(state="unchecked",cls=None, id=None, name=None, **kwargs):
     kwargs["cls"] = new_cls
     thumb = Span(cls=switch_thumb_cls)
     return Div(thumb,Input(type='checkbox', style="display: none;", id=id, name=name, checked='false'), data_state=state, onclick="const checked = this.dataset.state === 'unchecked' ? 'checked' : 'unchecked'; this.dataset.state = checked; this.querySelector('span').dataset.state = checked; this.querySelector('input').checked=(checked === 'checked' ? true : false)", **kwargs)
+
+def Table(*c, cls=None, **kwargs):
+    new_cls = table_base_cls
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Div(OgTable(*c, **kwargs), cls="relative w-full overflow-auto")
+
+def TableHeader(*c, cls=None, **kwargs):
+    new_cls = table_head_cls
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Thead(*c, **kwargs)
+
+def TableBody(*c, cls=None, **kwargs):
+    new_cls = table_body_cls
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Tbody(*c, **kwargs)
+
+def TableFooter(*c, cls=None, **kwargs):
+    new_cls = table_footer_cls
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Tfoot(*c, **kwargs)
+
+def TableRow(*c, cls=None, **kwargs):
+    new_cls = table_row_cls
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Tr(*c, **kwargs)
+
+def TableHead(*c, cls=None, **kwargs):
+    new_cls = table_head_cls
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Th(*c, **kwargs)
+
+def TableCell(*c, cls=None, **kwargs):
+    new_cls = table_cell_cls
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Td(*c, **kwargs)
+
+def TableCaption(*c, cls=None, **kwargs):
+    new_cls = table_cell_cls
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Caption(*c, **kwargs)
 
 component_map = [Button, Input, Card, Progress, Dialog, Textarea, Label]
 

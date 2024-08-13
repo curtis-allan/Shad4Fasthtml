@@ -14,6 +14,51 @@ app, rt = fast_app(
 
 toast_setup(app)
 
+dummy_data = data = [
+    {
+        "invoice": "INV001",
+        "paymentStatus": "Paid",
+        "totalAmount": "$250.00",
+        "paymentMethod": "Credit Card",
+    },
+    {
+        "invoice": "INV002",
+        "paymentStatus": "Pending",
+        "totalAmount": "$150.00",
+        "paymentMethod": "PayPal",
+    },
+    {
+        "invoice": "INV003",
+        "paymentStatus": "Unpaid",
+        "totalAmount": "$350.00",
+        "paymentMethod": "Bank Transfer",
+    },
+    {
+        "invoice": "INV004",
+        "paymentStatus": "Paid",
+        "totalAmount": "$450.00",
+        "paymentMethod": "Credit Card",
+    },
+    {
+        "invoice": "INV005",
+        "paymentStatus": "Paid",
+        "totalAmount": "$550.00",
+        "paymentMethod": "PayPal",
+    },
+    {
+        "invoice": "INV006",
+        "paymentStatus": "Pending",
+        "totalAmount": "$200.00",
+        "paymentMethod": "Bank Transfer",
+    },
+    {
+        "invoice": "INV007",
+        "paymentStatus": "Unpaid",
+        "totalAmount": "$300.00",
+        "paymentMethod": "Credit Card",
+    },
+]
+
 code = {
     "card1": """Card(
     Input(
@@ -213,7 +258,8 @@ def get():
         cls="space-y-5 max-w-[80%] w-full",
     ),
 """,
-    "switch": """Div(
+    "switch": """
+    Div(
     Label(
         "Agree to terms",
         htmlFor="switch",
@@ -222,6 +268,89 @@ def get():
             id="switch",
         ),
          cls="flex gap-1.5 items-center",
+    ),""",
+    "table": """
+        // Dummy table data to indicate mapping
+    
+    dummy_data = data = [
+    {
+        "invoice": "INV001",
+        "paymentStatus": "Paid",
+        "totalAmount": "$250.00",
+        "paymentMethod": "Credit Card",
+    },
+    {
+        "invoice": "INV002",
+        "paymentStatus": "Pending",
+        "totalAmount": "$150.00",
+        "paymentMethod": "PayPal",
+    },
+    {
+        "invoice": "INV003",
+        "paymentStatus": "Unpaid",
+        "totalAmount": "$350.00",
+        "paymentMethod": "Bank Transfer",
+    },
+    {
+        "invoice": "INV004",
+        "paymentStatus": "Paid",
+        "totalAmount": "$450.00",
+        "paymentMethod": "Credit Card",
+    },
+    {
+        "invoice": "INV005",
+        "paymentStatus": "Paid",
+        "totalAmount": "$550.00",
+        "paymentMethod": "PayPal",
+    },
+    {
+        "invoice": "INV006",
+        "paymentStatus": "Pending",
+        "totalAmount": "$200.00",
+        "paymentMethod": "Bank Transfer",
+    },
+    {
+        "invoice": "INV007",
+        "paymentStatus": "Unpaid",
+        "totalAmount": "$300.00",
+        "paymentMethod": "Credit Card",
+    },
+    ]
+
+    // Mapping function for FT components with data
+
+    def table_rows():
+    results = []
+    for i in dummy_data:
+        results.append(
+            TableRow(
+                TableCell(i["invoice"], cls="font-medium"),
+                TableCell(i["paymentStatus"]),
+                TableCell(i["paymentMethod"]),
+                TableCell(i["totalAmount"], cls="text-right"),
+            )
+        )
+    return results
+
+    // Final composition
+
+    Table(
+        TableCaption("View your recent spending history."),
+        TableHeader(
+            TableRow(
+                TableHead("Payment", cls="w-[100px]"),
+                TableHead("Status"),
+                TableHead("Method"),
+                TableHead("Amount", cls="text-right"),
+            )
+        ),
+        TableBody(*table_rows()),
+        TableFooter(
+            TableRow(
+                TableCell("Total", colSpan="3"), TableCell("$2,500.00")
+            )
+        ),
+        cls="max-w-[80%] mx-auto mt-5",
     ),""",
 }
 
@@ -238,7 +367,22 @@ state = {
     "dialog2": False,
     "input": False,
     "switch": False,
+    "table": False,
 }
+
+
+def table_rows():
+    results = []
+    for i in dummy_data:
+        results.append(
+            TableRow(
+                TableCell(i["invoice"], cls="font-medium"),
+                TableCell(i["paymentStatus"]),
+                TableCell(i["paymentMethod"]),
+                TableCell(i["totalAmount"], cls="text-right"),
+            )
+        )
+    return results
 
 
 def Block(*c, name=None, id="default", **kwargs):
@@ -477,7 +621,7 @@ def get():
             ),
             Block(
                 Div(
-                    H1("Create a post", cls="text-2xl font-semibold tracking-tight"),
+                    H1("Create a story", cls="text-2xl font-semibold tracking-tight"),
                     Div(
                         Label("Title", htmlFor="title"),
                         Input(placeholder="Enter a title", id="title"),
@@ -486,7 +630,7 @@ def get():
                             htmlFor="content",
                         ),
                         Textarea(
-                            placeholder="Enter some content...",
+                            placeholder="Enter some content.",
                             cls="col-span-3",
                             id="content",
                         ),
@@ -502,15 +646,38 @@ def get():
                 Div(
                     Label(
                         "Agree to terms",
-                        htmlFor="switch",
+                        htmlFor="switch-toggle",
                     ),
                     Switch(
-                        id="switch",
+                        id="switch-toggle",
                     ),
                     cls="flex gap-1.5 items-center",
                 ),
                 id="switch",
                 name="Switch & Label",
+            ),
+            Block(
+                Table(
+                    TableCaption("View your recent spending history."),
+                    TableHeader(
+                        TableRow(
+                            TableHead("Payment", cls="w-[100px]"),
+                            TableHead("Status"),
+                            TableHead("Method"),
+                            TableHead("Amount", cls="text-right"),
+                        )
+                    ),
+                    TableBody(*table_rows()),
+                    TableFooter(
+                        TableRow(
+                            TableCell("Total", colSpan="3"),
+                            TableCell("$2,500.00", cls="text-right"),
+                        )
+                    ),
+                    cls="max-w-[80%] mx-auto mt-5",
+                ),
+                id="table",
+                name="Table",
             ),
             cls="flex flex-col gap-6 p-8",
         ),
@@ -846,6 +1013,38 @@ def get(id: str):
                     id="switch",
                 ),
             )
+
+    if id == "table":
+        if not state[id]:
+            state[id] = True
+            return CodeBlock(id)
+        else:
+            state[id] = False
+            return (
+                Block(
+                    Table(
+                        TableCaption("View your recent spending history."),
+                        TableHeader(
+                            TableRow(
+                                TableHead("Payment", cls="w-[100px]"),
+                                TableHead("Status"),
+                                TableHead("Method"),
+                                TableHead("Amount", cls="text-right"),
+                            )
+                        ),
+                        TableBody(*table_rows()),
+                        TableFooter(
+                            TableRow(
+                                TableCell("Total", colSpan="3"),
+                                TableCell("$2,500.00", cls="text-right"),
+                            )
+                        ),
+                        cls="mt-4 max-h-full max-w-[80%] mx-auto",
+                    ),
+                    id="table",
+                ),
+            )
+
     return H1("Didnt work :()")
 
 

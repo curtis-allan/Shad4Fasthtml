@@ -190,6 +190,39 @@ def get():
     )
 )
 """,
+    "input": """
+    // Example usage of the Input, Button, Label & Textarea components
+
+    Div(
+        H1("Create a post", cls="text-2xl font-semibold tracking-tight"),
+        Div(
+            Label("Title", htmlFor="title"),
+            Input(placeholder="Enter a title", id="title"),
+            Label(
+                "Content",
+                htmlFor="content",
+            ),
+            Textarea(
+                placeholder="Enter some content...",
+                cls="col-span-3",
+                id="content",
+            ),
+            Button("Submit", cls="mt-5 self-end"),
+            cls="flex flex-col gap-1.5",
+        ),
+        cls="space-y-5 max-w-[80%] w-full",
+    ),
+""",
+    "switch": """Div(
+    Label(
+        "Agree to terms",
+        htmlFor="switch",
+        ),
+        Switch(
+            id="switch",
+        ),
+         cls="flex gap-1.5 items-center",
+    ),""",
 }
 
 state = {
@@ -203,6 +236,8 @@ state = {
     "progress": False,
     "dialog1": False,
     "dialog2": False,
+    "input": False,
+    "switch": False,
 }
 
 
@@ -317,8 +352,7 @@ def get():
             Block(
                 Card(
                     Input(
-                        type="text",
-                        placeholder="Enter some text...",
+                        type="text", placeholder="Enter some text...", id="card1-input"
                     ),
                     title="Create a post",
                     description="Enter your post related information below",
@@ -441,6 +475,43 @@ def get():
                 id="dialog2",
                 name="Dialog: standard",
             ),
+            Block(
+                Div(
+                    H1("Create a post", cls="text-2xl font-semibold tracking-tight"),
+                    Div(
+                        Label("Title", htmlFor="title"),
+                        Input(placeholder="Enter a title", id="title"),
+                        Label(
+                            "Content",
+                            htmlFor="content",
+                        ),
+                        Textarea(
+                            placeholder="Enter some content...",
+                            cls="col-span-3",
+                            id="content",
+                        ),
+                        Button("Submit", cls="mt-5 self-end"),
+                        cls="flex flex-col gap-1.5",
+                    ),
+                    cls="space-y-5 max-w-[80%] w-full",
+                ),
+                id="input",
+                name="Input & Textarea",
+            ),
+            Block(
+                Div(
+                    Label(
+                        "Agree to terms",
+                        htmlFor="switch",
+                    ),
+                    Switch(
+                        id="switch",
+                    ),
+                    cls="flex gap-1.5 items-center",
+                ),
+                id="switch",
+                name="Switch & Label",
+            ),
             cls="flex flex-col gap-6 p-8",
         ),
         cls="max-w-4xl container",
@@ -463,7 +534,7 @@ def get():
             cls="sm:max-w-[425px]",
         ),
         title="Dialog example",
-        description="An example of a dialog component, press 'x' to close.",
+        description="Click the 'x' or anywhere outside the dialog to close.",
         footer=P(
             "Powered by htmx, fasthtml, and vanillaJS",
             cls="text-center text-sm text-muted-foreground tracking-tight w-full",
@@ -720,6 +791,59 @@ def get(id: str):
                 Block(
                     DialogTrigger("Toggle Dialog", target="modal-standard"),
                     id="dialog2",
+                ),
+            )
+    if id == "input":
+        if not state[id]:
+            state[id] = True
+            return CodeBlock(id)
+        else:
+            state[id] = False
+            return (
+                Block(
+                    Div(
+                        H1(
+                            "Create a post", cls="text-2xl font-semibold tracking-tight"
+                        ),
+                        Div(
+                            Label("Title", htmlFor="title"),
+                            Input(placeholder="Enter a title", id="title"),
+                            Label(
+                                "Content",
+                                htmlFor="content",
+                            ),
+                            Textarea(
+                                placeholder="Enter some content...",
+                                cls="col-span-3",
+                                id="content",
+                            ),
+                            Button("Submit", cls="mt-5 self-end"),
+                            cls="flex flex-col gap-1.5",
+                        ),
+                        cls="space-y-5 max-w-[80%] w-full",
+                    ),
+                    id="input",
+                ),
+            )
+    if id == "switch":
+        if not state[id]:
+            state[id] = True
+            return CodeBlock(id)
+        else:
+            state[id] = False
+            return (
+                Block(
+                    Div(
+                        Label(
+                            "Agree to terms",
+                            htmlFor="switch",
+                        ),
+                        Switch(
+                            id="switch",
+                        ),
+                        cls="flex gap-1.5 items-center",
+                    ),
+                    id="switch",
                 ),
             )
     return H1("Didnt work :()")

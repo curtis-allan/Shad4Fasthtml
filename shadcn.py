@@ -1,10 +1,11 @@
 import sys
 import uuid
-from functools import wraps
 
 from fasthtml.common import *
 from fasthtml.components import Button as OgButton
 from fasthtml.components import Input as OgInput
+from fasthtml.components import Label as OgLabel
+from fasthtml.components import Textarea as OgTextarea
 from fasthtml.toaster import *
 
 __all__ = [
@@ -34,6 +35,9 @@ __all__ = [
     "DialogTrigger",
     "Button",
     "Input",
+    "Textarea",
+    "Label",
+    "Switch",
 ]
 
 
@@ -452,7 +456,10 @@ dialog_title_cls = "text-lg font-semibold leading-none tracking-tight"
 dialog_description_cls = "text-sm text-muted-foreground"
 dialog_header_cls = "flex flex-col space-y-1.5 text-center sm:text-left"
 dialog_footer_cls =  "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
-
+textarea_cls = "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+label_cls = "select-none text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+switch_base_cls = "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+switch_thumb_cls="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
 
 
 def Button(*c, size='default', variant='default', cls=None, **kwargs):
@@ -823,7 +830,7 @@ def DialogContent(*c,cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Div(*c,closeBtn, data_state='open', **kwargs)
 
-def DialogTrigger(*c, cls=None,target=None, **kwargs):
+def DialogTrigger(*c, target=None, cls=None, **kwargs):
     new_cls = ''
     if cls:
       new_cls += f" {cls}"
@@ -881,7 +888,31 @@ def Dialog(*c,footer=None, title=None, description=None, standard=False,cls=None
 
     return Div(overlay, DialogContent(header, *c, footer), **kwargs)
 
-component_map = [Button, Input, Card, Progress, Dialog]
+def Textarea(*c, cls=None, **kwargs):
+    new_cls = textarea_cls
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return OgTextarea(*c, **kwargs)
+  
+def Label(*c, htmlFor=None, cls=None, **kwargs):
+    new_cls = label_cls
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return OgLabel(*c, **{'for': htmlFor}, **kwargs)
+
+def Switch(state="unchecked",cls=None, id=None, name=None, **kwargs):
+    assert state in ("checked", "unchecked"), '`state` not in ("checked", "unchecked")'
+
+    new_cls = switch_base_cls
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    thumb = Span(cls=switch_thumb_cls)
+    return Div(thumb,Input(type='checkbox', style="display: none;", id=id, name=name, checked='false'), data_state=state, onclick="const checked = this.dataset.state === 'unchecked' ? 'checked' : 'unchecked'; this.dataset.state = checked; this.querySelector('span').dataset.state = checked; this.querySelector('input').checked=(checked === 'checked' ? true : false)", **kwargs)
+
+component_map = [Button, Input, Card, Progress, Dialog, Textarea, Label]
 
 def override_components():
     module_name = "fasthtml.common"

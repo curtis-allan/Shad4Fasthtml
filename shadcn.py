@@ -1,5 +1,4 @@
 import sys
-import uuid
 
 from fasthtml.common import *
 from fasthtml.components import Button as OgButton
@@ -47,7 +46,7 @@ __all__ = [
     "TableRow",
     "TableCell",
     "TableCaption",
-
+    "Checkbox",
 ]
 
 
@@ -55,6 +54,10 @@ def ShadHead(lucid=True):
     tw_import = "https://cdn.tailwindcss.com"
 
     lucide_import = "https://unpkg.com/lucide@latest/dist/umd/lucide.js"
+
+    inter_import = Link(rel="preconnect", href="https://rsms.me/")
+
+    inter_styles = Link(rel="stylesheet", href="https://rsms.me/inter/inter.css")
 
     tw_config = """
     function filterDefault(values) {
@@ -309,7 +312,6 @@ def ShadHead(lucid=True):
     @tailwind components;
     @tailwind utilities;
     
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -366,27 +368,155 @@ def ShadHead(lucid=True):
     --chart-5: 340 75% 55%;
   }
 }
+
 @layer base {
+:root {
+  font-family: Inter, sans-serif;
+}
+:root:has(.no-bg-scroll) {
+  overflow:hidden;
+}
+@supports (font-variation-settings: normal) {
+  :root { font-family: InterVariable, sans-serif; }
+  }
   * {
     @apply border-border antialiased;
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings: "rlig" 1, "calt" 1, "cv11" 1;
+  }
+}
+
+@keyframes slideInFromTop {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes slideInFromBottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.toast {
+  animation-duration: 0.2s;
+  animation-fill-mode: forwards;
+}
+
+@media (max-width: 640px) {
+  .toast {
+    animation-name: slideInFromTop;
+  }
+}
+
+@media (min-width: 641px) {
+  .toast {
+    animation-name: slideInFromBottom;
   }
 }
 """
     shad_scripts = """
     function toggleTheme() { 
 
-    const html = document.documentElement;
-    const theme = html.getAttribute('class');
-    const icon = document.getElementById("theme-toggle-icon");
-
-    html.setAttribute('class', theme === 'light' ? 'dark' : 'light');
+    document.documentElement.classList.toggle('dark');
     }
+
+    function toggleCheckbox(e) {
+    const checked = e.dataset.state === 'unchecked' ? 'checked' : 'unchecked';
+    e.dataset.state = checked;
+    e.querySelector('span').dataset.state = checked;
+    e.querySelector('input').checked=(checked === 'checked' ? true : false);
+    }
+
+  function proc_htmx(sel, func) {
+  htmx.onLoad(elt => {
+    const elements = any(sel, elt, false);
+    if (elt.matches && elt.matches(sel)) elements.unshift(elt);
+    elements.forEach(func);
+  });
+}
+
+  proc_htmx('.preventdbclick', elt => {
+    elt.addEventListener('mousedown', event => {
+    if (event.detail > 1) event.preventDefault();
+    })
+  })
+
+  proc_htmx('.dialog', function(dialog) {
+    const overlay = dialog.querySelector('.dialog-overlay');
+    const closeBtn = dialog.querySelector('.dialog-close-btn');
+    const content = dialog.querySelector('.dialog-content');
+
+    function toggleClose() {
+    content.dataset.state = 'closed';
+    overlay.dataset.state = 'closed';
+    setTimeout(() => dialog.remove(), 110);
+    }
+
+    if(closeBtn) closeBtn.addEventListener('click', toggleClose);
+    if(overlay) overlay.addEventListener('click', toggleClose);
+  });
+
+  proc_htmx('#toast-container', function(toast) {
+  let dismissTimeout;
+  const closeButton = toast.querySelector('.toast-close-button');
+  const duration = 6000;
+
+  function dismissToast() {
+    clearTimeout(dismissTimeout);
+    toast.style.transform = 'translateX(100%)';
+    setTimeout(() => toast.remove(), 300);
+  }
+
+  function resetTimer() {
+    clearTimeout(dismissTimeout);
+    dismissTimeout = setTimeout(dismissToast, duration);
+  }
+
+  // Mouse drag functionality
+  let isDragging = false;
+  let startX;
+  let originalTransform;
+  const threshold = 100;
+
+  toast.addEventListener('mousedown', e => {
+    e.preventDefault(); // Prevent text selection
+    toast.style.transition = 'none';
+    isDragging = true;
+    startX = e.clientX;
+    originalTransform = window.getComputedStyle(toast).transform;
+
+  });
+
+  toast.addEventListener('mousemove', e => {
+    if (!isDragging) return
+    resetTimer();
+    let deltaX = e.clientX - startX;
+    if (deltaX > 0) {
+      toast.style.transform = `translateX(${deltaX}px)`;
+    }
+  });
+
+  toast.addEventListener('mouseup', e => {
+    if (!isDragging) return;
+    toast.style.transition = 'transform 0.2s';
+    isDragging = false;
+    let deltaX = e.clientX - startX;
+    if (deltaX >= threshold) {
+      dismissToast();
+    } else {
+      toast.style.transform = 'translateX(0)';
+    }
+  });
+
+if (closeButton) closeButton.addEventListener('click', dismissToast);
+
+  toast.addEventListener('mouseleave', resetTimer);
+
+  resetTimer();
+});
     """
-    load_lucide="""htmx.onLoad(() => lucide.createIcons());"""
+    load_lucide="htmx.onLoad(() => lucide.createIcons())"
 
     if lucid:
         return (
@@ -395,15 +525,15 @@ def ShadHead(lucid=True):
             Script(tw_config),
             Style(tw_globals, type="text/tailwindcss"),
             Script(code=shad_scripts),
-            Script(code=load_lucide),
-            Script(code=dialog_script),)
+            Script(load_lucide),
+            inter_import,
+            inter_styles,)
     else:
         return (
             Script(src=tw_import),
             Script(tw_config),
             Style(tw_globals, type="text/tailwindcss"),
-            Script(code=shad_scripts),
-            Script(code=dialog_script),)
+            Script(code=shad_scripts),)
 
 
 btn_variants = {
@@ -459,7 +589,7 @@ toast_variants_cls = {"default": "border bg-background text-foreground", "destru
 toast_closeBtn_cls = "toast-close-button cursor-pointer active:ring absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600"
 toast_title_cls = "text-sm font-semibold"
 toast_description_cls = "text-sm opacity-90"
-dialog_overlay_cls = "dialog-overlay fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+dialog_overlay_cls = "no-bg-scroll dialog-overlay fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
 dialog_content_cls= "dialog-content fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg"
 dialog_closeBtn_cls = "dialog-close-btn cursor-pointer active:ring absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
 dialog_title_cls = "text-lg font-semibold leading-none tracking-tight"
@@ -467,7 +597,7 @@ dialog_description_cls = "text-sm text-muted-foreground"
 dialog_header_cls = "flex flex-col space-y-1.5 text-center sm:text-left"
 dialog_footer_cls =  "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
 textarea_cls = "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-label_cls = "select-none text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+label_cls = "preventdbclick text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 switch_base_cls = "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
 switch_thumb_cls="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
 table_base_cls = "w-full caption-bottom text-sm"
@@ -477,6 +607,9 @@ table_footer_cls = "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0"
 table_row_cls = "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
 table_head_cls="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
 table_cell_cls="p-4 align-middle [&:has([role=checkbox])]:pr-0"
+checkbox_base_cls= "preventdbclick peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+checkbox_indicator_cls="preventdbclick flex items-center justify-center text-current data-[state=unchecked]:hidden"
+
 
 
 def Button(*c, size='default', variant='default', cls=None, **kwargs):
@@ -594,69 +727,44 @@ def Alert(
     *c,
     title: str = None,
     description: str = None,
-    variant: str = None,
+    variant: str = 'default',
     cls=None,
     standard=False,
-    icon:str=None,
+    icon:str='chevrons-right',
     **kwargs,
 ):
-    new_cls = alert_cls["alert"]
-    icon_v = "chevrons-right"
-    headers = []
-    if variant == "default" or variant == None:
-        new_cls += f" {alert_variants_cls["default"]}"
-    if variant == "destructive":
-        icon_v = "circle-alert"
-        new_cls += f" {alert_variants_cls["destructive"]}"
+    variants = tuple(alert_variants_cls.keys())
+    assert variant in variants, f'`variant` not in {variants}'
 
+    new_cls = f"{alert_cls["alert"]} {alert_variants_cls[variant]}"
+    headers = []
+    if variant == "destructive":
+        icon = "circle-alert"
     if cls:
         new_cls += f" {cls}"
 
     kwargs["cls"] = new_cls
     if standard:
         return Div(*c, **kwargs)
-    if icon:
-        headers.append(Lucide(icon=icon, cls="size-4", id=f"alert-icon-{uuid.uuid4()}"))
-    else:
-        headers.append(Lucide(icon=icon_v, cls="size-4", id=f"alert-icon-{uuid.uuid4()}"))
+    headers.append(Lucide(icon=icon, cls="size-4"))
     if title:
         headers.append(AlertTitle(title))
     if description:
         headers.append(AlertDescription(description))
 
-
     return Div(*headers, *c, **kwargs)
 
-def Lucide(icon:str=None ,cls=None, id=None, **kwargs):
-    df_id=None
-    df_cls=None
+def Lucide(icon:str='x' ,cls='size-5', **kwargs):
+    kwargs["cls"] = f"lucide {cls}"
+    return I(data_lucide=icon, **kwargs)
 
-    if id == None:
-        df_id=f"icon-{uuid.uuid4()}"
-
-    if cls==None:
-        df_cls="size-5"
-
-    df_id=id
-    df_cls=cls
-    kwargs["cls"] = df_cls
-    if icon:
-        return I(**{'data-lucide':icon},id=df_id, **kwargs)
-    else:
-        return I(**{'data-lucide':"accessibility"}, id=df_id, **kwargs)
-
-def Badge(*c, variant:str=None, cls=None, **kwargs):
+def Badge(*c, variant:str='default', cls=None, **kwargs):
+    variants = tuple(badge_variants_cls.keys())
+    assert variant in variants, f'`variant` not in {variants}'
     new_cls = badge_cls
+    new_cls += f" {badge_variants_cls[variant]}"
     if cls:
         new_cls += f" {cls}"
-    if variant == 'default' or variant == None:
-        new_cls += f" {badge_variants_cls['default']}"
-    if variant == 'secondary':
-        new_cls += f" {badge_variants_cls['secondary']}"
-    if variant == 'destructive':
-        new_cls += f" {badge_variants_cls['destructive']}"
-    if variant == 'outline':
-        new_cls += f" {badge_variants_cls['outline']}"
     kwargs["cls"] = new_cls
     return Div(*c, **kwargs)
 
@@ -697,103 +805,6 @@ async function handleClick() {
     kwargs["cls"] = new_cls
     return Div(*c, script, id=id, **kwargs)
 
-toast_script = """
-export function proc_htmx(sel, func) {
-  htmx.onLoad(elt => {
-    const elements = any(sel, elt, false);
-    if (elt.matches && elt.matches(sel)) elements.unshift(elt);
-    elements.forEach(func);
-  });
-}
-
-proc_htmx('#toast-container', function(toast) {
-  let dismissTimeout;
-  const closeButton = toast.querySelector('.toast-close-button');
-  const duration = 6000;
-
-  function dismissToast() {
-    clearTimeout(dismissTimeout);
-    toast.style.transform = 'translateX(100%)';
-    setTimeout(() => toast.remove(), 300);
-  }
-
-  function resetTimer() {
-    clearTimeout(dismissTimeout);
-    dismissTimeout = setTimeout(dismissToast, duration);
-  }
-
-  // Mouse drag functionality
-  let isDragging = false;
-  let startX;
-  let originalTransform;
-  const threshold = 100;
-
-  toast.addEventListener('mousedown', e => {
-    e.preventDefault(); // Prevent text selection
-    toast.style.transition = 'none';
-    isDragging = true;
-    startX = e.clientX;
-    originalTransform = window.getComputedStyle(toast).transform;
-
-  });
-
-  toast.addEventListener('mousemove', e => {
-    if (!isDragging) return
-    resetTimer();
-    let deltaX = e.clientX - startX;
-    if (deltaX > 0) {
-      toast.style.transform = `translateX(${deltaX}px)`;
-    }
-  });
-
-  toast.addEventListener('mouseup', e => {
-    if (!isDragging) return;
-    toast.style.transition = 'transform 0.2s';
-    isDragging = false;
-    let deltaX = e.clientX - startX;
-    if (deltaX >= threshold) {
-      dismissToast();
-    } else {
-      toast.style.transform = 'translateX(0)';
-    }
-  });
-
-if (closeButton) closeButton.addEventListener('click', dismissToast);
-
-  toast.addEventListener('mouseleave', resetTimer);
-
-  resetTimer();
-});
-"""
-
-toast_styles = """@keyframes slideInFromTop {
-  from { transform: translateY(-100%); }
-  to { transform: translateY(0); }
-}
-
-@keyframes slideInFromBottom {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
-.toast {
-  animation-duration: 0.2s;
-  animation-fill-mode: forwards;
-}
-
-@media (max-width: 640px) {
-  .toast {
-    animation-name: slideInFromTop;
-  }
-}
-
-@media (min-width: 641px) {
-  .toast {
-    animation-name: slideInFromBottom;
-  }
-}
-"""
-
 def toast(sess, title, description, variant="default"):
     assert variant in ("default", "destructive"), '`variant` not in ("default", "destructive")'
     sess.setdefault(sk, []).append((title, description, variant))
@@ -805,7 +816,6 @@ def Toaster(sess):
                hx_swap_oob="afterbegin:body")
 
 def toast_setup(app):
-    app.router.hdrs += (Style(toast_styles), Script(toast_script, type="module"))
     app.router.after.append(after_toast)
 
 def after_toast(resp, req, sess):
@@ -853,31 +863,6 @@ def DialogTrigger(*c, target=None, cls=None, **kwargs):
       new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Button(*c ,hx_get=f"/{target}", hx_swap="beforeend", hx_target="body", **kwargs)
-
-dialog_script = """
-  function proc_htmx(sel, func) {
-  htmx.onLoad(elt => {
-    const elements = any(sel, elt, false);
-    if (elt.matches && elt.matches(sel)) elements.unshift(elt);
-    elements.forEach(func);
-  });
-}
-
-  proc_htmx('.dialog', function(dialog) {
-    const overlay = dialog.querySelector('.dialog-overlay');
-    const closeBtn = dialog.querySelector('.dialog-close-btn');
-    const content = dialog.querySelector('.dialog-content');
-
-    function toggleClose() {
-    content.dataset.state = 'closed';
-    overlay.dataset.state = 'closed';
-    setTimeout(() => dialog.remove(), 110);
-    }
-
-    if(closeBtn) closeBtn.addEventListener('click', toggleClose);
-    if(overlay) overlay.addEventListener('click', toggleClose);
-  })
-"""
 
 def Dialog(*c,footer=None, title=None, description=None, standard=False,cls=None, **kwargs):
     overlay = Div(cls=dialog_overlay_cls, data_state="open")
@@ -927,7 +912,8 @@ def Switch(state="unchecked",cls=None, id=None, name=None, **kwargs):
       new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     thumb = Span(cls=switch_thumb_cls)
-    return Div(thumb,Input(type='checkbox', style="display: none;", id=id, name=name, checked='false'), data_state=state, onclick="const checked = this.dataset.state === 'unchecked' ? 'checked' : 'unchecked'; this.dataset.state = checked; this.querySelector('span').dataset.state = checked; this.querySelector('input').checked=(checked === 'checked' ? true : false)", **kwargs)
+    value_holder = Input(type='checkbox', style="display: none;", id=id, name=name, checked='false')
+    return Div(thumb,value_holder, data_state=state, onclick="toggleCheckbox(this)", **kwargs)
 
 def Table(*c, cls=None, **kwargs):
     new_cls = table_base_cls
@@ -985,7 +971,16 @@ def TableCaption(*c, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Caption(*c, **kwargs)
 
-component_map = [Button, Input, Card, Progress, Dialog, Textarea, Label]
+def Checkbox(cls=None, state='unchecked', name=None, id=None, **kwargs):
+    new_cls = checkbox_base_cls
+    if cls:
+      new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    indicator = Span(Lucide(icon='check', cls='size-4'), cls=checkbox_indicator_cls, data_state=state)
+    value_holder = Input(type='checkbox', style="display: none;", id=id, name=name, checked='false')
+    return Span(indicator, value_holder, data_state=state, onclick="toggleCheckbox(this)", **kwargs)
+
+component_map = [Button, Input, Card, Progress, Dialog, Textarea, Label, Checkbox]
 
 def override_components():
     module_name = "fasthtml.common"

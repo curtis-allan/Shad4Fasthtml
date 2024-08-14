@@ -679,6 +679,26 @@ def get():
                 id="table",
                 name="Table",
             ),
+            Block(
+                Div(
+                    Checkbox(id="terms1"),
+                    Div(
+                        Label(
+                            "Agree to the terms",
+                            htmlFor="terms1",
+                            cls="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+                        ),
+                        P(
+                            "You agree to our Terms of Service and Privacy Policy.",
+                            cls="text-sm text-muted-foreground",
+                        ),
+                        cls="grid gap-1.5 leading-none",
+                    ),
+                    cls="items-top flex space-x-2",
+                ),
+                id="badge",
+                name="Checkbox",
+            ),
             cls="flex flex-col gap-6 p-8",
         ),
         cls="max-w-4xl container",
@@ -1003,10 +1023,10 @@ def get(id: str):
                     Div(
                         Label(
                             "Agree to terms",
-                            htmlFor="switch",
+                            htmlFor="switch-toggle",
                         ),
                         Switch(
-                            id="switch",
+                            id="switch-toggle",
                         ),
                         cls="flex gap-1.5 items-center",
                     ),

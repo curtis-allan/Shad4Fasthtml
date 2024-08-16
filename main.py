@@ -14,6 +14,7 @@ app, rt = fast_app(
 
 toast_setup(app)
 
+
 dummy_data = data = [
     {
         "invoice": "INV001",
@@ -352,6 +353,23 @@ def get():
         ),
         cls="max-w-[80%] mx-auto mt-5",
     ),""",
+    "select": """Select(
+    SelectTrigger(
+        SelectValue(placeholder="Pick a fruit"),
+        cls="w-[180px]",
+    ),
+    SelectContent(
+        SelectLabel("Fruits"),
+        SelectItem("Apple", value="apple"),
+        SelectItem("Banana", value="banana"),
+        SelectItem("Blueberry", value="blueberry"),
+        SelectItem("Pineapple", value="pineapple"),
+        SelectItem("Orange", value="orange"),
+        SelectItem("Mango", value="mango"),
+        SelectItem("Guava", value="guava"),
+        SelectItem("Watermelon", value="watermelon"),
+    ),
+),""",
 }
 
 state = {
@@ -368,6 +386,7 @@ state = {
     "input": False,
     "switch": False,
     "table": False,
+    "select": False,
 }
 
 
@@ -472,11 +491,11 @@ def get():
             Div(
                 H1(
                     "Click this button to change the theme",
-                    cls="text-2xl text-muted-foreground",
+                    cls="text-lg text-muted-foreground",
                 ),
                 Lucide(
                     icon="arrow-right",
-                    cls="size-8 min-w-max text-muted-foreground",
+                    cls="size-5 min-w-max text-muted-foreground",
                 ),
                 Button(
                     Lucide(
@@ -491,7 +510,7 @@ def get():
                     hx_get="/sun",
                     cls="flex-none",
                 ),
-                cls="flex justify-center items-center py-6 gap-1.5",
+                cls="container flex justify-center items-center gap-1.5",
             ),
             Block(
                 Card(
@@ -536,6 +555,27 @@ def get():
                 ),
                 name="Card: Standard",
                 id="card2",
+            ),
+            Block(
+                Select(
+                    SelectTrigger(
+                        SelectValue(placeholder="Pick a fruit"),
+                        cls="w-[180px]",
+                    ),
+                    SelectContent(
+                        SelectLabel("Fruits"),
+                        SelectItem("Apple", value="apple"),
+                        SelectItem("Banana", value="banana"),
+                        SelectItem("Blueberry", value="blueberry"),
+                        SelectItem("Pineapple", value="pineapple"),
+                        SelectItem("Orange", value="orange"),
+                        SelectItem("Mango", value="mango"),
+                        SelectItem("Guava", value="guava"),
+                        SelectItem("Watermelon", value="watermelon"),
+                    ),
+                ),
+                id="select",
+                name="Select",
             ),
             Block(
                 Alert(
@@ -1062,6 +1102,34 @@ def get(id: str):
                         cls="mt-4 max-h-full max-w-[80%] mx-auto",
                     ),
                     id="table",
+                ),
+            )
+    if id == "select":
+        if not state[id]:
+            state[id] = True
+            return CodeBlock(id)
+        else:
+            state[id] = False
+            return (
+                Block(
+                    Select(
+                        SelectTrigger(
+                            SelectValue(placeholder="Pick a fruit"),
+                            cls="w-[180px]",
+                        ),
+                        SelectContent(
+                            SelectLabel("Fruits"),
+                            SelectItem("Apple", value="apple"),
+                            SelectItem("Banana", value="banana"),
+                            SelectItem("Blueberry", value="blueberry"),
+                            SelectItem("Pineapple", value="pineapple"),
+                            SelectItem("Orange", value="orange"),
+                            SelectItem("Mango", value="mango"),
+                            SelectItem("Guava", value="guava"),
+                            SelectItem("Watermelon", value="watermelon"),
+                        ),
+                    ),
+                    id="select",
                 ),
             )
 

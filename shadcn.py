@@ -471,7 +471,7 @@ def ShadHead(lucid=True):
       content.dataset.state= 'closed'
     }
 
-   document.addEventListener('click', event => {
+   document.body.addEventListener('mousedown', event => {
     if (!select.contains(event.target) && select.dataset.state === 'open') {
       toggleClose();
     }

@@ -5,11 +5,11 @@ app, rt = fast_app(
     pico=False,
     hdrs=(
         ShadHead(),
-        HighlightJS(langs=["python"]),
+        HighlightJS(),
+        MarkdownJS(),
     ),
     live=True,
     debug=True,
-    htmlkw={"cls": "dark"},
 )
 
 toast_setup(app)
@@ -271,7 +271,7 @@ def get():
          cls="flex gap-1.5 items-center",
     ),""",
     "table": """
-        // Dummy table data to indicate mapping
+    // Dummy table data to indicate mapping
     
     dummy_data = data = [
     {
@@ -370,23 +370,22 @@ def get():
         SelectItem("Watermelon", value="watermelon"),
     ),
 ),""",
-}
-
-state = {
-    "card1": False,
-    "card2": False,
-    "alert1": False,
-    "alert2": False,
-    "toast": False,
-    "separator": False,
-    "badge": False,
-    "progress": False,
-    "dialog1": False,
-    "dialog2": False,
-    "input": False,
-    "switch": False,
-    "table": False,
-    "select": False,
+    "checkbox": """Div(
+        Checkbox(id="terms1"),
+        Div(
+            Label(
+                "Agree to the terms",
+                htmlFor="terms1",
+                cls="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+            ),
+            P(
+                "You agree to our Terms of Service and Privacy Policy.",
+                cls="text-sm text-muted-foreground",
+            ),
+            cls="grid gap-1.5 leading-none",
+        ),
+        cls="items-top flex space-x-2",
+    ),""",
 }
 
 
@@ -406,20 +405,6 @@ def table_rows():
 
 def Block(*c, name=None, id="default", **kwargs):
     cls = "relative mx-auto w-full max-w-xl flex flex-col rounded-md bg-muted/40 shadow"
-    if name == None:
-        return (
-            Div(
-                Div(
-                    *c,
-                    cls="flex flex-col items-center h-[350px] justify-center",
-                ),
-                BlockChange(target=id),
-                cls=cls,
-                id=id,
-                **kwargs,
-            ),
-        )
-
     title = Div(
         H1(
             name,
@@ -432,9 +417,10 @@ def Block(*c, name=None, id="default", **kwargs):
         Div(
             Div(
                 *c,
-                cls="flex flex-col items-center h-[350px] justify-center",
+                cls="block-content flex flex-col items-center h-[350px] justify-center",
             ),
-            BlockChange(target=id),
+            CodeContent(id=id),
+            BlockChange(),
             cls=cls,
             id=id,
             **kwargs,
@@ -442,37 +428,36 @@ def Block(*c, name=None, id="default", **kwargs):
     )
 
 
-def BlockChange(target: str):
-    icon = "arrow-right"
-    if state[target] == True:
-        icon = "arrow-left"
+def BlockChange():
     return (
         Button(
-            Lucide(icon=icon, cls="size-8 text-muted-foreground"),
+            Lucide(icon="arrow-left-right", cls="size-8 text-muted-foreground"),
             variant="outline",
             size="icon",
             cls="flex w-full py-8",
-            hx_target=f"#{target}",
-            hx_swap="outerHTML transition:true",
-            hx_get=f"/switch/{target}",
+            onclick=f"toggleView(this)",
+        ),
+        Script(
+            """function toggleView(elt) {
+                const block = elt.parentNode
+                    block.querySelector('.block-content').classList.toggle('hidden');
+                    block.querySelector('.code-content').classList.toggle('hidden');
+                   }"""
         ),
     )
 
 
-def CodeBlock(id: str = None):
+def CodeContent(id: str = None):
     return (
-        Block(
-            Div(
-                Pre(
-                    Code(
-                        code[id],
-                        cls="text-sm rounded-md bg-muted text-foreground h-[318px]",
-                    ),
-                    cls="flex",
+        Div(
+            Pre(
+                Code(
+                    code[id],
+                    cls="text-sm rounded-md bg-muted h-[318px]",
                 ),
-                cls="flex items-center justify-center w-full p-4 flex-grow",
+                cls="flex [&>button]:bg-primary/50",
             ),
-            id=id,
+            cls="code-content flex items-center justify-center w-full p-4 flex-grow hidden",
         ),
     )
 
@@ -485,7 +470,28 @@ def get():
                 "Shadcn-ui components, made for FastHtml",
                 cls="relative text-6xl font-bold tracking-tight text-center",
             ),
-            cls="pt-20 text-balance",
+            Nav(
+                A(
+                    Button(
+                        Lucide(icon="github"),
+                        size="icon",
+                        variant="outline",
+                    ),
+                    href="https://github.com/curtis-allan/shadcn-fasthtml-framework",
+                    target="_blank",
+                ),
+                A(
+                    Button(
+                        "Get Started",
+                        Lucide(icon="arrow-right"),
+                        variant="default",
+                    ),
+                    href="/getting-started/installation",
+                    hx_boost="true",
+                ),
+                cls="flex container max-w-md p-2 my-6 gap-4 justify-between border rounded-xl shadow-md",
+            ),
+            cls="flex flex-col pt-20 text-balance ",
         ),
         Section(
             Div(
@@ -736,13 +742,112 @@ def get():
                     ),
                     cls="items-top flex space-x-2",
                 ),
-                id="badge",
+                id="checkbox",
                 name="Checkbox",
             ),
             cls="flex flex-col gap-6 p-8",
         ),
         cls="max-w-4xl container",
     )
+
+
+def format_title(str: str):
+    if "-" in str:
+        words = str.split("-")
+        cw = [word.capitalize() for word in words]
+        formatted = " ".join(cw)
+        return formatted
+    res = str.capitalize()
+    return res
+
+
+link_groups = {
+    "getting-started": ("installation", "using-components"),
+    "components": ("card", "alert", "switch"),
+}
+
+
+def Sidebar():
+    nav_items = []
+    link_titles = link_groups.keys()
+    for title in link_titles:
+        link_group = (
+            (
+                Li(
+                    H1(
+                        format_title(title),
+                        cls="font-semibold tracking-tight text-md pb-1",
+                    ),
+                    Ul(
+                        *[
+                            Li(
+                                A(
+                                    Button(
+                                        format_title(i),
+                                        variant="link",
+                                        cls="w-full !justify-start !text-muted-foreground tracking-tight !p-0 pl-2 h-fit my-1.5",
+                                    ),
+                                    href=f"/{title}/{i}",
+                                    hx_boost="true",
+                                ),
+                            )
+                            for i in link_groups[title]
+                        ],
+                    ),
+                )
+            ),
+        )
+
+        nav_items += link_group
+    return Aside(
+        Nav(
+            A(
+                Button(
+                    Lucide(icon="arrow-left", cls="size-4 mr-1.5"),
+                    "Home",
+                    cls="w-full",
+                ),
+                href="/",
+                hx_boost="true",
+            ),
+            Ul(*nav_items, cls="space-y-2"),
+            cls="space-y-4",
+        ),
+        cls="fixed h-screen top-0 inset-x-0 border-r w-[180px] p-6",
+    )
+
+
+def DocsLayout(*c, title: str):
+    name = format_title(title)
+    return Title(name), Body(
+        Sidebar(),
+        Main(
+            Section(
+                Article(H1(name, cls="text-3xl font-bold"), *c, cls="space-y-8"),
+                cls="max-w-4xl container mt-14",
+            ),
+            cls="flex flex-col pl-[180px] flex-grow",
+        ),
+        cls="min-h-screen flex flex-col",
+    )
+
+
+def content():
+    f = open("README.md")
+    return f.read()
+
+
+@rt("/getting-started/{title}")
+def get(title: str):
+    return DocsLayout(
+        Div(content(), cls="marked"),
+        title=title,
+    )
+
+
+@rt("/components/{title}")
+def get(title: str):
+    return DocsLayout(Div("component here"), title=title)
 
 
 @rt("/toast")
@@ -822,318 +927,6 @@ def get(prevIcon: str):
             cls="flex-none",
         ),
     )
-
-
-@rt("/switch/{id}")
-def get(id: str):
-    if id == "alert1":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    Alert(
-                        title="Error",
-                        variant="destructive",
-                        description="Your session has expired. Please log in again.",
-                        cls="!w-[400px]",
-                    ),
-                    id=id,
-                ),
-            )
-    if id == "alert2":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return Block(
-                Alert(
-                    Lucide(icon="chevrons-right", cls="size-4"),
-                    AlertTitle("New message!"),
-                    AlertDescription(
-                        "Open your messages section to view more details."
-                    ),
-                    standard=True,
-                    cls="!w-[400px]",
-                ),
-                id=id,
-            )
-    if id == "card1":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return Block(
-                Card(
-                    Input(
-                        type="text",
-                        placeholder="Enter some text...",
-                    ),
-                    title="Create a post",
-                    description="Enter your post related information below",
-                    footer=Div(
-                        Button(
-                            "Cancel",
-                            variant="outline",
-                        ),
-                        Button("Submit"),
-                        cls="flex w-full justify-end gap-2",
-                    ),
-                    cls="w-[400px]",
-                ),
-                id=id,
-            )
-    if id == "card2":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    Card(
-                        CardHeader(
-                            CardTitle("New Card :)"),
-                            CardDescription("This is a new card :0"),
-                        ),
-                        CardContent(
-                            P(
-                                "Lots of awesome content aka oanwdo woadn owndiaonwi. wodn wodin donwd onida ondwoai",
-                                cls="text-balance",
-                            ),
-                        ),
-                        CardFooter(
-                            P(
-                                "This is the footer :D",
-                                cls="text-muted-foreground text-center text-sm",
-                            ),
-                        ),
-                        standard=True,
-                        cls="w-[400px]",
-                    ),
-                    id=id,
-                ),
-            )
-    if id == "separator":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    H1(
-                        "Welcome back",
-                        cls="text-3xl font-bold tracking-tight leading-loose",
-                    ),
-                    Separator(cls="my-2 max-w-[90%]"),
-                    Div(
-                        Button("Profile", variant="secondary"),
-                        Separator(orientation="vertical"),
-                        Button("Messages", variant="secondary"),
-                        Separator(orientation="vertical"),
-                        Button("Settings", variant="secondary"),
-                        cls="flex gap-3 p-3",
-                    ),
-                    id="separator",
-                ),
-            )
-    if id == "badge":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    Div(
-                        H1(
-                            "Shad4FastHtml",
-                            cls="text-2xl font-semibold tracking-tight leading-loose",
-                        ),
-                        Badge("v2.0", variant="default"),
-                        cls="flex gap-1.5 items-center justify-center",
-                    ),
-                    id="badge",
-                ),
-            )
-    if id == "progress":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    Div(
-                        Button(
-                            "Start",
-                            onclick="handleClick()",
-                            cls="max-w-fit",
-                        ),
-                        Progress(
-                            ProgressInner(id="progress-inner"),
-                        ),
-                        cls="flex flex-col gap-3 w-[80%] items-center justify-center",
-                    ),
-                    id="progress",
-                ),
-            )
-    if id == "toast":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    Button("Send email", hx_get="/toast", hx_swap="none"),
-                    id="toast",
-                ),
-            )
-
-    if id == "dialog1":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    DialogTrigger("Toggle Dialog", target="modal"),
-                    id="dialog1",
-                ),
-            )
-    if id == "dialog2":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    DialogTrigger("Toggle Dialog", target="modal-standard"),
-                    id="dialog2",
-                ),
-            )
-    if id == "input":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    Div(
-                        H1(
-                            "Create a post", cls="text-2xl font-semibold tracking-tight"
-                        ),
-                        Div(
-                            Label("Title", htmlFor="title"),
-                            Input(placeholder="Enter a title", id="title"),
-                            Label(
-                                "Content",
-                                htmlFor="content",
-                            ),
-                            Textarea(
-                                placeholder="Enter some content...",
-                                cls="col-span-3",
-                                id="content",
-                            ),
-                            Button("Submit", cls="mt-5 self-end"),
-                            cls="flex flex-col gap-1.5",
-                        ),
-                        cls="space-y-5 max-w-[80%] w-full",
-                    ),
-                    id="input",
-                ),
-            )
-    if id == "switch":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    Div(
-                        Label(
-                            "Agree to terms",
-                            htmlFor="switch-toggle",
-                        ),
-                        Switch(
-                            id="switch-toggle",
-                        ),
-                        cls="flex gap-1.5 items-center",
-                    ),
-                    id="switch",
-                ),
-            )
-
-    if id == "table":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    Table(
-                        TableCaption("View your recent spending history."),
-                        TableHeader(
-                            TableRow(
-                                TableHead("Payment", cls="w-[100px]"),
-                                TableHead("Status"),
-                                TableHead("Method"),
-                                TableHead("Amount", cls="text-right"),
-                            )
-                        ),
-                        TableBody(*table_rows()),
-                        TableFooter(
-                            TableRow(
-                                TableCell("Total", colSpan="3"),
-                                TableCell("$2,500.00", cls="text-right"),
-                            )
-                        ),
-                        cls="mt-4 max-h-full max-w-[80%] mx-auto",
-                    ),
-                    id="table",
-                ),
-            )
-    if id == "select":
-        if not state[id]:
-            state[id] = True
-            return CodeBlock(id)
-        else:
-            state[id] = False
-            return (
-                Block(
-                    Select(
-                        SelectTrigger(
-                            SelectValue(placeholder="Pick a fruit"),
-                            cls="w-[180px]",
-                        ),
-                        SelectContent(
-                            SelectLabel("Fruits"),
-                            SelectItem("Apple", value="apple"),
-                            SelectItem("Banana", value="banana"),
-                            SelectItem("Blueberry", value="blueberry"),
-                            SelectItem("Pineapple", value="pineapple"),
-                            SelectItem("Orange", value="orange"),
-                            SelectItem("Mango", value="mango"),
-                            SelectItem("Guava", value="guava"),
-                            SelectItem("Watermelon", value="watermelon"),
-                        ),
-                    ),
-                    id="select",
-                ),
-            )
-
-    return H1("Didnt work :()")
 
 
 serve()

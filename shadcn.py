@@ -4,7 +4,6 @@ from fasthtml.common import *
 from fasthtml.components import Button as OgButton
 from fasthtml.components import Input as OgInput
 from fasthtml.components import Label as OgLabel
-from fasthtml.components import Select as OgSelect
 from fasthtml.components import Table as OgTable
 from fasthtml.components import Textarea as OgTextarea
 from fasthtml.toaster import *
@@ -15,6 +14,7 @@ __all__ = [
     "CardTitle",
     "CardDescription",
     "CardContent",
+    "Card",
     "ShadHead",
     "Alert",
     "AlertTitle",

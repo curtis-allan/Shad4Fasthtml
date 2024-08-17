@@ -34,10 +34,10 @@ To implement Shadcn UI components in your codebase, refer to the relevant compon
 
 ## Need Help?
 
-If you encounter any issues or have questions, please check the [FAQ section](https://github.com/your-repo/faq) or open an issue on the GitHub repository.
+If you encounter any issues or have questions, please open an issue on the GitHub repository and either myself or a member of the community will try to help.
 
 Happy coding!
 
 ---
 
-*This documentation is a work in progress. I appreciate your patience and feedback as I continue to build upon the repo and this readme. All credits go to [@Shadcn](https://x.com/shadcn) for the component styles and [@JeremyPHoward](https://x.com/jeremyphoward) for the fastHtml framework.*
+*This documentation is a work in progress. I appreciate your patience and feedback as I continue to build upon the repo and this readme. All credits go to <a href="https://x.com/shadcn" target="blank">@Shadcn</a> for the component styles and <a href="https://x.com/jeremyphoward" target="_blank">@JeremyPHoward</a> for the fastHtml framework.*

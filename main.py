@@ -288,6 +288,11 @@ def get():
     )
 
 
+@rt("/{fname:path}.{ext:static}")
+async def get(fname: str, ext: str):
+    return FileResponse(f"public/{fname}.{ext}")
+
+
 @rt("/modal-standard")
 def get():
     return Dialog(

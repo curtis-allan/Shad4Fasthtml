@@ -25,11 +25,11 @@ zeromd_headers = Script(
 )
 
 social_headers = Socials(
-    site_name="Shadcn4FastHtml",
-    title="Shadcn4FastHtml",
+    site_name="Shad4FastHtml",
+    title="Shad4FastHtml",
     description="Open source Shadcn-ui components, made for FastHtml",
-    url="shadcn4fasthtml.com",
-    image="/public/social.jpg",
+    url="shad4fasthtml.com",
+    image="/public/social.png",
 )
 
 app, rt = fast_app(

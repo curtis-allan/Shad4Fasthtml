@@ -55,18 +55,15 @@ __all__ = [
     "SelectSeparator",
     "SelectTrigger",
     "SelectGroup",
-    "SelectValue"
+    "SelectValue",
+    "ThemeToggle"
 ]
 
 
 def ShadHead(lucid=True):
     tw_import = "https://cdn.tailwindcss.com"
 
-    lucide_import = "https://unpkg.com/lucide@latest/dist/umd/lucide.js"
-
-    inter_import = Link(rel="preconnect", href="https://rsms.me/")
-
-    inter_styles = Link(rel="stylesheet", href="https://rsms.me/inter/inter.css")
+    lucide_import = "https://unpkg.com/lucide@latest"
 
     tw_config = """
     function filterDefault(values) {
@@ -379,21 +376,15 @@ def ShadHead(lucid=True):
 }
 
 @layer base {
-:root {
-  font-family: Inter, sans-serif;
-}
 :root:has(.no-bg-scroll) {
   overflow:hidden;
 }
-@supports (font-variation-settings: normal) {
-  :root { font-family: InterVariable, sans-serif; }
-  }
   * {
     @apply border-border antialiased;
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1, "cv11" 1;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
@@ -437,11 +428,6 @@ def ShadHead(lucid=True):
 }
 """
     shad_scripts = """
-    function toggleTheme() { 
-
-    document.documentElement.classList.toggle('dark');
-    }
-
     function toggleCheckbox(e) {
     const checked = e.dataset.state === 'unchecked' ? 'checked' : 'unchecked';
     e.dataset.state = checked;
@@ -456,6 +442,18 @@ def ShadHead(lucid=True):
     elements.forEach(func);
   });
 }
+
+  proc_htmx('#theme-toggle', elt => {
+    elt.addEventListener('mousedown', event => {
+    event.preventDefault();
+      document.body.classList.toggle('dark');
+      const sunIcon = elt.querySelector('#theme-icon-sun');
+      const moonIcon = elt.querySelector('#theme-icon-moon');
+
+      sunIcon.classList.toggle('hidden');
+      moonIcon.classList.toggle('hidden');
+    })
+  })
 
   proc_htmx('.preventdbclick', elt => {
     elt.addEventListener('mousedown', event => {
@@ -633,18 +631,62 @@ if (closeButton) closeButton.addEventListener('click', dismissToast);
   resetTimer();
 });
     """
-    load_lucide="htmx.onLoad(() => lucide.createIcons())"
+
+    load_lucide="""  (function() {
+    // Function to load Lucide script
+    function loadLucide() {
+      return new Promise((resolve, reject) => {
+        if (window.lucide) {
+          resolve();
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/lucide@latest';
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    // Function to create icons
+    function createIcons() {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    // Function to set up HTMX event listeners
+    function setupEventListeners() {
+      document.body.addEventListener('htmx:afterSwap', createIcons);
+      document.body.addEventListener('htmx:load', createIcons);
+    }
+
+    // Main initialization function
+    function init() {
+      loadLucide()
+        .then(createIcons)
+        .then(setupEventListeners)
+        .catch(error => {
+          console.error('Failed to load Lucide:', error);
+        });
+    }
+
+    // Run initialization when DOM is fully loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();"""
 
     if lucid:
         return (
             Script(src=tw_import),
-            Script(src=lucide_import),
             Script(tw_config),
             Style(tw_globals, type="text/tailwindcss"),
             Script(code=shad_scripts),
-            Script(load_lucide),
-            inter_import,
-            inter_styles,)
+            Script(load_lucide),)
     else:
         return (
             Script(src=tw_import),
@@ -733,6 +775,9 @@ select_content_cls="absolute min-w-full h-fit w-fit data-[side=top]:bottom-11 da
 select_label_cls="py-1.5 pl-8 pr-2 text-sm font-semibold"
 select_item_cls="select-item relative flex w-full cursor-default select-none hover:bg-muted items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[checked=true]:bg-muted data-[disabled]:opacity-50"
 select_separator_cls="-mx-1 my-1 h-px bg-muted"
+
+def ThemeToggle(**kwargs):
+    return Button(Lucide(icon='sun', id='theme-icon-sun'), Lucide(icon='moon', id='theme-icon-moon', cls='hidden'), variant='outline', size='icon', id='theme-toggle', **kwargs)
 
 def Button(*c, size='default', variant='default', cls=None, **kwargs):
     new_cls = btn_base_cls

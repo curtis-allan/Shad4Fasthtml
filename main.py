@@ -27,8 +27,6 @@ zeromd_headers = [
 app, rt = fast_app(
     pico=False,
     hdrs=(ShadHead(), HighlightJS(), zeromd_headers),
-    live=True,
-    debug=True,
 )
 
 toast_setup(app)
@@ -88,19 +86,7 @@ def get():
                     icon="arrow-right",
                     cls="size-5 min-w-max text-muted-foreground",
                 ),
-                Button(
-                    Lucide(
-                        icon="sun",
-                        cls="size-6",
-                        id="theme-toggle-icon",
-                    ),
-                    size="icon",
-                    variant="outline",
-                    onclick="toggleTheme()",
-                    hx_swap="outerHTML",
-                    hx_get="/sun",
-                    cls="flex-none",
-                ),
+                ThemeToggle(cls="shrink-0"),
                 cls="container flex justify-center items-center gap-1.5",
             ),
             cls="max-w-4xl container min-h-screen flex flex-col justify-center items-center",
@@ -322,26 +308,6 @@ def get():
             cls="sm:max-w-[425px]",
         ),
         standard=True,
-    )
-
-
-@rt("/{prevIcon}")
-def get(prevIcon: str):
-    newIcon = ""
-    if prevIcon == "sun":
-        newIcon = "moon"
-    if prevIcon == "moon":
-        newIcon = "sun"
-    return (
-        Button(
-            Lucide(icon=newIcon, cls="size-6", id="theme-toggle-icon"),
-            size="icon",
-            variant="outline",
-            onclick="toggleTheme()",
-            hx_swap="outerHTML",
-            hx_get=f"/{newIcon}",
-            cls="flex-none",
-        ),
     )
 
 

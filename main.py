@@ -30,6 +30,7 @@ social_headers = Socials(
     description="Open source Shadcn-ui components, made for FastHtml",
     url="www.shad4fasthtml.com",
     image="/public/social.png",
+    card="summary_large_image",
 )
 
 favicon_headers = Favicon(

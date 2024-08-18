@@ -219,12 +219,11 @@ def get():
     )
 )
 """,
-    "input": """
-            Div(
-                Label("Title", htmlFor="title"),
-                Input(placeholder="Enter a title", type="text", id="title"),
-                cls="space-y-5 max-w-[80%] w-full",
-            ),
+    "input": """Div(
+        Label("Title", htmlFor="title"),
+        Input(placeholder="Enter a title", type="text", id="title"),
+        cls="space-y-5 max-w-[80%] w-full",
+    ),
 """,
     "switch": """
     Div(

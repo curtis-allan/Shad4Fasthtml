@@ -20,13 +20,21 @@ from fasthtml.common import *
 from fasthtml.components import Zero_md
 from shadcn import *
 
-zeromd_headers = [
-    Script(type="module", src="https://cdn.jsdelivr.net/npm/zero-md@3?register")
-]
+zeromd_headers = Script(
+    type="module", src="https://cdn.jsdelivr.net/npm/zero-md@3?register"
+)
+
+social_headers = Socials(
+    site_name="Shadcn4FastHtml",
+    title="Shadcn4FastHtml",
+    description="Open source Shadcn-ui components, made for FastHtml",
+    url="shadcn4fasthtml.com",
+    image="/public/social.jpg",
+)
 
 app, rt = fast_app(
     pico=False,
-    hdrs=(ShadHead(), HighlightJS(), zeromd_headers),
+    hdrs=(ShadHead(), HighlightJS(), zeromd_headers, social_headers),
 )
 
 toast_setup(app)

@@ -28,13 +28,17 @@ social_headers = Socials(
     site_name="Shad4FastHtml",
     title="Shad4FastHtml",
     description="Open source Shadcn-ui components, made for FastHtml",
-    url="shad4fasthtml.com",
+    url="www.shad4fasthtml.com",
     image="/public/social.png",
+)
+
+favicon_headers = Favicon(
+    light_icon="/public/light_favicon.ico", dark_icon="/public/dark_favicon.ico"
 )
 
 app, rt = fast_app(
     pico=False,
-    hdrs=(ShadHead(), HighlightJS(), zeromd_headers, social_headers),
+    hdrs=(ShadHead(), HighlightJS(), zeromd_headers, social_headers, favicon_headers),
 )
 
 toast_setup(app)

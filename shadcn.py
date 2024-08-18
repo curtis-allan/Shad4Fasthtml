@@ -63,8 +63,6 @@ __all__ = [
 def ShadHead(lucid=True):
     tw_import = "https://cdn.tailwindcss.com"
 
-    lucide_import = "https://unpkg.com/lucide@latest"
-
     tw_config = """
     function filterDefault(values) {
 	return Object.fromEntries(

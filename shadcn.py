@@ -901,7 +901,7 @@ def Alert(
     variants = tuple(alert_variants_cls.keys())
     assert variant in variants, f'`variant` not in {variants}'
 
-    new_cls = f"{alert_cls["alert"]} {alert_variants_cls[variant]}"
+    new_cls = f"{alert_cls['alert']} {alert_variants_cls[variant]}"
     headers = []
     if variant == "destructive":
         icon = "circle-alert"
@@ -937,7 +937,7 @@ def Separator(orientation:str='horizontal', cls=None, **kwargs):
     new_cls = sep_cls
 
     if orientation == 'horizontal' or orientation == None:
-        new_cls += f" {sep_variant_cls["horizontal"]}"
+        new_cls += f" {sep_variant_cls['horizontal']}"
     if orientation == 'vertical':
         new_cls += f" {sep_variant_cls['vertical']}"
 

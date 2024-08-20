@@ -84,11 +84,10 @@ def get():
                             variant="default",
                         ),
                         href="/getting-started/installation",
-                        hx_boost="true",
                     ),
                     cls="flex container max-w-md p-2 my-6 gap-4 justify-between border rounded-xl shadow-md",
                 ),
-                cls="flex flex-col text-balance ",
+                cls="flex flex-col text-balance max-w-3xl",
             ),
             Div(
                 H1(
@@ -97,12 +96,12 @@ def get():
                 ),
                 Lucide(
                     icon="arrow-right",
-                    cls="size-5 min-w-max text-muted-foreground",
+                    cls="size-5 shrink-0 text-muted-foreground",
                 ),
                 ThemeToggle(cls="shrink-0"),
                 cls="container flex justify-center items-center gap-1.5",
             ),
-            cls="max-w-4xl container min-h-screen flex flex-col justify-center items-center",
+            cls="min-h-screen flex flex-col !justify-center !items-center",
         ),
     )
 
@@ -133,7 +132,6 @@ link_groups = {
         "input",
         "textarea",
         "label",
-        "switch",
         "table",
         "checkbox",
         "select",
@@ -162,7 +160,6 @@ def Sidebar():
                                         cls="w-full !justify-start !text-muted-foreground tracking-tight !p-0 pl-2 h-fit my-1.5",
                                     ),
                                     href=f"/{title}/{i}",
-                                    hx_boost="true",
                                 ),
                             )
                             for i in link_groups[title]
@@ -183,7 +180,6 @@ def Sidebar():
                     cls="w-full !justify-start pl-0",
                 ),
                 href="/",
-                hx_boost="true",
             ),
             Ul(*nav_items, cls="space-y-2"),
             cls="space-y-4",
@@ -198,7 +194,11 @@ def DocsLayout(*c, title: str):
         Sidebar(),
         Main(
             Section(
-                Article(H1(name, cls="text-3xl font-bold"), *c, cls="space-y-8"),
+                Article(
+                    H1(name, cls="text-4xl font-semibold tracking-tight text-center"),
+                    *c,
+                    cls="space-y-8",
+                ),
                 cls="max-w-4xl container my-14",
             ),
             cls="flex flex-col pl-[180px] flex-grow",
@@ -208,7 +208,7 @@ def DocsLayout(*c, title: str):
 
 
 def render_md(link):
-    css = ".markdown-body {background-color: unset !important; color: unset !important; margin: 2rem auto;}"
+    css = ".markdown-body {background-color: hsl(var(--background)) !important; color: hsl(var(--foreground)) !important; margin: 2rem auto; table {color: initial; background-color:hsl(var(--muted)); width: 100%; border-radius: 0.5rem;} th{height:3rem} td {height:1rem} blockquote {color:hsl(var(--muted-foreground));}}}"
     css_template = Template(Style(css), data_append=True)
 
     with open(f"{link}.md") as f:
@@ -258,8 +258,13 @@ def get(title: str):
     comp = demo_comps[title]
     return DocsLayout(
         Div(
+            H2(
+                "Demo",
+                cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4 border-primary",
+            ),
             comp(),
             render_md(f"docs/md/{title}_template"),
+            cls="flex flex-col gap-6",
         ),
         title=title,
     )
@@ -270,31 +275,12 @@ def get(sess):
     toast(sess=sess, title="Sent!", description="Email has been sent successfully.")
 
 
-@rt("/modal")
-def get():
-    return Dialog(
-        Div(
-            P(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla viverra orci, non ullamcorper quam rhoncus eget. Proin finibus turpis a sapien egestas eleifend.",
-                cls="text-pretty",
-            ),
-            cls="sm:max-w-[425px]",
-        ),
-        title="Dialog example",
-        description="Click the 'x' or anywhere outside the dialog to close.",
-        footer=P(
-            "Powered by htmx, fasthtml, and vanillaJS",
-            cls="text-center text-sm text-muted-foreground tracking-tight w-full",
-        ),
-    )
-
-
 @rt("/{fname:path}.{ext:static}")
 async def get(fname: str, ext: str):
     return FileResponse(f"public/{fname}.{ext}")
 
 
-@rt("/modal-standard")
+@rt("/modal")
 def get():
     return Dialog(
         DialogContent(

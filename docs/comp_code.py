@@ -47,10 +47,10 @@ code_dict = {
     "card1": """Card(
     Input(
         type="text",
-        placeholder="Enter some text...",
+        placeholder="Title",
         ),
     title="Create a post",
-    description="Enter your post related information below",
+    description="Enter your post title below",
     footer=Div(
         Button(
             "Cancel",
@@ -59,44 +59,21 @@ code_dict = {
         Button("Submit"),
             cls="flex w-full justify-end gap-2",
             ),
-            cls="w-[90%]",
+            cls="w-[80%]",
         ),""",
-    "card2": """Card(
-    CardHeader(
-        CardTitle("New Card!"),
-        CardDescription("This is a new card :0"),
-    ),
-    CardContent(
-        P("Lots of awesome content aka oanwdo woadn
-        owndiaonwi. wodn wodin donwd onida ondwoai",
-        cls="text-balance",
-        ),
-    ),
-    CardFooter(
-        P("This is the footer :D",
-            cls="text-muted-foreground text-center 
-            text-sm",
-        ),
-    ),
-    cls="w-[90%]",
+    "alert2": """Alert(
+    Lucide(icon="circle-alert", cls="size-4"),
+    AlertTitle("Error"),
+    AlertDescription("An error occurred while processing your request."),
     standard=True,
-)
+    variant="destructive",
+    cls="max-w-[80%]",
+            ),
 """,
     "alert1": """Alert(
-    Lucide(icon="chevrons-right", cls="size-4"),
-    AlertTitle("New message!"),
-    AlertDescription(
-        "Open your messages section to view more details."
-    ),
-    standard=True,
-    cls="max-w-[90%]",
-)
-""",
-    "alert2": """Alert(
-    title="Error",
-    variant="destructive",
-    description="Your session has expired. Please log in again.",
-    cls="max-w-[90%]",
+    title="New message!",
+    description="Open your messages to view more details.",
+    cls="max-w-[80%]",
 )
 """,
     "separator": """H1(

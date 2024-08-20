@@ -21,9 +21,9 @@ def table_rows():
     return results
 
 
-def Block(*c, name=None, id="default", **kwargs):
-    cls = "relative mx-auto w-full max-w-xl flex flex-col rounded-md bg-muted/40 shadow"
-    return Article(
+def Block(*c, id="default", **kwargs):
+    cls = "relative max-w-xl mx-auto flex flex-col rounded-md bg-muted/40 shadow"
+    return Div(
         Div(
             Div(
                 *c,
@@ -62,7 +62,7 @@ def CodeContent(id: str = None):
             Pre(
                 Code(
                     code_dict[id],
-                    cls="text-sm rounded-md bg-muted h-[318px]",
+                    cls="text-sm rounded-md bg-primary h-[318px]",
                 ),
                 cls="flex [&>button]:bg-primary/50",
             ),
@@ -75,9 +75,9 @@ def card_block():
     return (
         Block(
             Card(
-                Input(type="text", placeholder="Enter some text...", id="card1-input"),
+                Input(type="text", placeholder="Title", id="card1-input"),
                 title="Create a post",
-                description="Enter your post related information below",
+                description="Enter your post title below",
                 footer=Div(
                     Button(
                         "Cancel",
@@ -86,7 +86,7 @@ def card_block():
                     Button("Submit"),
                     cls="flex w-full justify-end gap-2",
                 ),
-                cls="w-[90%]",
+                cls="w-[80%]",
             ),
             id="card1",
         ),
@@ -152,10 +152,12 @@ def AlertAltBlock():
     return (
         Block(
             Alert(
-                title="Error",
+                Lucide(icon="circle-alert", cls="size-4"),
+                AlertTitle("Error"),
+                AlertDescription("An error occurred while processing your request."),
+                standard=True,
                 variant="destructive",
-                description="Your session has expired. Please log in again.",
-                cls="!w-[90%]",
+                cls="max-w-[80%]",
             ),
             id="alert1",
             name="Alert",
@@ -181,13 +183,11 @@ def alert_block():
     return (
         Block(
             Alert(
-                Lucide(icon="chevrons-right", cls="size-4"),
-                AlertTitle("New message!"),
-                AlertDescription("Open your messages section to view more details."),
-                standard=True,
-                cls="!w-[90%]",
+                title="New message!",
+                description="Open your messages to view more details.",
+                cls="max-w-[80%]",
             ),
-            id="alert2",
+            id="alert1",
             name="Alert: Standard",
         ),
     )

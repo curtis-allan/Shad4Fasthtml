@@ -56,7 +56,7 @@ __all__ = [
     "SelectTrigger",
     "SelectGroup",
     "SelectValue",
-    "ThemeToggle"
+    "ThemeToggle",
 ]
 
 
@@ -630,7 +630,7 @@ if (closeButton) closeButton.addEventListener('click', dismissToast);
 });
     """
 
-    load_lucide="""  (function() {
+    load_lucide = """  (function() {
     // Function to load Lucide script
     function loadLucide() {
       return new Promise((resolve, reject) => {
@@ -684,13 +684,15 @@ if (closeButton) closeButton.addEventListener('click', dismissToast);
             Script(tw_config),
             Style(tw_globals, type="text/tailwindcss"),
             Script(code=shad_scripts),
-            Script(load_lucide),)
+            Script(load_lucide),
+        )
     else:
         return (
             Script(src=tw_import),
             Script(tw_config),
             Style(tw_globals, type="text/tailwindcss"),
-            Script(code=shad_scripts),)
+            Script(code=shad_scripts),
+        )
 
 
 btn_variants = {
@@ -728,56 +730,72 @@ alert_variants_cls = {
 }
 badge_cls = "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
 badge_variants_cls = {
-        "default":
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        "secondary":
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        "destructive":
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        "outline": "text-foreground",
+    "default": "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+    "secondary": "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+    "destructive": "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+    "outline": "text-foreground",
 }
 sep_cls = "shrink-0 bg-border"
-sep_variant_cls={"horizontal": "h-[1.5px] w-full", "vertical": "self-stretch w-[1.5px]"}
+sep_variant_cls = {
+    "horizontal": "h-[1.5px] w-full",
+    "vertical": "self-stretch w-[1.5px]",
+}
 progress_cls = "relative h-4 w-full overflow-hidden rounded-full bg-secondary"
 progress_inner_cls = "h-full w-full flex-1 bg-primary transition-all"
 toast_container_cls = "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px] transition-transform duration-300"
 toast_base_cls = "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg toast"
-toast_variants_cls = {"default": "border bg-background text-foreground", "destructive":"destructive group border-destructive bg-destructive text-destructive-foreground"}
+toast_variants_cls = {
+    "default": "border bg-background text-foreground",
+    "destructive": "destructive group border-destructive bg-destructive text-destructive-foreground",
+}
 toast_closeBtn_cls = "toast-close-button cursor-pointer active:ring absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600"
 toast_title_cls = "text-sm font-semibold"
 toast_description_cls = "text-sm opacity-90"
 dialog_overlay_cls = "no-bg-scroll dialog-overlay fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-dialog_content_cls= "dialog-content fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg"
+dialog_content_cls = "dialog-content fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg"
 dialog_closeBtn_cls = "dialog-close-btn cursor-pointer active:ring absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
 dialog_title_cls = "text-lg font-semibold leading-none tracking-tight"
 dialog_description_cls = "text-sm text-muted-foreground"
 dialog_header_cls = "flex flex-col space-y-1.5 text-center sm:text-left"
-dialog_footer_cls =  "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
+dialog_footer_cls = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
 textarea_cls = "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 label_cls = "preventdbclick text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 switch_base_cls = "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
-switch_thumb_cls="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+switch_thumb_cls = "pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
 table_base_cls = "w-full caption-bottom text-sm"
 table_head_cls = "[&_tr]:border-b"
 table_body_cls = "[&_tr:last-child]:border-0"
 table_footer_cls = "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0"
-table_row_cls = "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-table_head_cls="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
-table_cell_cls="p-4 align-middle [&:has([role=checkbox])]:pr-0"
-checkbox_base_cls= "preventdbclick peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-checkbox_indicator_cls="preventdbclick flex items-center justify-center text-current data-[state=unchecked]:hidden"
-select_trigger_cls="select-trigger cursor-pointer flex h-10 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-select_scrollup_cls="scroll-up flex cursor-default items-center justify-center py-1"
-select_scrolldown_cls="scroll-down flex cursor-default items-center justify-center py-1"
-select_content_cls="absolute min-w-full h-fit w-fit data-[side=top]:bottom-11 data-[side=bottom]:top-11 select-content data-[state=open]:no-bg-scroll z-50 max-h-96 rounded-md border bg-popover text-popover-foreground shadow-md data-[state=closed]:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
-select_label_cls="py-1.5 pl-8 pr-2 text-sm font-semibold"
-select_item_cls="select-item relative flex w-full cursor-default select-none hover:bg-muted items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[checked=true]:bg-muted data-[disabled]:opacity-50"
-select_separator_cls="-mx-1 my-1 h-px bg-muted"
+table_row_cls = (
+    "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+)
+table_head_cls = "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
+table_cell_cls = "p-4 align-middle [&:has([role=checkbox])]:pr-0"
+checkbox_base_cls = "preventdbclick peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+checkbox_indicator_cls = "preventdbclick flex items-center justify-center text-current data-[state=unchecked]:hidden"
+select_trigger_cls = "select-trigger cursor-pointer flex h-10 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+select_scrollup_cls = "scroll-up flex cursor-default items-center justify-center py-1"
+select_scrolldown_cls = (
+    "scroll-down flex cursor-default items-center justify-center py-1"
+)
+select_content_cls = "absolute min-w-full h-fit w-fit data-[side=top]:bottom-11 data-[side=bottom]:top-11 select-content data-[state=open]:no-bg-scroll z-50 max-h-96 rounded-md border bg-popover text-popover-foreground shadow-md data-[state=closed]:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
+select_label_cls = "py-1.5 pl-8 pr-2 text-sm font-semibold"
+select_item_cls = "select-item relative flex w-full cursor-default select-none hover:bg-muted items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[checked=true]:bg-muted data-[disabled]:opacity-50"
+select_separator_cls = "-mx-1 my-1 h-px bg-muted"
+
 
 def ThemeToggle(**kwargs):
-    return Button(Lucide(icon='sun', id='theme-icon-sun'), Lucide(icon='moon', id='theme-icon-moon', cls='hidden'), variant='outline', size='icon', id='theme-toggle', **kwargs)
+    return Button(
+        Lucide(icon="sun", id="theme-icon-sun"),
+        Lucide(icon="moon", id="theme-icon-moon", cls="hidden"),
+        variant="outline",
+        size="icon",
+        id="theme-toggle",
+        **kwargs,
+    )
 
-def Button(*c, size='default', variant='default', cls=None, **kwargs):
+
+def Button(*c, size="default", variant="default", cls=None, **kwargs):
     new_cls = btn_base_cls
 
     new_cls += f" {btn_variants[variant]} {btn_sizes[size]}"
@@ -790,12 +808,14 @@ def Button(*c, size='default', variant='default', cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return OgButton(*c, **kwargs)
 
+
 def Input(*c, cls=None, **kwargs):
     new_cls = input_base_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return OgInput(*c, **kwargs)
+
 
 def CardHeader(*c, cls=None, **kwargs):
     new_cls = card_cls["head"]
@@ -805,6 +825,7 @@ def CardHeader(*c, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Div(*c, **kwargs)
 
+
 def CardTitle(*c, cls=None, **kwargs):
     new_cls = card_cls["title"]
     if cls:
@@ -812,6 +833,7 @@ def CardTitle(*c, cls=None, **kwargs):
 
     kwargs["cls"] = new_cls
     return H1(*c, **kwargs)
+
 
 def CardDescription(*c, cls=None, **kwargs):
     new_cls = card_cls["description"]
@@ -821,6 +843,7 @@ def CardDescription(*c, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return P(*c, **kwargs)
 
+
 def CardContent(*c, cls=None, **kwargs):
     new_cls = card_cls["content"]
     if cls:
@@ -829,6 +852,7 @@ def CardContent(*c, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Div(*c, **kwargs)
 
+
 def CardFooter(*c, cls=None, **kwargs):
     new_cls = card_cls["footer"]
     if cls:
@@ -836,6 +860,7 @@ def CardFooter(*c, cls=None, **kwargs):
 
     kwargs["cls"] = new_cls
     return Div(*c, **kwargs)
+
 
 def Card(
     *c,
@@ -872,6 +897,7 @@ def Card(
 
     return Div(header, CardContent(*c), footer, **kwargs)
 
+
 def AlertTitle(title: str = None, cls=None, **kwargs):
     new_cls = alert_cls["title"]
     if cls:
@@ -879,6 +905,7 @@ def AlertTitle(title: str = None, cls=None, **kwargs):
 
     kwargs["cls"] = new_cls
     return H1(title, **kwargs)
+
 
 def AlertDescription(description: str = None, cls=None, **kwargs):
     new_cls = alert_cls["description"]
@@ -888,18 +915,19 @@ def AlertDescription(description: str = None, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return P(description, **kwargs)
 
+
 def Alert(
     *c,
     title: str = None,
     description: str = None,
-    variant: str = 'default',
+    variant: str = "default",
     cls=None,
     standard=False,
-    icon:str='chevrons-right',
+    icon: str = "chevrons-right",
     **kwargs,
 ):
     variants = tuple(alert_variants_cls.keys())
-    assert variant in variants, f'`variant` not in {variants}'
+    assert variant in variants, f"`variant` not in {variants}"
 
     new_cls = f"{alert_cls['alert']} {alert_variants_cls[variant]}"
     headers = []
@@ -919,13 +947,15 @@ def Alert(
 
     return Div(*headers, *c, **kwargs)
 
-def Lucide(icon:str='x' ,cls='size-5', **kwargs):
+
+def Lucide(icon: str = "x", cls="size-5", **kwargs):
     kwargs["cls"] = f"lucide {cls}"
     return I(data_lucide=icon, **kwargs)
 
-def Badge(*c, variant:str='default', cls=None, **kwargs):
+
+def Badge(*c, variant: str = "default", cls=None, **kwargs):
     variants = tuple(badge_variants_cls.keys())
-    assert variant in variants, f'`variant` not in {variants}'
+    assert variant in variants, f"`variant` not in {variants}"
     new_cls = badge_cls
     new_cls += f" {badge_variants_cls[variant]}"
     if cls:
@@ -933,27 +963,31 @@ def Badge(*c, variant:str='default', cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Div(*c, **kwargs)
 
-def Separator(orientation:str='horizontal', cls=None, **kwargs):
+
+def Separator(orientation: str = "horizontal", cls=None, **kwargs):
     new_cls = sep_cls
 
-    if orientation == 'horizontal' or orientation == None:
+    if orientation == "horizontal" or orientation == None:
         new_cls += f" {sep_variant_cls['horizontal']}"
-    if orientation == 'vertical':
+    if orientation == "vertical":
         new_cls += f" {sep_variant_cls['vertical']}"
 
     if cls:
         new_cls += f" {cls}"
-    
+
     kwargs["cls"] = new_cls
     return Div(decorative=True, **kwargs)
 
-def ProgressInner(id:str=None):
+
+def ProgressInner(id: str = None):
     style = "transform: translateX(-101%)"
     return Div(style=style, id=id, cls=progress_inner_cls)
 
-def Progress(*c,id:str=None,cls=None, **kwargs):
+
+def Progress(*c, id: str = None, cls=None, **kwargs):
     new_cls = progress_cls
-    script = Script("""function sleep(ms) {
+    script = Script(
+        """function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -964,34 +998,55 @@ async function handleClick() {
         progress.style.transform = `translateX(-${100-i}%)`;
         await sleep(700);
     }
-}""")
+}"""
+    )
     if cls:
         new_cls += f" { cls}"
     kwargs["cls"] = new_cls
     return Div(*c, script, id=id, **kwargs)
 
+
 def toast(sess, title, description, variant="default"):
-    assert variant in ("default", "destructive"), '`variant` not in ("default", "destructive")'
+    assert variant in (
+        "default",
+        "destructive",
+    ), '`variant` not in ("default", "destructive")'
     sess.setdefault(sk, []).append((title, description, variant))
+
 
 def Toaster(sess):
     closeBtn = Div(Lucide(icon="x", cls="size-4"), cls=toast_closeBtn_cls)
-    toasts = [Div(P(title, cls=toast_title_cls),P(description, cls=toast_description_cls), closeBtn, cls=f"{toast_base_cls} {toast_variants_cls[variant]}") for title,description,variant in sess.pop(sk, [])]
-    return Div(Div(*toasts, cls=toast_container_cls, id="toast-container"),
-               hx_swap_oob="afterbegin:body")
+    toasts = [
+        Div(
+            P(title, cls=toast_title_cls),
+            P(description, cls=toast_description_cls),
+            closeBtn,
+            cls=f"{toast_base_cls} {toast_variants_cls[variant]}",
+        )
+        for title, description, variant in sess.pop(sk, [])
+    ]
+    return Div(
+        Div(*toasts, cls=toast_container_cls, id="toast-container"),
+        hx_swap_oob="afterbegin:body",
+    )
+
 
 def toast_setup(app):
     app.router.after.append(after_toast)
 
-def after_toast(resp, req, sess):
-    if sk in sess: req.injects.append(Toaster(sess))
 
-def DialogHeader(*c,cls=None, **kwargs):
+def after_toast(resp, req, sess):
+    if sk in sess:
+        req.injects.append(Toaster(sess))
+
+
+def DialogHeader(*c, cls=None, **kwargs):
     new_cls = dialog_header_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Div(*c, **kwargs)
+
 
 def DialogFooter(*c, cls=None, **kwargs):
     new_cls = dialog_footer_cls
@@ -1000,41 +1055,54 @@ def DialogFooter(*c, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Div(*c, **kwargs)
 
-def DialogTitle(*c,cls=None, **kwargs):
+
+def DialogTitle(*c, cls=None, **kwargs):
     new_cls = dialog_title_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return H1(*c, **kwargs)
 
-def DialogDescription(*c,cls=None, **kwargs):
+
+def DialogDescription(*c, cls=None, **kwargs):
     new_cls = dialog_description_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return P(*c, **kwargs)
 
-def DialogContent(*c,cls=None, **kwargs):
-    closeBtn = Div(Lucide(icon='x', cls=f'size-4'), Span("Close", cls='sr-only'),cls=dialog_closeBtn_cls)
+
+def DialogContent(*c, cls=None, **kwargs):
+    closeBtn = Div(
+        Lucide(icon="x", cls=f"size-4"),
+        Span("Close", cls="sr-only"),
+        cls=dialog_closeBtn_cls,
+    )
     new_cls = dialog_content_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Div(*c,closeBtn, data_state='open', **kwargs)
+    return Div(*c, closeBtn, data_state="open", **kwargs)
+
 
 def DialogTrigger(*c, target=None, cls=None, **kwargs):
-    new_cls = ''
+    new_cls = ""
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Button(*c ,hx_get=f"/{target}", hx_swap="beforeend", hx_target="body", **kwargs)
+    return Button(
+        *c, hx_get=f"/{target}", hx_swap="beforeend", hx_target="body", **kwargs
+    )
 
-def Dialog(*c,footer=None, title=None, description=None, standard=False,cls=None, **kwargs):
+
+def Dialog(
+    *c, footer=None, title=None, description=None, standard=False, cls=None, **kwargs
+):
     overlay = Div(cls=dialog_overlay_cls, data_state="open")
 
-    new_cls = 'dialog'
+    new_cls = "dialog"
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
 
     if standard:
@@ -1042,9 +1110,9 @@ def Dialog(*c,footer=None, title=None, description=None, standard=False,cls=None
 
     header_content = []
     if title:
-      header_content.append(DialogTitle(title))
+        header_content.append(DialogTitle(title))
     if description:
-      header_content.append(DialogDescription(description))
+        header_content.append(DialogDescription(description))
     if footer:
         footer = DialogFooter(footer)
 
@@ -1055,30 +1123,38 @@ def Dialog(*c,footer=None, title=None, description=None, standard=False,cls=None
 
     return Div(overlay, DialogContent(header, *c, footer), **kwargs)
 
+
 def Textarea(*c, cls=None, **kwargs):
     new_cls = textarea_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return OgTextarea(*c, **kwargs)
-  
+
+
 def Label(*c, htmlFor=None, cls=None, **kwargs):
     new_cls = label_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return OgLabel(*c, _for=htmlFor, **kwargs)
 
-def Switch(state="unchecked",cls=None, id=None, name=None, **kwargs):
+
+def Switch(state="unchecked", cls=None, id=None, name=None, **kwargs):
     assert state in ("checked", "unchecked"), '`state` not in ("checked", "unchecked")'
 
     new_cls = switch_base_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     thumb = Span(cls=switch_thumb_cls)
-    value_holder = Input(type='checkbox', style="display: none;", id=id, name=name, checked='false')
-    return Div(thumb,value_holder, data_state=state, onclick="toggleCheckbox(this)", **kwargs)
+    value_holder = Input(
+        type="checkbox", style="display: none;", id=id, name=name, checked="false"
+    )
+    return Div(
+        thumb, value_holder, data_state=state, onclick="toggleCheckbox(this)", **kwargs
+    )
+
 
 def Table(*c, cls=None, **kwargs):
     new_cls = table_base_cls
@@ -1087,137 +1163,186 @@ def Table(*c, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Div(OgTable(*c, **kwargs), cls="relative w-full overflow-auto")
 
+
 def TableHeader(*c, cls=None, **kwargs):
     new_cls = table_head_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Thead(*c, **kwargs)
+
 
 def TableBody(*c, cls=None, **kwargs):
     new_cls = table_body_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Tbody(*c, **kwargs)
+
 
 def TableFooter(*c, cls=None, **kwargs):
     new_cls = table_footer_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Tfoot(*c, **kwargs)
+
 
 def TableRow(*c, cls=None, **kwargs):
     new_cls = table_row_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Tr(*c, **kwargs)
+
 
 def TableHead(*c, cls=None, **kwargs):
     new_cls = table_head_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Th(*c, **kwargs)
+
 
 def TableCell(*c, cls=None, **kwargs):
     new_cls = table_cell_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Td(*c, **kwargs)
+
 
 def TableCaption(*c, cls=None, **kwargs):
     new_cls = table_cell_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Caption(*c, **kwargs)
 
-def Checkbox(cls=None, state='unchecked', name=None, id=None, **kwargs):
+
+def Checkbox(cls=None, state="unchecked", name=None, id=None, **kwargs):
     new_cls = checkbox_base_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    indicator = Span(Lucide(icon='check', cls='size-4'), cls=checkbox_indicator_cls, data_state=state)
-    value_holder = Input(type='checkbox', style="display: none;", id=id, name=name, checked='false')
-    return Span(indicator, value_holder, data_state=state, onclick="toggleCheckbox(this)", **kwargs)
+    indicator = Span(
+        Lucide(icon="check", cls="size-4"), cls=checkbox_indicator_cls, data_state=state
+    )
+    value_holder = Input(
+        type="checkbox", style="display: none;", id=id, name=name, checked="false"
+    )
+    return Span(
+        indicator,
+        value_holder,
+        data_state=state,
+        onclick="toggleCheckbox(this)",
+        **kwargs,
+    )
+
 
 def SelectTrigger(*c, cls=None, **kwargs):
-    ico = Lucide(icon='chevron-down', cls="h-4 w-4 opacity-50 shrink-0")
+    ico = Lucide(icon="chevron-down", cls="h-4 w-4 opacity-50 shrink-0")
     new_cls = select_trigger_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Div(*c, ico, tabindex=-1, **kwargs)
 
+
 def SelectValue(placeholder=None, cls=None, **kwargs):
-    new_cls = 'select-value overflow-hidden text-ellipsis'
+    new_cls = "select-value overflow-hidden text-ellipsis"
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Span(placeholder, **kwargs)
 
+
 def SelectScrollUpButton(cls=None, **kwargs):
-    new_cls=select_scrollup_cls
+    new_cls = select_scrollup_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    ico = Lucide(icon='chevron-up', cls="h-4 w-4")
-    return Span(ico, style="visibility:hidden",**kwargs)
+    ico = Lucide(icon="chevron-up", cls="h-4 w-4")
+    return Span(ico, style="visibility:hidden", **kwargs)
+
 
 def SelectScrollDownButton(cls=None, **kwargs):
-    new_cls=select_scrolldown_cls
+    new_cls = select_scrolldown_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    ico = Lucide(icon='chevron-down', cls="h-4 w-4")
-    return Span(ico,**kwargs)
-    
+    ico = Lucide(icon="chevron-down", cls="h-4 w-4")
+    return Span(ico, **kwargs)
+
+
 def SelectContent(*c, cls=None, **kwargs):
-    new_cls= select_content_cls
+    new_cls = select_content_cls
     scrollUp = SelectScrollUpButton()
     scrollDown = SelectScrollDownButton()
-    viewport = Div(*c, cls="viewport overflow-y-scroll p-1 h-[188px] w-full min-w-[8rem] no-scrollbar")
+    viewport = Div(
+        *c,
+        cls="viewport overflow-y-scroll p-1 h-[188px] w-full min-w-[8rem] no-scrollbar",
+    )
 
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Div(scrollUp, viewport,scrollDown, data_state='closed', **kwargs)
+    return Div(scrollUp, viewport, scrollDown, data_state="closed", **kwargs)
+
 
 def SelectGroup(*c, **kwargs):
     return Optgroup(*c, **kwargs)
 
+
 def SelectLabel(*c, cls=None, **kwargs):
-    new_cls=select_label_cls
+    new_cls = select_label_cls
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Label(*c, **kwargs)
 
-def SelectItem(*c, cls=None, checked='false', value=None, **kwargs):
-    new_cls=select_item_cls
-    span_cls="absolute left-2 flex h-3.5 w-3.5 items-center justify-center data-[checked=false]:hidden"
-    ico = Lucide(icon="check", cls=f'h-4 w-4')
+
+def SelectItem(*c, cls=None, checked="false", value=None, **kwargs):
+    new_cls = select_item_cls
+    span_cls = "absolute left-2 flex h-3.5 w-3.5 items-center justify-center data-[checked=false]:hidden"
+    ico = Lucide(icon="check", cls=f"h-4 w-4")
     if cls:
-      new_cls += f" {cls}"
+        new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Div(Span(ico, cls=span_cls,data_checked=checked),value=value, *c, data_checked=checked, **kwargs)
+    return Div(
+        Span(ico, cls=span_cls, data_checked=checked),
+        value=value,
+        *c,
+        data_checked=checked,
+        **kwargs,
+    )
+
 
 def SelectSeparator(**kwargs):
     return Hr(cls=select_separator_cls, **kwargs)
 
-def Select(*c, cls=None,state="closed",id=None, name=None, **kwargs):
-    new_cls='select relative w-fit'
-    if cls:
-      new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    value_holder = Hidden(value='undefined',name=name, id=id)
-    return Div(value_holder, *c,data_state=state, **kwargs)
 
-component_map = [Button, Input, Card, Progress, Dialog, Textarea, Label, Checkbox, Select]
+def Select(*c, cls=None, state="closed", id=None, name=None, **kwargs):
+    new_cls = "select relative w-fit"
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    value_holder = Hidden(value="undefined", name=name, id=id)
+    return Div(value_holder, *c, data_state=state, **kwargs)
+
+
+component_map = [
+    Button,
+    Input,
+    Card,
+    Progress,
+    Dialog,
+    Textarea,
+    Label,
+    Checkbox,
+    Select,
+]
+
 
 def override_components():
     module_name = "fasthtml.common"

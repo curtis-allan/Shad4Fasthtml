@@ -12,3 +12,53 @@ Just make sure to import and setup `ShadHead()` as well:
 ```python
 app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
+
+## Ft method
+
+Using the FastHtml method, you can pass in the `title`, `description`, and `footer` attributes to the `Card` component:
+
+```python+html
+Card(
+    Input(type="text", placeholder="Enter some text..."),
+    title="Create a post",
+    description="Enter your post title below.",
+    footer=Div(
+        Button("Cancel", variant="outline"),
+        Button("Submit"),
+        cls="flex w-full justify-end gap-2",
+    ),
+    cls="w-[80%]",
+)
+```
+
+## Standard method
+
+The standard method is similar to the FastHtml method, but follows the original Shadcn-ui method of passing in the `CardHeader`, `CardContent`, and `CardFooter` components. To ensure the component is rendered correctly, you must pass in the `standard` attribute as `True`:
+
+```python+html
+Card(
+    CardHeader(
+        CardTitle("Create a post"),
+        CardDescription("Enter your post title below."),
+    ),
+    CardContent(Input(type="text", placeholder="Enter some text..."),),
+    CardFooter(
+        Div(
+            Button("Cancel", variant="outline"),
+            Button("Submit"),
+            cls="flex w-full justify-end gap-2",
+        ),
+    ),
+    standard=True,
+    cls="w-[80%]",
+)
+```
+
+## Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `title` | The title of the card. |
+| `description` | The description of the card.
+| `footer` | The footer of the card.
+| `standard` | A boolean attribute to indicate if the component is rendered in the standard method. Defaults to `False`.

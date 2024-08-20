@@ -33,7 +33,7 @@ If lucide is set to `True` in the `ShadHead()` function and the icon attribute i
 
 ## Standard method
 
-The standard method is similar to the FastHtml method, but follows the original Shadcn-ui method of passing in the `AlertTitle` and `AlertDescription` components. A lucide icon can also be provided through the method below, or omitted to not display an icon. To ensure the component is rendered correctly, you must pass in the `standard` attribute as `True`:
+The standard method is similar to the FastHtml method, but follows the original Shadcn-ui method of passing in the `AlertTitle` and `AlertDescription` components. To ensure the component is rendered correctly, you must pass in the `standard` attribute as `True`.
 
 ```python+html
 Alert(
@@ -45,6 +45,8 @@ Alert(
     cls="max-w-[80%]",
 )
 ```
+
+> **Note:** A 'Lucide' icon component can be provided through the method shown above, or omitted to not display an icon.
 
 ## Parameters
 

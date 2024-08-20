@@ -21,11 +21,20 @@ def table_rows():
     return results
 
 
-def Block(*c, id="default", **kwargs):
+def Block(*c, id="default", name=None, **kwargs):
+    header = None
+    themeToggle = ThemeToggle(cls="absolute top-0 right-0")
+    if name:
+        header = H2(
+            name, cls="text-xl font-semibold tracking-tight absolute top-2 inset-y-0"
+        )
+
     cls = "relative max-w-xl mx-auto flex flex-col rounded-md bg-muted/40 shadow"
     return Div(
         Div(
             Div(
+                header,
+                themeToggle,
                 *c,
                 cls="block-content flex flex-col items-center h-[350px] justify-center",
             ),
@@ -57,17 +66,15 @@ def BlockChange():
 
 
 def CodeContent(id: str = None):
-    return (
-        Div(
-            Pre(
-                Code(
-                    code_dict[id],
-                    cls="text-sm rounded-md bg-primary h-[318px]",
-                ),
-                cls="flex [&>button]:bg-primary/50",
+    return Div(
+        Pre(
+            Code(
+                code_dict[id],
+                cls="text-sm rounded-md h-[318px] w-full",
             ),
-            cls="code-content flex items-center justify-center w-full p-4 flex-grow hidden",
+            cls="flex [&>button]:bg-muted-foreground/40 w-full",
         ),
+        cls="code-content flex items-center justify-center p-4 flex-grow hidden",
     )
 
 
@@ -116,7 +123,6 @@ def CardAltBlock():
                 cls="w-[90%]",
                 standard=True,
             ),
-            name="Card: Standard",
             id="card2",
         ),
     )
@@ -143,7 +149,6 @@ def select_block():
                 ),
             ),
             id="select",
-            name="Select",
         ),
     )
 
@@ -159,8 +164,8 @@ def AlertAltBlock():
                 variant="destructive",
                 cls="max-w-[80%]",
             ),
-            id="alert1",
-            name="Alert",
+            id="alert2",
+            name="Destructive",
         ),
     )
 
@@ -170,13 +175,12 @@ def button_block():
         Block(
             Button("Default", variant="default"),
             id="button",
-            name="Button",
         ),
     )
 
 
 def lucide_block():
-    return Block(Lucide(icon="home", cls="size-6"), id="lucide", name="Lucide")
+    return Block(Lucide(icon="home", cls="size-6"), id="lucide")
 
 
 def alert_block():
@@ -188,8 +192,12 @@ def alert_block():
                 cls="max-w-[80%]",
             ),
             id="alert1",
-            name="Alert: Standard",
         ),
+        H2(
+            "Variants",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4 border-primary",
+        ),
+        AlertAltBlock(),
     )
 
 
@@ -197,7 +205,6 @@ def toast_block():
     return (
         Block(
             Button("Send email", hx_get="/toast", hx_swap="none"),
-            name="Toast",
             id="toast",
         ),
     )
@@ -219,7 +226,6 @@ def separator_block():
                 Button("Settings", variant="secondary"),
                 cls="flex gap-3 p-3",
             ),
-            name="Separator",
             id="separator",
         ),
     )
@@ -236,10 +242,64 @@ def badge_block():
                 Badge("v2.0"),
                 cls="flex gap-1.5 items-center justify-center",
             ),
-            name="Badge",
             id="badge",
         ),
+        H2(
+            "Variants",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4 border-primary",
+        ),
+        BadgeAltBlock(),
     )
+
+
+def BadgeAltBlock():
+    return (
+        Block(
+            Div(
+                Span(
+                    Label("Default:", htmlFor="badge-default"),
+                    BadgeDefault(),
+                    cls="flex items-center justify-between",
+                ),
+                Separator(),
+                Span(
+                    Label("Secondary:", htmlFor="badge-secondary"),
+                    BadgeSecondary(),
+                    cls="flex items-center justify-between",
+                ),
+                Separator(),
+                Span(
+                    Label("Outline:", htmlFor="badge-outline"),
+                    BadgeOutline(),
+                    cls="flex items-center justify-between",
+                ),
+                Separator(),
+                Span(
+                    Label("Destructive:", htmlFor="badge-destructive"),
+                    BadgeDestructive(),
+                    cls="flex items-center justify-between",
+                ),
+                cls="flex flex-col gap-3 justify-center w-[180px]",
+            ),
+            id="badge2",
+        ),
+    )
+
+
+def BadgeDefault():
+    return Badge("New Feature", variant="default", id="badge-default")
+
+
+def BadgeSecondary():
+    return Badge("Updated", variant="secondary", id="badge-secondary")
+
+
+def BadgeDestructive():
+    return Badge("Invalid", variant="destructive", id="badge-destructive")
+
+
+def BadgeOutline():
+    return Badge("Terms v1.03", variant="outline", id="badge-outline")
 
 
 def progress_block():
@@ -256,7 +316,6 @@ def progress_block():
                 ),
                 cls="flex flex-col gap-3 w-[80%] items-center justify-center",
             ),
-            name="Progress Bar",
             id="progress",
         ),
     )
@@ -267,7 +326,6 @@ def dialog_block():
         Block(
             DialogTrigger("Toggle Dialog", target="modal"),
             id="dialog1",
-            name="Dialog",
         ),
     )
 
@@ -277,7 +335,6 @@ def DialogAltBlock():
         Block(
             DialogTrigger("Toggle Dialog", target="modal-standard"),
             id="dialog2",
-            name="Dialog: standard",
         ),
     )
 
@@ -293,7 +350,6 @@ def label_block():
             cls="space-y-5 max-w-[80%] w-full",
         ),
         id="label",
-        name="Label",
     )
 
 
@@ -306,7 +362,6 @@ def input_block():
                 cls="space-y-5 max-w-[80%] w-full",
             ),
             id="input",
-            name="Input",
         ),
     )
 
@@ -326,7 +381,6 @@ def textarea_block():
             cls="space-y-5 max-w-[80%] w-full",
         ),
         id="textarea",
-        name="Textarea",
     )
 
 
@@ -340,11 +394,41 @@ def switch_block():
                 ),
                 Switch(
                     id="switch-toggle",
+                    name="switch-toggle",
+                    value="agree",
                 ),
                 cls="flex gap-1.5 items-center",
             ),
             id="switch",
-            name="Switch & Label",
+        ),
+        H2(
+            "Within a form",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4 border-primary",
+        ),
+        SwitchFormBlock(),
+    )
+
+
+def SwitchFormBlock():
+    return (
+        Block(
+            Form(
+                Div(
+                    Label(
+                        "Agree to terms",
+                        htmlFor="switch-toggle2",
+                    ),
+                    Switch(
+                        id="switch-toggle2",
+                        name="switch-toggle2",
+                        value="agree",
+                    ),
+                    cls="flex gap-1.5 items-center",
+                ),
+                Button("Submit", type="button"),
+                cls="flex flex-col gap-4",
+            ),
+            id="switch2",
         ),
     )
 
@@ -372,7 +456,6 @@ def table_block():
                 cls="max-w-[80%] mx-auto mt-5",
             ),
             id="table",
-            name="Table",
         ),
     )
 
@@ -397,6 +480,5 @@ def checkbox_block():
                 cls="items-top flex space-x-2",
             ),
             id="checkbox",
-            name="Checkbox",
         ),
     )

@@ -427,10 +427,8 @@ def ShadHead(lucid=True):
 """
     shad_scripts = """
     function toggleCheckbox(e) {
-    const checked = e.dataset.state === 'unchecked' ? 'checked' : 'unchecked';
-    e.dataset.state = checked;
-    e.querySelector('span').dataset.state = checked;
-    e.querySelector('input').checked=(checked === 'checked' ? true : false);
+    e.dataset.state = e.dataset.state === 'unchecked' ? 'checked' : 'unchecked';
+    e.querySelector('input').checked = e.dataset.state === 'checked';
     }
 
   function proc_htmx(sel, func) {
@@ -441,15 +439,15 @@ def ShadHead(lucid=True):
   });
 }
 
-  proc_htmx('#theme-toggle', elt => {
+  proc_htmx('.theme-toggle', elt => {
     elt.addEventListener('mousedown', event => {
     event.preventDefault();
-      document.body.classList.toggle('dark');
+      document.documentElement.classList.toggle('dark');
       const sunIcon = elt.querySelector('#theme-icon-sun');
       const moonIcon = elt.querySelector('#theme-icon-moon');
 
-      sunIcon.classList.toggle('hidden');
-      moonIcon.classList.toggle('hidden');
+      if(sunIcon) sunIcon.classList.toggle('hidden');
+      if(moonIcon) moonIcon.classList.toggle('hidden');
     })
   })
 
@@ -760,8 +758,8 @@ dialog_header_cls = "flex flex-col space-y-1.5 text-center sm:text-left"
 dialog_footer_cls = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
 textarea_cls = "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 label_cls = "preventdbclick text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-switch_base_cls = "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
-switch_thumb_cls = "pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+switch_base_cls = "group peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+switch_thumb_cls = "pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform group-data-[state=checked]:translate-x-5 group-data-[state=unchecked]:translate-x-0"
 table_base_cls = "w-full caption-bottom text-sm"
 table_head_cls = "[&_tr]:border-b"
 table_body_cls = "[&_tr:last-child]:border-0"
@@ -784,13 +782,13 @@ select_item_cls = "select-item relative flex w-full cursor-default select-none h
 select_separator_cls = "-mx-1 my-1 h-px bg-muted"
 
 
-def ThemeToggle(**kwargs):
+def ThemeToggle(variant="outline", cls=None, **kwargs):
     return Button(
         Lucide(icon="sun", id="theme-icon-sun"),
         Lucide(icon="moon", id="theme-icon-moon", cls="hidden"),
-        variant="outline",
+        variant=variant,
         size="icon",
-        id="theme-toggle",
+        cls=f"theme-toggle + {cls}",
         **kwargs,
     )
 
@@ -1140,7 +1138,8 @@ def Label(*c, htmlFor=None, cls=None, **kwargs):
     return OgLabel(*c, _for=htmlFor, **kwargs)
 
 
-def Switch(state="unchecked", cls=None, id=None, name=None, **kwargs):
+def Switch(state="unchecked", cls=None, id=None, name=None, value=None, **kwargs):
+    curr_state = "true" if state == "checked" else None
     assert state in ("checked", "unchecked"), '`state` not in ("checked", "unchecked")'
 
     new_cls = switch_base_cls
@@ -1149,7 +1148,12 @@ def Switch(state="unchecked", cls=None, id=None, name=None, **kwargs):
     kwargs["cls"] = new_cls
     thumb = Span(cls=switch_thumb_cls)
     value_holder = Input(
-        type="checkbox", style="display: none;", id=id, name=name, checked="false"
+        type="checkbox",
+        style="display: none;",
+        id=id,
+        name=name,
+        value=value,
+        checked=curr_state,
     )
     return Div(
         thumb, value_holder, data_state=state, onclick="toggleCheckbox(this)", **kwargs

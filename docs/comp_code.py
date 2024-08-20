@@ -60,7 +60,7 @@ code_dict = {
             cls="flex w-full justify-end gap-2",
             ),
             cls="w-[80%]",
-        ),""",
+        )""",
     "alert2": """Alert(
     Lucide(icon="circle-alert", cls="size-4"),
     AlertTitle("Error"),
@@ -68,7 +68,7 @@ code_dict = {
     standard=True,
     variant="destructive",
     cls="max-w-[80%]",
-            ),
+)
 """,
     "alert1": """Alert(
     title="New message!",
@@ -88,7 +88,7 @@ code_dict = {
         Separator(orientation="vertical"),
         Button("Settings", variant="secondary"),
         cls="flex gap-3 p-3",
-    ),
+    )
 """,
     "badge": """Div(
     H1(
@@ -97,8 +97,34 @@ code_dict = {
     ),
     Badge("v2.0", variant="default"),
     cls="flex gap-1.5 items-center justify-center",
-),
+)
 """,
+    "badge2": """Div(
+    Span(
+        Label("Default:", htmlFor="badge-default"),
+        BadgeDefault(),
+        cls="flex items-center justify-between",
+    ),
+    Separator(),
+    Span(
+        Label("Secondary:", htmlFor="badge-secondary"),
+        BadgeSecondary(),
+        cls="flex items-center justify-between",
+    ),
+    Separator(),
+    Span(
+        Label("Outline:", htmlFor="badge-outline"),
+        BadgeOutline(),
+        cls="flex items-center justify-between",
+    ),
+    Separator(),
+    Span(
+        Label("Destructive:", htmlFor="badge-destructive"),
+        BadgeDestructive(),
+        cls="flex items-center justify-between",
+    ),
+    cls="flex flex-col gap-3 justify-center w-[180px]",
+)""",
     "progress": """Div(
     Button(
         "Start",
@@ -202,17 +228,36 @@ def get():
         cls="space-y-5 max-w-[80%] w-full",
     ),
 """,
-    "switch": """
-    Div(
+    "switch": """Div(
     Label(
         "Agree to terms",
-        htmlFor="switch",
-        ),
-        Switch(
-            id="switch",
-        ),
-         cls="flex gap-1.5 items-center",
-    ),""",
+        htmlFor="switch-toggle",
+    ),
+    Switch(
+        id="switch-toggle",
+        name="switch-toggle",
+        value="agree",
+    ),
+    cls="flex gap-1.5 items-center",
+),""",
+    "switch2": """Form(
+Div(
+    Label(
+        "Agree to terms",
+        htmlFor="switch-toggle",
+    ),
+    Switch(
+        id="switch-toggle",
+        name="switch-toggle",
+        value="agree",
+    ),
+    Button("Submit"),
+    cls="flex flex-col gap-4",
+    ),
+    cls="flex gap-1.5 items-center",
+)
+
+""",
     "table": """
     // Dummy table data to indicate mapping
     

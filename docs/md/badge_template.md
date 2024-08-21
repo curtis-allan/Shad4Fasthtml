@@ -13,22 +13,19 @@ Just make sure to import and setup `ShadHead()` as well:
 app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
 
-## Ft method
+---
 
-To use the Badge component, structure your code as with a normal FT method. Attributes follow the standard Shadcn Badge structure, for a full reference see the parameters table below.
+## Implementation
+
+To use the Badge component, structure your code as with a normal FT method. The `variant` parameter specifies which variant of the badge to render, see the parameters table below for a full reference.
 
 ```python+html
-Div(
-    H1(
-        "Shad4FastHtml",
-        cls="text-2xl font-semibold tracking-tight leading-loose",
-    ),
-    Badge("v2.0", variant="default"),
-    cls="flex gap-1.5 items-center justify-center",
-)
+Badge("v2.0", variant="default")
 ```
 
 > **Note:** If the `variant` attribute is not provided, the badge will be rendered with the `default` variant.
+
+---
 
 ## Parameters
 

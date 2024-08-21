@@ -23,7 +23,6 @@ __all__ = [
     "Badge",
     "Separator",
     "Progress",
-    "ProgressInner",
     "toast",
     "Toaster",
     "toast_setup",
@@ -425,6 +424,7 @@ def ShadHead(lucid=True):
   }
 }
 """
+
     shad_scripts = """
     function toggleCheckbox(e) {
     e.dataset.state = e.dataset.state === 'unchecked' ? 'checked' : 'unchecked';
@@ -739,7 +739,7 @@ sep_variant_cls = {
     "vertical": "self-stretch w-[1.5px]",
 }
 progress_cls = "relative h-4 w-full overflow-hidden rounded-full bg-secondary"
-progress_inner_cls = "h-full w-full flex-1 bg-primary transition-all"
+progress_inner_cls = "progress-inner h-full w-full flex-1 bg-primary transition-all"
 toast_container_cls = "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px] transition-transform duration-300"
 toast_base_cls = "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg toast"
 toast_variants_cls = {
@@ -977,31 +977,24 @@ def Separator(orientation: str = "horizontal", cls=None, **kwargs):
     return Div(decorative=True, **kwargs)
 
 
-def ProgressInner(id: str = None):
-    style = "transform: translateX(-101%)"
-    return Div(style=style, id=id, cls=progress_inner_cls)
+def Progress(value=0, id=None, cls=None, **kwargs):
 
-
-def Progress(*c, id: str = None, cls=None, **kwargs):
-    new_cls = progress_cls
-    script = Script(
-        """function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function handleClick() {
-    const total = 100;
-    const progress = htmx.find("#progress-inner");
-    for (let i = 20; i <= total; i+=20) {
-        progress.style.transform = `translateX(-${100-i}%)`;
-        await sleep(700);
-    }
-}"""
+    bar_comp = Div(
+        style=f"transform: translateX(-{100-value}%)",
+        id=f"{id}-inner",
+        cls=progress_inner_cls,
     )
+    new_cls = progress_cls
     if cls:
         new_cls += f" { cls}"
     kwargs["cls"] = new_cls
-    return Div(*c, script, id=id, **kwargs)
+    return Div(
+        bar_comp,
+        role="progressbar",
+        value=value,
+        id=id,
+        **kwargs,
+    )
 
 
 def toast(sess, title, description, variant="default"):

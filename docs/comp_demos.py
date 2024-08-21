@@ -195,7 +195,7 @@ def alert_block():
         ),
         H2(
             "Variants",
-            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4 border-primary",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
         ),
         AlertAltBlock(),
     )
@@ -219,11 +219,11 @@ def separator_block():
             ),
             Separator(cls="my-2 max-w-[90%]"),
             Div(
-                Button("Profile", variant="secondary"),
+                Button("Profile", variant="outline"),
                 Separator(orientation="vertical"),
-                Button("Messages", variant="secondary"),
+                Button("Messages", variant="outline"),
                 Separator(orientation="vertical"),
-                Button("Settings", variant="secondary"),
+                Button("Settings", variant="outline"),
                 cls="flex gap-3 p-3",
             ),
             id="separator",
@@ -246,7 +246,7 @@ def badge_block():
         ),
         H2(
             "Variants",
-            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4 border-primary",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
         ),
         BadgeAltBlock(),
     )
@@ -308,15 +308,89 @@ def progress_block():
             Div(
                 Button(
                     "Start",
-                    onclick="handleClick()",
+                    hx_post="/start",
                     cls="max-w-fit",
+                    hx_swap="innerHTML",
+                    hx_target="#progress-container",
                 ),
-                Progress(
-                    ProgressInner(id="progress-inner"),
-                ),
-                cls="flex flex-col gap-3 w-[80%] items-center justify-center",
+                id="progress-container",
+                cls="grid place-items-center w-[80%]",
             ),
             id="progress",
+        ),
+        H2(
+            "Alternate Demo (JS + EventStream)",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        ProgressAltBlock(),
+    )
+
+
+progress_script = Script(
+    """function startProgress(elt) {
+        const inner = elt.querySelector('#progress-bar-js-inner');
+        const progress = elt.querySelector('#progress-bar-js');
+        const button = elt.querySelector('#progress-button');
+        const button_text = button.querySelector('span')
+        const icon = elt.querySelector('#progress-loader');
+
+        const eventSource = new EventSource('/progress-stream');
+
+        progress.dataset.state = 'visible';
+
+        icon.classList.remove('hidden');
+
+        button_text.innerHTML = 'Posting';
+
+        button.disabled = true;
+
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+
+            inner.style.transform = `translateX(-${100 - (data.progress / data.total * 100)}%)`;
+
+            if (data.progress === data.total) {
+                icon.classList.add('hidden');
+                button.disabled = false;
+                button_text.innerHTML = 'Restart';
+                eventSource.close();
+            }
+        };
+        eventSource.onerror = function(error) {
+            console.error('EventSource failed:', error);
+            eventSource.close();
+        };
+    }
+    """
+)
+
+
+def ProgressAltBlock():
+    return (
+        Block(
+            Form(
+                Button(
+                    Lucide(
+                        icon="loader-circle",
+                        cls="hidden size-4 animate-spin mr-1.5",
+                        id="progress-loader",
+                    ),
+                    Span("Post"),
+                    cls="max-w-fit",
+                    id="progress-button",
+                ),
+                Progress(
+                    id="progress-bar-js",
+                    cls="data-[state=hidden]:hidden data-[state=visible]:animate-in data-[state=visible]:fade-in-0 data-[state=visible]:zoom-in-95",
+                    data_state="hidden",
+                ),
+                progress_script,
+                cls="grid place-items-center w-[80%] gap-4",
+                hx_post="/job",
+                hx_swap="beforeend",
+                hx_on__before_request="startProgress(this)",
+            ),
+            id="progress2",
         ),
     )
 
@@ -394,8 +468,6 @@ def switch_block():
                 ),
                 Switch(
                     id="switch-toggle",
-                    name="switch-toggle",
-                    value="agree",
                 ),
                 cls="flex gap-1.5 items-center",
             ),
@@ -403,7 +475,7 @@ def switch_block():
         ),
         H2(
             "Within a form",
-            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4 border-primary",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
         ),
         SwitchFormBlock(),
     )

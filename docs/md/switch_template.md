@@ -12,10 +12,11 @@ Just make sure to import and setup `ShadHead()` as well:
 ```python
 app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
+---
 
-## Ft method
+## Implementation
 
-A relatively simple component, just structure your code as with a normal FT method. Parameters follow the same logic as a standard Input checkbox, except for the `state` attribute. For a full reference see the parameters table below.
+To use the switch component, structure your code as with a normal FT method. Parameters follow the same logic as a standard Input checkbox, except for the `state` attribute. For a full reference see the parameters table below.
 
 ```python+html
 Switch(
@@ -29,6 +30,8 @@ Switch(
 When using the switch in a form, note that the `id`, `name`, and `value` attributes are passed on to the hidden input element. If you want to target the switch itself (either through htmx or javascript), you must use a class selector.
 
 > **Note:** The state of the switch on initial render can be set via a 'state' attribute, either being `checked` or `unchecked`. The default state is `unchecked` when omitted.
+
+---
 
 ## Parameters
 

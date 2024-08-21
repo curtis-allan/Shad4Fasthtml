@@ -1,3 +1,10 @@
+import asyncio
+import json
+import random
+import time
+
+from starlette.responses import StreamingResponse
+
 from docs.comp_demos import (
     alert_block,
     badge_block,
@@ -208,7 +215,7 @@ def DocsLayout(*c, title: str):
 
 
 def render_md(link):
-    css = ".markdown-body {background-color: hsl(var(--background)) !important; color: hsl(var(--foreground)) !important; margin: 2rem auto; table {color: initial; background-color:hsl(var(--muted)); width: 100%; border-radius: 0.5rem;} th{height:3rem} td {height:1rem} blockquote {color:hsl(var(--muted-foreground));}}}"
+    css = ".markdown-body {h1, h2, h3 {border-color: hsl(var(--border));} background-color: hsl(var(--background)); color: hsl(var(--foreground)); margin: 2rem auto; table {color: initial; background-color:hsl(var(--muted)); width: 100%; border-radius: 0.5rem;} th {height:3rem} td {height:1rem} blockquote {color:hsl(var(--muted-foreground));} hr {background-color: hsl(var(--muted-foreground)); margin: 2rem auto;}}"
     css_template = Template(Style(css), data_append=True)
 
     with open(f"{link}.md") as f:
@@ -260,7 +267,7 @@ def get(title: str):
         Div(
             H2(
                 "Demo",
-                cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4 border-primary",
+                cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
             ),
             comp(),
             render_md(f"docs/md/{title}_template"),
@@ -275,9 +282,76 @@ def get(sess):
     toast(sess=sess, title="Sent!", description="Email has been sent successfully.")
 
 
-@rt("/{fname:path}.{ext:static}")
-async def get(fname: str, ext: str):
-    return FileResponse(f"public/{fname}.{ext}")
+progress = 0
+
+
+def ProgressBar(progress):
+    return Progress(
+        value=progress,
+        hx_trigger="every 500ms",
+        hx_target="this",
+        hx_get="/progress",
+        hx_swap="outerHTML",
+        id="progress-bar",
+    )
+
+
+@rt("/start")
+def post():
+    global progress
+    progress = 0
+    return ProgressBar(progress)
+
+
+@rt("/progress")
+def get():
+    global progress
+    progress += random.randint(1, 25)
+    if progress >= 100:
+        return Div(
+            Button(
+                "Restart",
+                hx_post="/start",
+                cls="max-w-fit",
+                hx_swap="innerHTML",
+                hx_target="#progress-container",
+            ),
+            H2("Complete", cls="text-lg font-semibold tracking-tight"),
+            cls="flex flex-col items-center justify-center gap-4",
+            id="progress-bar",
+        )
+
+    return ProgressBar(progress)
+
+
+loaded = 0
+total = 8000
+
+
+@rt("/progress-stream")
+async def get():
+    global loaded
+    global total
+
+    async def event_stream():
+        while loaded <= total:
+            yield f"data: {json.dumps({'progress': loaded, 'total': total})}\n\n"
+            await asyncio.sleep(0.4)
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+
+@rt("/job")
+async def post():
+    global total
+    global loaded
+    loaded = 0
+
+    while loaded < total:
+        loaded += 200
+        await asyncio.sleep(0.05)
+
+    return Response(status_code=204)
 
 
 @rt("/modal")

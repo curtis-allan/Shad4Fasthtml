@@ -13,7 +13,10 @@ Just make sure to import and setup `ShadHead()` as well:
 app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
 
-## Ft method
+---
+## Implementation
+
+### FT Method
 
 Using the FastHtml method, you can pass in the `title`, `description`, and `footer` attributes to the `Card` component. For a full attribute reference see the parameters table below.
 
@@ -31,7 +34,7 @@ Card(
 )
 ```
 
-## Standard method
+### Standard Method
 
 The standard method is similar to the FastHtml method, but follows the original Shadcn-ui method of passing in the `CardHeader`, `CardContent`, and `CardFooter` components. To ensure the component is rendered correctly, you must pass in the `standard` attribute as `True`.
 
@@ -53,6 +56,8 @@ Card(
     cls="w-[80%]",
 )
 ```
+
+---
 
 ## Parameters
 

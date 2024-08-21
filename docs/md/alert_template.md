@@ -13,7 +13,11 @@ Just make sure to import and setup `ShadHead()` as well:
 app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
 
-## Ft method
+---
+
+## Implementation
+
+### FT Method
 
 Using the FastHtml method, you can pass in the `title`, `description`, `variant` and `icon` attributes to the `Alert` component. See the parameters section for all possible attributes.
 
@@ -31,7 +35,7 @@ Alert(
     
 If lucide is set to `True` in the `ShadHead()` function and the icon attribute is not added, a default ludice icon will be rendered, depending on the `variant` attribute. If you wish to use an alert with no icon, you can set the `icon` attribute to `None` or use the `standard` method.
 
-## Standard method
+### Standard Method
 
 The standard method is similar to the FastHtml method, but follows the original Shadcn-ui method of passing in the `AlertTitle` and `AlertDescription` components. To ensure the component is rendered correctly, you must pass in the `standard` attribute as `True`.
 
@@ -47,6 +51,8 @@ Alert(
 ```
 
 > **Note:** A 'Lucide' icon component can be provided through the method shown above, or omitted to not display an icon.
+
+---
 
 ## Parameters
 

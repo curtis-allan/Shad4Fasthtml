@@ -79,16 +79,16 @@ code_dict = {
     "separator": """H1(
     "Welcome back",
     cls="text-3xl font-bold tracking-tight leading-loose",
-    ),
-    Separator(cls="my-2 max-w-[90%]"),
-    Div(
-        Button("Profile", variant="secondary"),
-        Separator(orientation="vertical"),
-        Button("Messages", variant="secondary"),
-        Separator(orientation="vertical"),
-        Button("Settings", variant="secondary"),
-        cls="flex gap-3 p-3",
-    )
+),
+Separator(cls="my-2 max-w-[90%]"),
+Div(
+    Button("Profile", variant="outline"),
+    Separator(orientation="vertical"),
+    Button("Messages", variant="outline"),
+    Separator(orientation="vertical"),
+    Button("Settings", variant="outline"),
+    cls="flex gap-3 p-3",
+)
 """,
     "badge": """Div(
     H1(
@@ -128,14 +128,64 @@ code_dict = {
     "progress": """Div(
     Button(
         "Start",
-        onclick="handleClick()",
+        hx_post="/start",
         cls="max-w-fit",
+        hx_swap="innerHTML",
+        hx_target="#progress-container",
     ),
-    Progress(
-        ProgressInner(id="progress-inner"),
-        ),
-        cls="flex flex-col gap-3 w-[80%] items-center justify-center",
-    ),""",
+    id="progress-container",
+    cls="grid place-items-center w-[80%]",
+)
+
+def ProgressBar(progress):
+    return Progress(
+        value=progress,
+        hx_trigger="every 500ms",
+        hx_target="this",
+        hx_get="/progress",
+        hx_swap="outerHTML",
+        id="progress-bar",
+    )
+
+progress = 0
+    
+@rt("/start")
+def post():
+    global progress
+    progress = 0
+    return ProgressBar(progress)
+
+
+@rt("/progress")
+def get():
+    global progress
+    progress += random.randint(1, 25)
+    if progress >= 100:
+        return Div(
+            Button(
+                "Restart",
+                hx_post="/start",
+                cls="max-w-fit",
+                hx_swap="innerHTML",
+                hx_target="#progress-container",
+            ),
+            H2("Complete", cls="text-lg font-semibold tracking-tight"),
+            cls="flex flex-col items-center justify-center gap-4",
+            id="progress-bar",
+        )
+
+    return ProgressBar(progress)""",
+    "progress2": """Div(
+    Button(
+        "Start",
+        hx_post="/start",
+        cls="max-w-fit",
+        hx_swap="innerHTML",
+        hx_target="#progress-container",
+    ),
+    id="progress-container",
+    cls="grid place-items-center w-[80%]",
+)""",
     "toast": """
     // import statements + app setup
 
@@ -235,8 +285,6 @@ def get():
     ),
     Switch(
         id="switch-toggle",
-        name="switch-toggle",
-        value="agree",
     ),
     cls="flex gap-1.5 items-center",
 ),""",

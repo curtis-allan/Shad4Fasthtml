@@ -180,7 +180,7 @@ def button_block():
 
 
 def lucide_block():
-    return Block(Lucide(icon="home", cls="size-6"), id="lucide")
+    return Block(H1("Placeholder"), id="lucide")
 
 
 def alert_block():
@@ -549,7 +549,7 @@ def checkbox_block():
                     ),
                     cls="grid gap-1.5 leading-none",
                 ),
-                cls="items-top flex space-x-2",
+                cls="items-top flex space-x-2 max-w-[80%] mx-auto",
             ),
             id="checkbox",
         ),

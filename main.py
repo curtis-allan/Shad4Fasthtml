@@ -1,7 +1,6 @@
 import asyncio
 import json
 import random
-import time
 
 from starlette.responses import StreamingResponse
 
@@ -52,15 +51,33 @@ app, rt = fast_app(
 toast_setup(app)
 
 
+def MobileHeader():
+    return Div(
+        SheetTrigger(
+            Lucide(icon="menu"),
+            target="sheet-nav",
+            variant="outline",
+            size="icon",
+            cls="absolute left-2 inset-x-0",
+        ),
+        H1(
+            "Shad4FastHtml",
+            cls="text-xl font-semibold tracking-tight",
+        ),
+        cls="sm:hidden fixed flex top-0 z-50 items-center justify-center bg-background w-full h-fit px-4 py-2 !h-[50px] shadow",
+    )
+
+
 @rt("/")
 def get():
     return (
         Title("Shadcn components in FastHtml"),
         Body(
+            MobileHeader(),
             Header(
                 H1(
                     "Shadcn-ui components, made for FastHtml",
-                    cls="relative text-6xl font-bold tracking-tight text-center",
+                    cls="sm:text-6xl text-5xl font-bold tracking-tight text-center",
                 ),
                 Nav(
                     Div(
@@ -97,7 +114,7 @@ def get():
                 cls="flex flex-col text-balance max-w-3xl",
             ),
             Div(
-                H1(
+                H3(
                     "Click this button to change the theme",
                     cls="text-lg text-muted-foreground",
                 ),
@@ -108,7 +125,7 @@ def get():
                 ThemeToggle(cls="shrink-0"),
                 cls="container flex justify-center items-center gap-1.5",
             ),
-            cls="min-h-screen flex flex-col !justify-center !items-center",
+            cls="pt-[60px] px-6 sm:p-0 h-screen flex flex-col justify-center items-center",
         ),
     )
 
@@ -135,7 +152,6 @@ link_groups = {
         "toast",
         "dialog",
         "button",
-        "lucide",
         "input",
         "textarea",
         "label",
@@ -146,37 +162,44 @@ link_groups = {
 }
 
 
-def Sidebar():
+def RenderNav(mobile=False):
     nav_items = []
     link_titles = link_groups.keys()
     for title in link_titles:
         link_group = (
             (
-                Li(
-                    H1(
-                        format_title(title),
-                        cls="font-semibold tracking-tight text-md pb-1",
+                (
+                    (
+                        Li(
+                            H1(
+                                format_title(title),
+                                cls="font-semibold tracking-tight text-md pb-1",
+                            ),
+                            Ul(
+                                *[
+                                    Li(
+                                        A(
+                                            Button(
+                                                format_title(i),
+                                                variant="link",
+                                                cls="link-btn w-full !justify-start !text-muted-foreground tracking-tight !p-0 pl-2 h-fit my-1.5",
+                                            ),
+                                            href=f"/{title}/{i}",
+                                        ),
+                                    )
+                                    for i in sorted(link_groups[title])
+                                ],
+                            ),
+                        )
                     ),
-                    Ul(
-                        *[
-                            Li(
-                                A(
-                                    Button(
-                                        format_title(i),
-                                        variant="link",
-                                        cls="w-full !justify-start !text-muted-foreground tracking-tight !p-0 pl-2 h-fit my-1.5",
-                                    ),
-                                    href=f"/{title}/{i}",
-                                ),
-                            )
-                            for i in link_groups[title]
-                        ],
-                    ),
-                )
+                ),
             ),
         )
-
         nav_items += link_group
+    return Ul(*nav_items, cls="space-y-2")
+
+
+def Sidebar():
     return Aside(
         Nav(
             A(
@@ -188,10 +211,10 @@ def Sidebar():
                 ),
                 href="/",
             ),
-            Ul(*nav_items, cls="space-y-2"),
+            RenderNav(),
             cls="space-y-4",
         ),
-        cls="fixed h-screen top-0 inset-x-0 border-r w-[180px] p-6",
+        cls="hidden sm:flex fixed h-screen top-0 inset-x-0 border-r w-[180px] p-6",
     )
 
 
@@ -199,6 +222,7 @@ def DocsLayout(*c, title: str):
     name = format_title(title)
     return Title(name), Body(
         Sidebar(),
+        MobileHeader(),
         Main(
             Section(
                 Article(
@@ -208,15 +232,18 @@ def DocsLayout(*c, title: str):
                 ),
                 cls="max-w-4xl container my-14",
             ),
-            cls="flex flex-col pl-[180px] flex-grow",
+            cls="flex flex-col sm:pl-[180px] flex-grow",
         ),
-        cls="min-h-screen flex flex-col",
+        cls="pt-[60px] sm:p-0 min-h-screen flex flex-col",
     )
 
 
 def render_md(link):
     css = ".markdown-body {h1, h2, h3 {border-color: hsl(var(--border));} background-color: hsl(var(--background)); color: hsl(var(--foreground)); margin: 2rem auto; table {color: initial; background-color:hsl(var(--muted)); width: 100%; border-radius: 0.5rem;} th {height:3rem} td {height:1rem} blockquote {color:hsl(var(--muted-foreground));} hr {background-color: hsl(var(--muted-foreground)); margin: 2rem auto;}}"
-    css_template = Template(Style(css), data_append=True)
+    css_template = Template(
+        Style(css),
+        data_append=True,
+    )
 
     with open(f"{link}.md") as f:
         content = f.read()
@@ -352,6 +379,18 @@ async def post():
         await asyncio.sleep(0.05)
 
     return Response(status_code=204)
+
+
+@rt("/sheet-nav")
+def get():
+    return Sheet(
+        RenderNav(),
+        title="Shad4FastHtml",
+        description="Documentation",
+        id="sheet-nav",
+        side="left",
+        content_cls="flex flex-col gap-8",
+    )
 
 
 @rt("/modal")

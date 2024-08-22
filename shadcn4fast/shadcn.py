@@ -838,6 +838,7 @@ def Dialog(
         DialogContent(header, *c, footer),
         style="display: none;",
         data_state=state,
+        tabindex="-1",
         **kwargs,
     )
 

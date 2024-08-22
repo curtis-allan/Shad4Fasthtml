@@ -79,6 +79,7 @@ app, rt = fast_app(
         favicon_headers,
         tw_output_link,
     ),
+    htmlkw={"lang": "en"},
 )
 
 toast_setup(app)
@@ -103,6 +104,7 @@ def MobileHeader():
             hx_boost="true",
         ),
         cls="sm:hidden fixed flex top-0 z-50 items-center justify-center bg-background w-full h-fit px-4 py-2 !h-[50px] shadow",
+        tabindex="-1",
     )
 
 
@@ -155,7 +157,7 @@ def get():
                     cls="flex flex-col text-balance max-w-3xl",
                 ),
                 Div(
-                    H3(
+                    H2(
                         "Click this button to change the theme",
                         cls="text-lg text-muted-foreground",
                     ),

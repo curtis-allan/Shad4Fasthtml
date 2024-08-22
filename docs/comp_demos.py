@@ -1,6 +1,6 @@
 from docs.comp_code import code_dict, dummy_data
 from fasthtml.common import *
-from shadcn import *
+from shadcn4fast.shadcn import *
 
 __all__ = [
     "card_block, select_block, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block"
@@ -213,18 +213,19 @@ def toast_block():
 def separator_block():
     return (
         Block(
-            H1(
-                "Welcome back",
-                cls="text-3xl font-bold tracking-tight leading-loose",
-            ),
-            Separator(cls="my-2 max-w-[90%]"),
             Div(
-                Button("Profile", variant="outline"),
-                Separator(orientation="vertical"),
-                Button("Messages", variant="outline"),
-                Separator(orientation="vertical"),
-                Button("Settings", variant="outline"),
-                cls="flex gap-3 p-3",
+                H1(
+                    "Welcome back",
+                    cls="text-2xl sm:text-3xl font-bold tracking-tight",
+                ),
+                Separator(cls="my-2"),
+                Div(
+                    Button("Profile", variant="outline"),
+                    Separator(orientation="vertical"),
+                    Button("Settings", variant="outline"),
+                    cls="flex gap-3 p-3",
+                ),
+                cls="container flex flex-col max-w-[80%] justify-center items-center",
             ),
             id="separator",
         ),

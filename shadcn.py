@@ -579,21 +579,33 @@ def ShadHead(lucid=True):
     if (closeBtn) closeBtn.addEventListener('mousedown', toggleClose)
     if (closeIcon) closeIcon.addEventListener('mousedown', toggleClose)
 
-  })
+  });
 
-  proc_htmx('.dialog', function(dialog) {
+function openDialog(button) {
+    const dialog = document.querySelector(`#${button.getAttribute('dialog-id')}`);
+    dialog.dataset.state = 'open'
+    dialog.style.display = 'block';
+  }
+
+  proc_htmx('.dialog', dialog => {
+    var fragment = document.createDocumentFragment();
+
+    fragment.appendChild(dialog);
+
+    document.body.appendChild(fragment);
+
     const overlay = dialog.querySelector('.dialog-overlay');
-    const closeBtn = dialog.querySelector('.dialog-close-btn');
-    const content = dialog.querySelector('.dialog-content');
+    const closeIcon = dialog.querySelector('.dialog-close-btn');
+    const closeBtn = dialog.querySelector('.dialog-close-button');
 
     function toggleClose() {
-    content.dataset.state = 'closed';
-    overlay.dataset.state = 'closed';
-    setTimeout(() => dialog.remove(), 110);
+        dialog.dataset.state = 'closed'
+        setTimeout(() => dialog.style.display = 'none', 110);
     }
 
-    if(closeBtn) closeBtn.addEventListener('click', toggleClose);
-    if(overlay) overlay.addEventListener('click', toggleClose);
+    if (overlay) overlay.addEventListener('mousedown', toggleClose)
+    if (closeBtn) closeBtn.addEventListener('mousedown', toggleClose)
+    if (closeIcon) closeIcon.addEventListener('mousedown', toggleClose)
   });
 
   proc_htmx('#toast-container', function(toast) {
@@ -777,7 +789,7 @@ toast_variants_cls = {
 toast_closeBtn_cls = "toast-close-button cursor-pointer active:ring absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600"
 toast_title_cls = "text-sm font-semibold"
 toast_description_cls = "text-sm opacity-90"
-dialog_overlay_cls = "no-bg-scroll dialog-overlay fixed inset-0 z-50 bg-black/80 group-data-[state=open]:animate-in group-data-[state=closed]:animate-out group-data-[state=closed]:fade-out-0 group-data-[state=open]:fade-in-0"
+dialog_overlay_cls = "group-data-[state=open]:no-bg-scroll dialog-overlay fixed inset-0 z-50 bg-black/80 group-data-[state=open]:animate-in group-data-[state=closed]:animate-out group-data-[state=closed]:fade-out-0 group-data-[state=open]:fade-in-0"
 dialog_content_cls = "dialog-content fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 group-data-[state=open]:animate-in group-data-[state=closed]:animate-out group-data-[state=closed]:fade-out-0 group-data-[state=open]:fade-in-0 group-data-[state=closed]:zoom-out-95 group-data-[state=open]:zoom-in-95 group-data-[state=closed]:slide-out-to-left-1/2 group-data-[state=closed]:slide-out-to-top-[48%] group-data-[state=open]:slide-in-from-left-1/2 group-data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg"
 dialog_closeBtn_cls = "dialog-close-btn cursor-pointer active:ring absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none group-data-[state=open]:bg-accent group-data-[state=open]:text-muted-foreground"
 dialog_title_cls = "text-lg font-semibold leading-none tracking-tight"
@@ -1119,12 +1131,13 @@ def DialogContent(*c, cls=None, **kwargs):
     return Div(*c, closeBtn, **kwargs)
 
 
-def DialogTrigger(*c, dialog_id=None, cls=None, **kwargs):
-    new_cls = "dialog-trigger"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Button(*c, dialog_id=dialog_id, **kwargs)
+def DialogTrigger(*c, dialog_id=None, **kwargs):
+    return Button(
+        *c,
+        dialog_id=dialog_id,
+        onclick="event.preventDefault();openDialog(this)",
+        **kwargs,
+    )
 
 
 def Dialog(
@@ -1145,7 +1158,7 @@ def Dialog(
     kwargs["cls"] = new_cls
 
     if standard:
-        return Div(overlay, *c, **kwargs)
+        return Div(overlay, style="display: none;", data_state=state, *c, **kwargs)
 
     header_content = []
     if title:
@@ -1188,7 +1201,7 @@ def Sheet(
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     if standard:
-        return Div(overlay, *c, **kwargs)
+        return Div(overlay, style="display: none;", data_state=state, *c, **kwargs)
 
     if title:
         header_content.append(SheetTitle(title))

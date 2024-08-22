@@ -148,7 +148,7 @@ def get():
                 ThemeToggle(cls="shrink-0"),
                 cls="container flex justify-center items-center gap-1.5",
             ),
-            cls="pt-[60px] px-6 sm:p-0 h-screen flex flex-col justify-center items-center",
+            cls="pt-[50px] px-6 sm:p-0 h-screen flex flex-col justify-center items-center",
         ),
         MobileNav(),
     )
@@ -261,7 +261,7 @@ def Sidebar():
             RenderNav(),
             cls="space-y-4",
         ),
-        cls="hidden sm:flex fixed h-screen top-0 inset-x-0 border-r w-[180px] p-6",
+        cls="hidden sm:flex fixed h-screen top-0 inset-x-0 border-r w-[180px] p-6 overflow-hidden",
     )
 
 
@@ -279,11 +279,11 @@ def DocsLayout(*c, title: str):
                 ),
                 cls="max-w-4xl container my-14",
             ),
-            cls="flex flex-col sm:ml-[180px] flex-grow",
+            cls="flex flex-col sm:ml-[180px]",
         ),
         MobileNav(),
         toggle_active_script,
-        cls="pt-[60px] sm:p-0 h-screen",
+        cls="pt-[50px] sm:p-0 h-screen",
     )
 
 
@@ -429,53 +429,5 @@ def get():
 #         await asyncio.sleep(0.05)
 
 #     return Response(status_code=204)
-
-
-# @rt("/sheet-nav")
-# def get():
-#     return Sheet(
-#         RenderNav(),
-#         title="Shad4FastHtml",
-#         description="Documentation",
-#         id="sheet-nav",
-#         side="left",
-#         content_cls="flex flex-col items-center max-w-[250px] gap-8",
-#     )
-
-
-@rt("/modal")
-def get():
-    return Dialog(
-        DialogContent(
-            DialogHeader(
-                DialogTitle("Edit Profile"),
-                DialogDescription(
-                    "Make changes to your profile here. Click save when you're done."
-                ),
-            ),
-            Div(
-                Div(
-                    Label("Name", cls="text-right"),
-                    Input(
-                        value="John",
-                        cls="col-span-3",
-                        autofocus="true",
-                        onfocus="this.select()",
-                    ),
-                    cls="grid grid-cols-4 items-center gap-4",
-                ),
-                Div(
-                    Label("Email", cls="text-right"),
-                    Input(type="email", value="john@gmail.com", cls="col-span-3"),
-                    cls="grid grid-cols-4 items-center gap-4",
-                ),
-                cls="grid gap-4 py-4",
-            ),
-            DialogFooter(Button("Save changes")),
-            cls="sm:max-w-[425px]",
-        ),
-        standard=True,
-    )
-
 
 serve()

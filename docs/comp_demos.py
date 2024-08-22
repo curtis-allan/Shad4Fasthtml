@@ -400,17 +400,40 @@ def ProgressAltBlock():
 def dialog_block():
     return (
         Block(
-            DialogTrigger("Toggle Dialog", target="modal"),
+            DialogTrigger("Toggle Dialog", dialog_id="demo-dialog"),
             id="dialog1",
         ),
-    )
-
-
-def DialogAltBlock():
-    return (
-        Block(
-            DialogTrigger("Toggle Dialog", target="modal-standard"),
-            id="dialog2",
+        Dialog(
+            DialogContent(
+                DialogHeader(
+                    DialogTitle("Edit Profile"),
+                    DialogDescription(
+                        "Make changes to your profile here. Click save when you're done."
+                    ),
+                ),
+                Div(
+                    Div(
+                        Label("Name", cls="text-right"),
+                        Input(
+                            value="John",
+                            cls="col-span-3",
+                        ),
+                        cls="grid grid-cols-4 items-center gap-4",
+                    ),
+                    Div(
+                        Label("Email", cls="text-right"),
+                        Input(
+                            type="email", value="johnsmith@email.com", cls="col-span-3"
+                        ),
+                        cls="grid grid-cols-4 items-center gap-4",
+                    ),
+                    cls="grid gap-4 py-4",
+                ),
+                DialogFooter(Button("Save changes")),
+                cls="sm:max-w-[425px]",
+            ),
+            standard=True,
+            id="demo-dialog",
         ),
     )
 

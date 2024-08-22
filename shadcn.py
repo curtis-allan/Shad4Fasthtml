@@ -794,8 +794,8 @@ table_row_cls = (
 )
 table_head_cls = "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
 table_cell_cls = "p-4 align-middle [&:has([role=checkbox])]:pr-0"
-checkbox_base_cls = "preventdbclick peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-checkbox_indicator_cls = "preventdbclick flex items-center justify-center text-current data-[state=unchecked]:hidden"
+checkbox_base_cls = "preventdbclick peer group h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+checkbox_indicator_cls = "preventdbclick flex items-center justify-center text-current group-data-[state=unchecked]:hidden"
 select_trigger_cls = "select-trigger cursor-pointer flex h-10 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 select_scrollup_cls = "scroll-up flex cursor-default items-center justify-center py-1"
 select_scrolldown_cls = (
@@ -1161,7 +1161,7 @@ def Sheet(
     description=None,
     footer=None,
     standard=False,
-    state="open",
+    state="closed",
     content_cls=None,
     **kwargs,
 ):
@@ -1353,15 +1353,14 @@ def TableCaption(*c, cls=None, **kwargs):
 
 
 def Checkbox(cls=None, state="unchecked", name=None, id=None, **kwargs):
+    curr_state = "true" if state == "checked" else None
     new_cls = checkbox_base_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    indicator = Span(
-        Lucide(icon="check", cls="size-4"), cls=checkbox_indicator_cls, data_state=state
-    )
+    indicator = Span(Lucide(icon="check", cls="size-4"), cls=checkbox_indicator_cls)
     value_holder = Input(
-        type="checkbox", style="display: none;", id=id, name=name, checked="false"
+        type="checkbox", style="display: none;", id=id, name=name, checked=curr_state
     )
     return Span(
         indicator,

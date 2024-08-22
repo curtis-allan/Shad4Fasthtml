@@ -133,12 +133,15 @@ def get():
 def MobileNav():
     return (
         Sheet(
-            RenderNav(),
+            Div(
+                RenderNav(),
+                cls="overflow-y-scroll overflow-x-hidden max-h-[calc(100vh-64px)] w-full pl-10 pb-10 sm:pb-0 no-scrollbar scroll-smooth",
+            ),
             title="Shad4FastHtml",
             description="Documentation",
             id="sheet-nav",
             side="left",
-            content_cls="flex flex-col items-center max-w-[250px] gap-8",
+            content_cls="flex flex-col items-center max-w-[250px] gap-4",
             style="display: none;",
         ),
     )

@@ -55,7 +55,6 @@ def MobileHeader():
     return Div(
         SheetTrigger(
             Lucide(icon="menu"),
-            target="sheet-nav",
             variant="outline",
             size="icon",
             cls="absolute left-2 inset-x-0",
@@ -127,6 +126,21 @@ def get():
             ),
             cls="pt-[60px] px-6 sm:p-0 h-screen flex flex-col justify-center items-center",
         ),
+        MobileNav(),
+    )
+
+
+def MobileNav():
+    return (
+        Sheet(
+            RenderNav(),
+            title="Shad4FastHtml",
+            description="Documentation",
+            id="sheet-nav",
+            side="left",
+            content_cls="flex flex-col items-center max-w-[250px] gap-8",
+            style="display: none;",
+        ),
     )
 
 
@@ -162,7 +176,7 @@ link_groups = {
 }
 
 
-def RenderNav(mobile=False):
+def RenderNav():
     nav_items = []
     link_titles = link_groups.keys()
     for title in link_titles:
@@ -234,6 +248,7 @@ def DocsLayout(*c, title: str):
             ),
             cls="flex flex-col sm:pl-[180px] flex-grow",
         ),
+        MobileNav(),
         cls="pt-[60px] sm:p-0 min-h-screen flex flex-col",
     )
 
@@ -333,7 +348,7 @@ def post():
 @rt("/progress")
 def get():
     global progress
-    progress += random.randint(1, 25)
+    progress += random.randint(5, 25)
     if progress >= 100:
         return Div(
             Button(
@@ -351,46 +366,46 @@ def get():
     return ProgressBar(progress)
 
 
-loaded = 0
-total = 8000
+# loaded = 0
+# total = 8000
 
 
-@rt("/progress-stream")
-async def get():
-    global loaded
-    global total
+# @rt("/progress-stream")
+# async def get():
+#     global loaded
+#     global total
 
-    async def event_stream():
-        while loaded <= total:
-            yield f"data: {json.dumps({'progress': loaded, 'total': total})}\n\n"
-            await asyncio.sleep(0.4)
+#     async def event_stream():
+#         while loaded <= total:
+#             yield f"data: {json.dumps({'progress': loaded, 'total': total})}\n\n"
+#             await asyncio.sleep(0.4)
 
-    return StreamingResponse(event_stream(), media_type="text/event-stream")
-
-
-@rt("/job")
-async def post():
-    global total
-    global loaded
-    loaded = 0
-
-    while loaded < total:
-        loaded += 200
-        await asyncio.sleep(0.05)
-
-    return Response(status_code=204)
+#     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
-@rt("/sheet-nav")
-def get():
-    return Sheet(
-        RenderNav(),
-        title="Shad4FastHtml",
-        description="Documentation",
-        id="sheet-nav",
-        side="left",
-        content_cls="flex flex-col gap-8",
-    )
+# @rt("/job")
+# async def post():
+#     global total
+#     global loaded
+#     loaded = 0
+
+#     while loaded < total:
+#         loaded += 200
+#         await asyncio.sleep(0.05)
+
+#     return Response(status_code=204)
+
+
+# @rt("/sheet-nav")
+# def get():
+#     return Sheet(
+#         RenderNav(),
+#         title="Shad4FastHtml",
+#         description="Documentation",
+#         id="sheet-nav",
+#         side="left",
+#         content_cls="flex flex-col items-center max-w-[250px] gap-8",
+#     )
 
 
 @rt("/modal")

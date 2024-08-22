@@ -563,10 +563,16 @@ def ShadHead(lucid=True):
   proc_htmx('.sheet', elt => {
     function toggleClose() {
       elt.dataset.state = 'closed'
-      setTimeout(() => elt.remove(), 110);
+      setTimeout(() => elt.style.display = 'none', 110);
     }
     const overlay = elt.querySelector('.sheet-overlay');
     const closeBtn = elt.querySelector('.sheet-close-x');
+    const triggerBtn = document.body.querySelector('.sheet-trigger');
+
+    if (triggerBtn) triggerBtn.addEventListener('mousedown', () => {
+        elt.dataset.state = 'open';
+        elt.style.display = 'flex';
+    })
 
     if (overlay) overlay.addEventListener('mousedown', toggleClose);
     if (closeBtn) closeBtn.addEventListener('mousedown', toggleClose);
@@ -1228,14 +1234,12 @@ def SheetHeader(*c, cls=None, **kwargs):
     return Div(*c, **kwargs)
 
 
-def SheetTrigger(*c, cls=None, target=None, **kwargs):
-    new_cls = ""
+def SheetTrigger(*c, cls=None, **kwargs):
+    new_cls = "sheet-trigger"
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Button(
-        *c, hx_get=f"/{target}", hx_swap="beforeend", hx_target="body", **kwargs
-    )
+    return Button(*c, **kwargs)
 
 
 def SheetFooter(*c, cls=None, **kwargs):

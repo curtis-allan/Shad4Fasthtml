@@ -368,7 +368,7 @@ progress_script = Script(
 def ProgressAltBlock():
     return (
         Block(
-            Form(
+            Div(
                 Button(
                     Lucide(
                         icon="loader-circle",
@@ -378,17 +378,19 @@ def ProgressAltBlock():
                     Span("Post"),
                     cls="max-w-fit",
                     id="progress-button",
+                    disabled=True,
                 ),
-                Progress(
-                    id="progress-bar-js",
-                    cls="data-[state=hidden]:hidden data-[state=visible]:animate-in data-[state=visible]:fade-in-0 data-[state=visible]:zoom-in-95",
-                    data_state="hidden",
-                ),
-                progress_script,
+                Badge("Work in progress", variant="destructive"),
+                # Progress(
+                #     id="progress-bar-js",
+                #     cls="data-[state=hidden]:hidden data-[state=visible]:animate-in data-[state=visible]:fade-in-0 data-[state=visible]:zoom-in-95",
+                #     data_state="hidden",
+                # ),
+                # progress_script,
                 cls="grid place-items-center w-[80%] gap-4",
-                hx_post="/job",
-                hx_swap="beforeend",
-                hx_on__before_request="startProgress(this)",
+                # hx_post="/job",
+                # hx_swap="none",
+                # hx_on__before_request="startProgress(this)",
             ),
             id="progress2",
         ),

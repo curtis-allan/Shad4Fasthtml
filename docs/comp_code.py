@@ -445,4 +445,18 @@ Div(
     Input(type="email", id="email"),
     cls="space-y-5 max-w-[80%] w-full",
 ),""",
+    "sheet": """Div(
+    SheetTrigger("Toggle Sheet", sheet_id="demo-sheet"),
+),
+Sheet(
+    Div(
+        P("This is where you'd enter your sheet content", cls="text-pretty"),
+        cls="p-4",
+    ),
+    title="Demo Sheet",
+    description="This is a demo sheet.",
+    footer=Div(SheetCloseButton("Close")),
+    content_cls="flex flex-col justify-between",
+    id="demo-sheet",
+)""",
 }

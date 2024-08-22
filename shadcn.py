@@ -63,6 +63,7 @@ __all__ = [
     "SheetDescription",
     "SheetContent",
     "SheetTrigger",
+    "SheetCloseButton",
 ]
 
 
@@ -149,14 +150,6 @@ def ShadHead(lucid=True):
 								"translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0))",
 						},
 					},
-          "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
 				},
       colors: {
         border: "hsl(var(--border))",
@@ -560,22 +553,32 @@ def ShadHead(lucid=True):
   })
   })
 
+  function openSheet(button) {
+    const sheet = document.querySelector(`#${button.getAttribute('sheet-id')}`);
+    sheet.dataset.state = 'open'
+    sheet.style.display = 'block';
+  }
+
   proc_htmx('.sheet', elt => {
-    function toggleClose() {
-      elt.dataset.state = 'closed'
-      setTimeout(() => elt.style.display = 'none', 110);
-    }
+    var fragment = document.createDocumentFragment();
+
+    fragment.appendChild(elt);
+
+    document.body.appendChild(fragment);
+
     const overlay = elt.querySelector('.sheet-overlay');
-    const closeBtn = elt.querySelector('.sheet-close-x');
-    const triggerBtn = document.body.querySelector('.sheet-trigger');
+    const closeIcon = elt.querySelector('.sheet-close-x');
+    const closeBtn = elt.querySelector('.sheet-close-button');
 
-    if (triggerBtn) triggerBtn.addEventListener('mousedown', () => {
-        elt.dataset.state = 'open';
-        elt.style.display = 'flex';
-    })
+    function toggleClose() {
+    elt.dataset.state = 'closed'
+    setTimeout(() => elt.style.display = 'none', 110);
+  }
 
-    if (overlay) overlay.addEventListener('mousedown', toggleClose);
-    if (closeBtn) closeBtn.addEventListener('mousedown', toggleClose);
+    if (overlay) overlay.addEventListener('mousedown', toggleClose)
+    if (closeBtn) closeBtn.addEventListener('mousedown', toggleClose)
+    if (closeIcon) closeIcon.addEventListener('mousedown', toggleClose)
+
   })
 
   proc_htmx('.dialog', function(dialog) {
@@ -774,9 +777,9 @@ toast_variants_cls = {
 toast_closeBtn_cls = "toast-close-button cursor-pointer active:ring absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600"
 toast_title_cls = "text-sm font-semibold"
 toast_description_cls = "text-sm opacity-90"
-dialog_overlay_cls = "no-bg-scroll dialog-overlay fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-dialog_content_cls = "dialog-content fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg"
-dialog_closeBtn_cls = "dialog-close-btn cursor-pointer active:ring absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+dialog_overlay_cls = "no-bg-scroll dialog-overlay fixed inset-0 z-50 bg-black/80 group-data-[state=open]:animate-in group-data-[state=closed]:animate-out group-data-[state=closed]:fade-out-0 group-data-[state=open]:fade-in-0"
+dialog_content_cls = "dialog-content fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 group-data-[state=open]:animate-in group-data-[state=closed]:animate-out group-data-[state=closed]:fade-out-0 group-data-[state=open]:fade-in-0 group-data-[state=closed]:zoom-out-95 group-data-[state=open]:zoom-in-95 group-data-[state=closed]:slide-out-to-left-1/2 group-data-[state=closed]:slide-out-to-top-[48%] group-data-[state=open]:slide-in-from-left-1/2 group-data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg"
+dialog_closeBtn_cls = "dialog-close-btn cursor-pointer active:ring absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none group-data-[state=open]:bg-accent group-data-[state=open]:text-muted-foreground"
 dialog_title_cls = "text-lg font-semibold leading-none tracking-tight"
 dialog_description_cls = "text-sm text-muted-foreground"
 dialog_header_cls = "flex flex-col space-y-1.5 text-center sm:text-left"
@@ -1000,17 +1003,11 @@ def Badge(*c, variant: str = "default", cls=None, **kwargs):
     return Div(*c, **kwargs)
 
 
-def Separator(orientation: str = "horizontal", cls=None, **kwargs):
-    new_cls = sep_cls
-
-    if orientation == "horizontal" or orientation == None:
-        new_cls += f" {sep_variant_cls['horizontal']}"
-    if orientation == "vertical":
-        new_cls += f" {sep_variant_cls['vertical']}"
+def Separator(orientation="horizontal", cls=None, **kwargs):
+    new_cls = f"{sep_cls} {sep_variant_cls[orientation]}"
 
     if cls:
         new_cls += f" {cls}"
-
     kwargs["cls"] = new_cls
     return Div(decorative=True, **kwargs)
 
@@ -1093,6 +1090,14 @@ def DialogTitle(*c, cls=None, **kwargs):
     return H1(*c, **kwargs)
 
 
+def DialogCloseButton(*c, cls=None, **kwargs):
+    new_cls = "dialog-close-button"
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Button(*c, **kwargs)
+
+
 def DialogDescription(*c, cls=None, **kwargs):
     new_cls = dialog_description_cls
     if cls:
@@ -1111,25 +1116,30 @@ def DialogContent(*c, cls=None, **kwargs):
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Div(*c, closeBtn, data_state="open", **kwargs)
+    return Div(*c, closeBtn, **kwargs)
 
 
-def DialogTrigger(*c, target=None, cls=None, **kwargs):
-    new_cls = ""
+def DialogTrigger(*c, dialog_id=None, cls=None, **kwargs):
+    new_cls = "dialog-trigger"
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Button(
-        *c, hx_get=f"/{target}", hx_swap="beforeend", hx_target="body", **kwargs
-    )
+    return Button(*c, dialog_id=dialog_id, **kwargs)
 
 
 def Dialog(
-    *c, footer=None, title=None, description=None, standard=False, cls=None, **kwargs
+    *c,
+    footer=None,
+    title=None,
+    description=None,
+    standard=False,
+    state="closed",
+    cls=None,
+    **kwargs,
 ):
-    overlay = Div(cls=dialog_overlay_cls, data_state="open")
+    overlay = Div(cls=dialog_overlay_cls)
 
-    new_cls = "dialog"
+    new_cls = "dialog group"
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
@@ -1150,7 +1160,13 @@ def Dialog(
             *header_content,
         )
 
-    return Div(overlay, DialogContent(header, *c, footer), **kwargs)
+    return Div(
+        overlay,
+        DialogContent(header, *c, footer),
+        style="display: none;",
+        data_state=state,
+        **kwargs,
+    )
 
 
 def Sheet(
@@ -1191,6 +1207,18 @@ def Sheet(
         data_state=state,
         role="dialog",
         tabindex="-1",
+        style="display: none;",
+        **kwargs,
+    )
+
+
+def SheetCloseButton(*c, cls=None, **kwargs):
+    new_cls = "sheet-close-button"
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Button(
+        *c,
         **kwargs,
     )
 
@@ -1234,12 +1262,17 @@ def SheetHeader(*c, cls=None, **kwargs):
     return Div(*c, **kwargs)
 
 
-def SheetTrigger(*c, cls=None, **kwargs):
+def SheetTrigger(*c, cls=None, sheet_id: str = None, **kwargs):
     new_cls = "sheet-trigger"
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Button(*c, **kwargs)
+    return Button(
+        *c,
+        onclick="event.preventDefault();openSheet(this)",
+        sheet_id=sheet_id,
+        **kwargs,
+    )
 
 
 def SheetFooter(*c, cls=None, **kwargs):

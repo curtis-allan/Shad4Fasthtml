@@ -61,6 +61,10 @@ To implement Shadcn UI components in your codebase, refer to the relevant compon
 
 * Using Lucide via the cdn results in icon flickering on page load.
 
+* Toast: Client side render + mobile touch handling + disable scroll while hovering.
+
+* Add assetions for all required parameters.
+
 ## Need Help?
 
 If you encounter any issues or have questions, please open an issue on the GitHub repository and either myself or a member of the community will try to help.

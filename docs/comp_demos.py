@@ -534,6 +534,28 @@ def table_block():
     )
 
 
+def sheet_block():
+    return (
+        Block(
+            Div(
+                SheetTrigger("Toggle Sheet", sheet_id="demo-sheet"),
+            ),
+            id="sheet",
+        ),
+        Sheet(
+            Div(
+                P("This is where you'd enter your sheet content", cls="text-pretty"),
+                cls="p-4",
+            ),
+            title="Demo Sheet",
+            description="This is a demo sheet.",
+            footer=Div(SheetCloseButton("Close")),
+            content_cls="flex flex-col justify-between",
+            id="demo-sheet",
+        ),
+    )
+
+
 def checkbox_block():
     return (
         Block(

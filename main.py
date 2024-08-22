@@ -17,6 +17,7 @@ from docs.comp_demos import (
     progress_block,
     select_block,
     separator_block,
+    sheet_block,
     switch_block,
     table_block,
     textarea_block,
@@ -43,9 +44,28 @@ favicon_headers = Favicon(
     light_icon="/public/light_favicon.ico", dark_icon="/public/dark_favicon.ico"
 )
 
+toggle_active_script = Script(
+    """
+  document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const links = document.querySelectorAll(`a[href=${CSS.escape(currentPath)}] button`);
+
+    links.forEach(link => {
+        link.classList.add('border-r-2', '!text-foreground', 'font-semibold', '!border-primary', 'rounded-none');
+    });
+  });
+    """
+)
+
 app, rt = fast_app(
     pico=False,
-    hdrs=(ShadHead(), HighlightJS(), zeromd_headers, social_headers, favicon_headers),
+    hdrs=(
+        ShadHead(),
+        HighlightJS(),
+        zeromd_headers,
+        social_headers,
+        favicon_headers,
+    ),
 )
 
 toast_setup(app)
@@ -58,10 +78,14 @@ def MobileHeader():
             variant="outline",
             size="icon",
             cls="absolute left-2 inset-x-0",
+            sheet_id="mobile-nav",
         ),
-        H1(
-            "Shad4FastHtml",
-            cls="text-xl font-semibold tracking-tight",
+        A(
+            H1(
+                "Shad4FastHtml",
+                cls="text-xl font-bold tracking-tighter",
+            ),
+            href="/",
         ),
         cls="sm:hidden fixed flex top-0 z-50 items-center justify-center bg-background w-full h-fit px-4 py-2 !h-[50px] shadow",
     )
@@ -135,14 +159,13 @@ def MobileNav():
         Sheet(
             Div(
                 RenderNav(),
-                cls="overflow-y-scroll overflow-x-hidden max-h-[calc(100vh-64px)] w-full pl-10 pb-10 sm:pb-0 no-scrollbar scroll-smooth",
+                cls="overflow-y-scroll overflow-x-hidden max-h-[calc(100vh-8rem)] w-full no-scrollbar scroll-smooth",
             ),
             title="Shad4FastHtml",
             description="Documentation",
-            id="sheet-nav",
             side="left",
             content_cls="flex flex-col items-center max-w-[250px] gap-4",
-            style="display: none;",
+            id="mobile-nav",
         ),
     )
 
@@ -175,8 +198,22 @@ link_groups = {
         "table",
         "checkbox",
         "select",
+        "sheet",
     ),
 }
+
+
+def NavItem(title, i):
+    return (
+        A(
+            Button(
+                format_title(i),
+                variant="link",
+                cls="link-btn w-full !justify-start !text-[16px] !text-muted-foreground tracking-tight !p-0 pl-2 h-fit my-2",
+            ),
+            href=f"/{title}/{i}",
+        ),
+    )
 
 
 def RenderNav():
@@ -195,14 +232,7 @@ def RenderNav():
                             Ul(
                                 *[
                                     Li(
-                                        A(
-                                            Button(
-                                                format_title(i),
-                                                variant="link",
-                                                cls="link-btn w-full !justify-start !text-muted-foreground tracking-tight !p-0 pl-2 h-fit my-1.5",
-                                            ),
-                                            href=f"/{title}/{i}",
-                                        ),
+                                        NavItem(title, i),
                                     )
                                     for i in sorted(link_groups[title])
                                 ],
@@ -249,10 +279,11 @@ def DocsLayout(*c, title: str):
                 ),
                 cls="max-w-4xl container my-14",
             ),
-            cls="flex flex-col sm:pl-[180px] flex-grow",
+            cls="flex flex-col sm:ml-[180px] flex-grow",
         ),
         MobileNav(),
-        cls="pt-[60px] sm:p-0 min-h-screen flex flex-col",
+        toggle_active_script,
+        cls="pt-[60px] sm:p-0 h-screen",
     )
 
 
@@ -302,6 +333,7 @@ demo_comps = {
     "lucide": lucide_block,
     "textarea": textarea_block,
     "table": table_block,
+    "sheet": sheet_block,
 }
 
 

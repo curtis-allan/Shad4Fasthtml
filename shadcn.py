@@ -83,7 +83,6 @@ def ShadHead(lucide_link=True, tw_link=False):
             if(sunIcons && moonIcons) {
                 sunIcons.forEach(icon => icon.style.display = 'none')
                 moonIcons.forEach(icon => icon.style.display = 'block')
-
             }
         }
     }
@@ -140,7 +139,7 @@ def ShadHead(lucide_link=True, tw_link=False):
             localStorage.theme = 'dark'
             document.documentElement.classList.add('dark');
         }
-                zeroMd.forEach(zeroMd => {
+        zeroMd.forEach(zeroMd => {
             if (zeroMd.shadowRoot) {
                 const links = zeroMd.shadowRoot.querySelectorAll('link');
                 links.forEach(link => handleMdThemeChange(link));

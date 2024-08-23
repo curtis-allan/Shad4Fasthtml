@@ -1,5 +1,3 @@
-import asyncio
-import json
 import random
 
 from starlette.responses import StreamingResponse
@@ -15,6 +13,7 @@ from docs.comp_demos import (
     label_block,
     lucide_block,
     progress_block,
+    render_copy_buttons,
     select_block,
     separator_block,
     sheet_block,
@@ -25,7 +24,7 @@ from docs.comp_demos import (
 )
 from fasthtml.common import *
 from fasthtml.components import Zero_md
-from shadcn4fast.shadcn import *
+from shadcn import *
 
 zeromd_headers = Script(
     type="module", src="https://cdn.jsdelivr.net/npm/zero-md@3?register"
@@ -73,7 +72,6 @@ app, rt = fast_app(
     pico=False,
     hdrs=(
         ShadHead(),
-        HighlightJS(),
         zeromd_headers,
         social_headers,
         favicon_headers,
@@ -83,6 +81,8 @@ app, rt = fast_app(
 )
 
 toast_setup(app)
+
+render_copy_buttons(app)
 
 
 def MobileHeader():
@@ -202,7 +202,7 @@ def format_title(str: str):
 
 
 link_groups = {
-    "getting-started": ("installation",),
+    "getting-started": ("installation", "tailwind-setup"),
     "components": (
         "card",
         "alert",
@@ -311,10 +311,29 @@ def DocsLayout(*c, title: str):
 
 
 def render_md(link):
-    css = ".markdown-body {h1, h2, h3 {border-color: hsl(var(--border));} background-color: hsl(var(--background)); color: hsl(var(--foreground)); margin: 2rem auto; table {color: initial; background-color:hsl(var(--muted)); width: 100%; border-radius: 0.5rem;} th {height:3rem} td {height:1rem} blockquote {color:hsl(var(--muted-foreground));} hr {background-color: hsl(var(--muted-foreground)); margin: 2rem auto;}}"
     css_template = Template(
-        Style(css),
-        data_append=True,
+        Link(
+            rel="stylesheet",
+            href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.6.1/github-markdown-light.min.css",
+            cls="light-theme",
+        ),
+        Link(
+            rel="stylesheet",
+            href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.6.1/github-markdown-dark.min.css",
+            media="(prefers-color-scheme: dark)",
+            cls="dark-theme",
+        ),
+        Link(
+            rel="stylesheet",
+            href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css",
+            cls="light-theme",
+        ),
+        Link(
+            rel="stylesheet",
+            href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github-dark.min.css",
+            media="(prefers-color-scheme: dark)",
+            cls="dark-theme",
+        ),
     )
 
     with open(f"{link}.md") as f:
@@ -330,6 +349,10 @@ def render_md(link):
 
 @rt("/getting-started/{title}")
 def get(title: str):
+    content = f"docs/md/{title}"
+    print(content)
+    if title == "installation":
+        content = "README"
     name = format_title(title)
     return (
         Title(name),
@@ -338,7 +361,7 @@ def get(title: str):
             MobileHeader(),
             DocsLayout(
                 Div(
-                    render_md("README"),
+                    render_md(content),
                 ),
                 title=title,
             ),

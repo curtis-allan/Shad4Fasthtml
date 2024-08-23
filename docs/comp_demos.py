@@ -1,9 +1,10 @@
 from docs.comp_code import code_dict, dummy_data
 from fasthtml.common import *
-from shadcn4fast.shadcn import *
+from fasthtml.components import Zero_md
+from shadcn import *
 
 __all__ = [
-    "card_block, select_block, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block"
+    "card_block, select_block, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block, render_copy_buttons"
 ]
 
 
@@ -26,15 +27,16 @@ def Block(*c, id="default", name=None, **kwargs):
     themeToggle = ThemeToggle(cls="absolute top-0 right-0")
     if name:
         header = H2(
-            name, cls="text-xl font-semibold tracking-tight absolute top-2 inset-y-0"
+            name,
+            cls="text-xl font-semibold tracking-tight absolute top-2 inset-x-0 text-center",
         )
 
     cls = "relative max-w-xl mx-auto flex flex-col rounded-md bg-muted/40 shadow"
     return Div(
         Div(
+            header,
+            themeToggle,
             Div(
-                header,
-                themeToggle,
                 *c,
                 cls="block-content flex flex-col items-center h-[350px] justify-center",
             ),
@@ -60,21 +62,117 @@ def BlockChange():
                 const block = elt.parentNode
                     block.querySelector('.block-content').classList.toggle('hidden');
                     block.querySelector('.code-content').classList.toggle('hidden');
-                   }"""
+            }"""
+        ),
+    )
+
+
+def render_copy_buttons(app):
+    app.router.hdrs += (
+        Script(
+            """function handleMdThemeChange(link) {
+    const isDarkMode = localStorage.theme === 'dark' || document.documentElement.classList.contains('dark');
+    const themeClass = isDarkMode ? 'dark-theme' : 'light-theme';
+    link.disabled = !link.classList.contains(themeClass);
+}
+
+        document.addEventListener('zero-md-rendered', function(event) {
+                const zeroMd = event.target;
+                const shadowRoot = zeroMd.shadowRoot;
+
+            if (shadowRoot) {
+                const preElements = shadowRoot.querySelectorAll('pre');
+                const content = shadowRoot.querySelector('.markdown-body');
+
+                shadowRoot.querySelectorAll('link').forEach(link => handleMdThemeChange(link));
+                
+                preElements.forEach(pre => {
+                    pre.style.position = 'relative';
+                    pre.querySelector('code').style.padding = '1.5rem 0 ';
+                    const button = document.createElement('button');
+                    const clipboard = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" id="clipboard" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>';
+                    const tick = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:none;" id="tick" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg>';
+                    button.innerHTML = clipboard + tick;
+                    button.className = 'copy-button';
+                    
+                    button.addEventListener('click', function() {
+                        const code = pre.querySelector('code');
+                        const range = document.createRange();
+                        range.selectNode(code);
+                        window.getSelection().removeAllRanges();
+                        window.getSelection().addRange(range);
+                        
+                        try {
+                            document.execCommand('copy');
+                            button.querySelector('#tick').style.display = 'block';
+                            button.querySelector('#clipboard').style.display = 'none';
+                            setTimeout(() => {
+                                button.querySelector('#tick').style.display = 'none';
+                                button.querySelector('#clipboard').style.display = 'block';
+                            }, 2000);
+                        } catch (err) {
+                            console.error('Failed to copy text: ', err);
+                        }
+                        
+                        window.getSelection().removeAllRanges();
+                    });
+                    pre.appendChild(button);
+                });
+
+                const style = document.createElement('style');
+                style.textContent = `
+                    .copy-button {
+                        appearance: none;
+                        position: absolute;
+                        top: 5px;
+                        right: 5px;
+                        padding: 3px;
+                        background-color: transparent;
+                        border: 1px solid;
+                        border-color: hsl(var(--border));
+                        border-radius: 5px;
+                        cursor: pointer;
+                    }
+                    .copy-button:hover {
+                        background-color: hsl(var(--muted));
+                    }
+
+                `;
+                shadowRoot.appendChild(style);
+            }
+        });"""
+        ),
+    )
+
+
+def render_code(content):
+    css_template = Template(
+        Link(
+            rel="stylesheet",
+            href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css",
+            cls="light-theme",
+        ),
+        Link(
+            rel="stylesheet",
+            href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github-dark.min.css",
+            media="(prefers-color-scheme: dark)",
+            cls="dark-theme",
+        ),
+    )
+
+    return Zero_md(
+        css_template,
+        Script(
+            f"```\n{content}\n```",
+            type="text/markdown",
         ),
     )
 
 
 def CodeContent(id: str = None):
     return Div(
-        Pre(
-            Code(
-                code_dict[id],
-                cls="text-sm rounded-md h-[318px] w-full",
-            ),
-            cls="flex [&>button]:bg-muted-foreground/40 w-full",
-        ),
-        cls="code-content flex items-center justify-center p-4 flex-grow hidden",
+        render_code(code_dict[id]),
+        cls="code-content flex items-center justify-center h-[350px] hidden",
     )
 
 

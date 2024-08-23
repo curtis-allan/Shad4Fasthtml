@@ -67,56 +67,49 @@ __all__ = [
 ]
 
 
-def ShadHead(lucid=True):
+def ShadHead(lucide_link=True, tw_link=False):
 
     shad_scripts = """
-    function swapThemeIcon(theme) {
+    function swapTheme() {
         const sunIcons = document.querySelectorAll('#theme-icon-sun');
         const moonIcons = document.querySelectorAll('#theme-icon-moon');
 
-        if (localStorage.theme === 'dark') {
+        if (localStorage.theme === 'dark' || document.documentElement.classList.contains('dark')) {
             if(sunIcons && moonIcons) {
-            sunIcons.forEach(icon => icon.style.display = 'block')
-            moonIcons.forEach(icon => icon.style.display = 'none')
-            }
+                sunIcons.forEach(icon => icon.style.display = 'block')
+                moonIcons.forEach(icon => icon.style.display = 'none')
+                }
     } else {
             if(sunIcons && moonIcons) {
-            sunIcons.forEach(icon => icon.style.display = 'none')
-            moonIcons.forEach(icon => icon.style.display = 'block')
+                sunIcons.forEach(icon => icon.style.display = 'none')
+                moonIcons.forEach(icon => icon.style.display = 'block')
+
             }
+        }
+    }
+
+    function handleThemeChange() {
+    if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", () => {
+                swapTheme()
+                document.body.addEventListener("htmx:afterSwap", () => {
+                    swapTheme()
+                });
+            });
+        } else {
+            swapTheme()
+            document.body.addEventListener("htmx:afterSwap", () => {
+                swapTheme()
+            });
         }
     }
 
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark')
-        if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", () => {
-                swapThemeIcon()
-                document.body.addEventListener("htmx:afterSwap", function() {
-                    swapThemeIcon()
-                });
-            });
-        } else {
-            swapThemeIcon()
-            document.body.addEventListener("htmx:afterSwap", function() {
-                swapThemeIcon()
-            });
-        }
+        handleThemeChange()
     } else {
         document.documentElement.classList.remove('dark')
-        if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", () => {
-                swapThemeIcon()
-                document.body.addEventListener("htmx:afterSwap", function() {
-                    swapThemeIcon()
-                });
-            });
-        } else {
-            swapThemeIcon()
-            document.body.addEventListener("htmx:afterSwap", function() {
-                swapThemeIcon()
-            });
-        }
+        handleThemeChange()
     }
 
 
@@ -135,18 +128,26 @@ def ShadHead(lucid=True):
 
   proc_htmx('.theme-toggle', elt => {
     elt.addEventListener('mousedown', event => {
+        event.preventDefault();
         const sunIcon = elt.querySelector('#theme-icon-sun');
         const moonIcon = elt.querySelector('#theme-icon-moon');
-        event.preventDefault();
+        const zeroMd = document.querySelectorAll('zero-md');
+
         if(localStorage.theme === 'dark') {
             localStorage.theme = 'light'
             document.documentElement.classList.remove('dark');
-            swapThemeIcon()
         } else {
             localStorage.theme = 'dark'
             document.documentElement.classList.add('dark');
-            swapThemeIcon()
         }
+                zeroMd.forEach(zeroMd => {
+            if (zeroMd.shadowRoot) {
+                const links = zeroMd.shadowRoot.querySelectorAll('link');
+                links.forEach(link => handleMdThemeChange(link));
+            } else {
+            console.log('No shadow roots found');
+            }
+        });
     })
   })
 
@@ -384,13 +385,18 @@ if (closeButton) closeButton.addEventListener('click', dismissToast);
     }
     """
 
-    if lucid:
-        return (
-            Script(shad_scripts),
-            Script(load_lucide, type="module"),
-        )
-    else:
-        return (Script(shad_scripts),)
+    tw_import = """"https://cdn.tailwindcss.com"""
+
+    headers = [
+        Script(shad_scripts),
+    ]
+
+    if lucide_link:
+        headers.append(Script(load_lucide, type="module"))
+    if tw_link:
+        headers.append(Script(src=tw_import))
+
+    return (*headers,)
 
 
 btn_variants = {

@@ -127,18 +127,19 @@ def ShadHead(lucide_link=True, tw_link=False):
 
   proc_htmx('.theme-toggle', elt => {
     elt.addEventListener('mousedown', event => {
-        event.preventDefault();
         const sunIcon = elt.querySelector('#theme-icon-sun');
         const moonIcon = elt.querySelector('#theme-icon-moon');
+        event.preventDefault();
         const zeroMd = document.querySelectorAll('zero-md');
 
-        if(localStorage.theme === 'dark') {
+        if(localStorage.theme === 'dark' || document.documentElement.classList.contains('dark')) {
             localStorage.theme = 'light'
             document.documentElement.classList.remove('dark');
         } else {
             localStorage.theme = 'dark'
             document.documentElement.classList.add('dark');
         }
+        swapTheme();
         zeroMd.forEach(zeroMd => {
             if (zeroMd.shadowRoot) {
                 const links = zeroMd.shadowRoot.querySelectorAll('link');

@@ -4,8 +4,19 @@ from fasthtml.components import Zero_md
 from shadcn import *
 
 __all__ = [
-    "card_block, select_block, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block, render_copy_buttons"
+    "card_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block, render_copy_buttons"
 ]
+
+
+def ThemeToggle(variant="outline", cls=None, **kwargs):
+    return Button(
+        Lucide(icon="sun", id="theme-icon-sun"),
+        Lucide(icon="moon", id="theme-icon-moon"),
+        variant=variant,
+        size="icon",
+        cls=f"theme-toggle + {cls}",
+        **kwargs,
+    )
 
 
 def table_rows():
@@ -67,85 +78,8 @@ def BlockChange():
     )
 
 
-def render_copy_buttons(app):
-    app.router.hdrs += (
-        Script(
-            """function handleMdThemeChange(link) {
-    const isDarkMode = localStorage.theme === 'dark' || document.documentElement.classList.contains('dark');
-    const themeClass = isDarkMode ? 'dark-theme' : 'light-theme';
-    link.disabled = !link.classList.contains(themeClass);
-}
-
-        document.addEventListener('zero-md-rendered', function(event) {
-                const zeroMd = event.target;
-                const shadowRoot = zeroMd.shadowRoot;
-
-            if (shadowRoot) {
-                const preElements = shadowRoot.querySelectorAll('pre');
-                const content = shadowRoot.querySelector('.markdown-body');
-
-                shadowRoot.querySelectorAll('link').forEach(link => handleMdThemeChange(link));
-                
-                preElements.forEach(pre => {
-                    pre.style.position = 'relative';
-                    pre.querySelector('code').style.padding = '1.5rem 0 ';
-                    const button = document.createElement('button');
-                    const clipboard = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" id="clipboard" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>';
-                    const tick = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:none;" id="tick" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg>';
-                    button.innerHTML = clipboard + tick;
-                    button.className = 'copy-button';
-                    
-                    button.addEventListener('click', function() {
-                        const code = pre.querySelector('code');
-                        const range = document.createRange();
-                        range.selectNode(code);
-                        window.getSelection().removeAllRanges();
-                        window.getSelection().addRange(range);
-                        
-                        try {
-                            document.execCommand('copy');
-                            button.querySelector('#tick').style.display = 'block';
-                            button.querySelector('#clipboard').style.display = 'none';
-                            setTimeout(() => {
-                                button.querySelector('#tick').style.display = 'none';
-                                button.querySelector('#clipboard').style.display = 'block';
-                            }, 2000);
-                        } catch (err) {
-                            console.error('Failed to copy text: ', err);
-                        }
-                        
-                        window.getSelection().removeAllRanges();
-                    });
-                    pre.appendChild(button);
-                });
-
-                const style = document.createElement('style');
-                style.textContent = `
-                    .copy-button {
-                        appearance: none;
-                        position: absolute;
-                        top: 5px;
-                        right: 5px;
-                        padding: 3px;
-                        background-color: transparent;
-                        border: 1px solid;
-                        border-color: hsl(var(--border));
-                        border-radius: 5px;
-                        cursor: pointer;
-                    }
-                    .copy-button:hover {
-                        background-color: hsl(var(--muted));
-                    }
-
-                `;
-                shadowRoot.appendChild(style);
-            }
-        });"""
-        ),
-    )
-
-
 def render_code(content):
+    css = ".markdown-body{height:100%; overflow:hidden; box-sizing:border-box; pre {code {height:100%; box-sizing:border-box;}height:100%; max-width:100%; box-sizing:border-box;} } :host {box-sizing:border-box; height:100%; width:100%; display: block; position: relative; contain: content;} :host([hidden]) { display: none; }"
     css_template = Template(
         Link(
             rel="stylesheet",
@@ -158,6 +92,18 @@ def render_code(content):
             media="(prefers-color-scheme: dark)",
             cls="dark-theme",
         ),
+        Link(
+            rel="stylesheet",
+            href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.6.1/github-markdown-light.min.css",
+            cls="light-theme",
+        ),
+        Link(
+            rel="stylesheet",
+            href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.6.1/github-markdown-dark.min.css",
+            media="(prefers-color-scheme: dark)",
+            cls="dark-theme",
+        ),
+        Style(css),
     )
 
     return Zero_md(
@@ -172,7 +118,7 @@ def render_code(content):
 def CodeContent(id: str = None):
     return Div(
         render_code(code_dict[id]),
-        cls="code-content flex items-center justify-center h-[350px] hidden",
+        cls="code-content flex items-center justify-center h-[350px] hidden ",
     )
 
 

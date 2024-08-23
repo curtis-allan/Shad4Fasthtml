@@ -21,7 +21,7 @@ Progress bars can be a little tricky to implement. Depending on your use case, y
 
 > **Note:** Make sure not to include the % symbol in your value, just a value representing the completion percentage: (33 for 33%). This value can be either an integer or a float.
 
-, which can be dynamically updated in the UI through various methods. Here are two possible implementations you can use depending on your use case:
+Here are two possible implementations you can use depending on your use case:
 
 ---
 

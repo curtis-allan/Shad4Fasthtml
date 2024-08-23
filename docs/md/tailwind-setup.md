@@ -9,7 +9,7 @@ For more information on getting started with the standalone package, check out t
 
 ## Setup Instructions
 
-1. **Install Tailwind CSS:** Download and install the standalone Tailwind CSS package for your operating system.
+1. **Install Tailwind CSS:** Download and install the standalone Tailwind CSS packagefor your operating system from <a href="https://github.com/tailwindlabs/tailwindcss/releases/tag/v3.4.10" target="_blank">here</a>, or follow the blog post guide above to install it via the CLI.
 
 2. **Configure Permissions:** Run CLI commands to give Tailwind CSS executable permissions. (Optional: Rename the package for ease of use)
 

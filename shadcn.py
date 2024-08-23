@@ -55,7 +55,6 @@ __all__ = [
     "SelectTrigger",
     "SelectGroup",
     "SelectValue",
-    "ThemeToggle",
     "Sheet",
     "SheetHeader",
     "SheetFooter",
@@ -70,48 +69,6 @@ __all__ = [
 def ShadHead(lucide_link=True, tw_link=False):
 
     shad_scripts = """
-    function swapTheme() {
-        const sunIcons = document.querySelectorAll('#theme-icon-sun');
-        const moonIcons = document.querySelectorAll('#theme-icon-moon');
-
-        if (localStorage.theme === 'dark' || document.documentElement.classList.contains('dark')) {
-            if(sunIcons && moonIcons) {
-                sunIcons.forEach(icon => icon.style.display = 'block')
-                moonIcons.forEach(icon => icon.style.display = 'none')
-                }
-    } else {
-            if(sunIcons && moonIcons) {
-                sunIcons.forEach(icon => icon.style.display = 'none')
-                moonIcons.forEach(icon => icon.style.display = 'block')
-            }
-        }
-    }
-
-    function handleThemeChange() {
-    if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", () => {
-                swapTheme()
-                document.body.addEventListener("htmx:afterSwap", () => {
-                    swapTheme()
-                });
-            });
-        } else {
-            swapTheme()
-            document.body.addEventListener("htmx:afterSwap", () => {
-                swapTheme()
-            });
-        }
-    }
-
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark')
-        handleThemeChange()
-    } else {
-        document.documentElement.classList.remove('dark')
-        handleThemeChange()
-    }
-
-
     function toggleCheckbox(e) {
     e.dataset.state = e.dataset.state === 'unchecked' ? 'checked' : 'unchecked';
     e.querySelector('input').checked = e.dataset.state === 'checked';
@@ -369,7 +326,7 @@ if (closeButton) closeButton.addEventListener('click', dismissToast);
     """
 
     load_lucide = """
-    import 'https://unpkg.com/lucide@latest';
+    import 'https://unpkg.com/lucide@latest/dist/umd/lucide.js';
 
     const loadLucide = () => {
             lucide.createIcons();
@@ -499,17 +456,6 @@ sheet_header_cls = "flex flex-col space-y-2 text-center sm:text-left"
 sheet_footer_cls = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
 sheet_title_cls = "text-lg font-semibold text-foreground"
 sheet_description_cls = "text-sm text-muted-foreground"
-
-
-def ThemeToggle(variant="outline", cls=None, **kwargs):
-    return Button(
-        Lucide(icon="sun", id="theme-icon-sun"),
-        Lucide(icon="moon", id="theme-icon-moon"),
-        variant=variant,
-        size="icon",
-        cls=f"theme-toggle + {cls}",
-        **kwargs,
-    )
 
 
 def Button(*c, size="default", variant="default", cls=None, **kwargs):

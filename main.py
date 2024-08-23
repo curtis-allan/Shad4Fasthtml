@@ -3,6 +3,7 @@ import random
 from starlette.responses import StreamingResponse
 
 from docs.comp_demos import (
+    ThemeToggle,
     alert_block,
     badge_block,
     button_block,
@@ -13,7 +14,6 @@ from docs.comp_demos import (
     label_block,
     lucide_block,
     progress_block,
-    render_copy_buttons,
     select_block,
     separator_block,
     sheet_block,
@@ -66,6 +66,120 @@ toggle_active_script = Script(
     """
 )
 
+handle_theme_script = Script(
+    """    function swapTheme() {
+        const sunIcons = document.querySelectorAll('#theme-icon-sun');
+        const moonIcons = document.querySelectorAll('#theme-icon-moon');
+
+        if (localStorage.theme === 'dark' || document.documentElement.classList.contains('dark')) {
+            if(sunIcons && moonIcons) {
+                sunIcons.forEach(icon => icon.style.display = 'block')
+                moonIcons.forEach(icon => icon.style.display = 'none')
+                }
+    } else {
+            if(sunIcons && moonIcons) {
+                sunIcons.forEach(icon => icon.style.display = 'none')
+                moonIcons.forEach(icon => icon.style.display = 'block')
+            }
+        }
+    }
+
+    function handleThemeChange() {
+    if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", () => {
+                swapTheme()
+                document.body.addEventListener("htmx:afterSwap", () => {
+                    swapTheme()
+                });
+            });
+        } else {
+            swapTheme()
+            document.body.addEventListener("htmx:afterSwap", () => {
+                swapTheme()
+            });
+        }
+    }
+
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+        handleThemeChange()
+    } else {
+        document.documentElement.classList.remove('dark')
+        handleThemeChange()
+    }
+    
+    function handleMdThemeChange(link) {
+    const isDarkMode = localStorage.theme === 'dark' || document.documentElement.classList.contains('dark');
+    const themeClass = isDarkMode ? 'dark-theme' : 'light-theme';
+    link.disabled = !link.classList.contains(themeClass);
+}
+
+        document.addEventListener('zero-md-rendered', function(event) {
+                const zeroMd = event.target;
+                const shadowRoot = zeroMd.shadowRoot;
+
+            if (shadowRoot) {
+                const preElements = shadowRoot.querySelectorAll('pre');
+                const content = shadowRoot.querySelector('.markdown-body');
+
+                shadowRoot.querySelectorAll('link').forEach(link => handleMdThemeChange(link));
+                
+                preElements.forEach(pre => {
+                    const button = document.createElement('button');
+                    const clipboard = '<svg xmlns="http://www.w3.org/2000/svg" width="16"  height="16" viewBox="0 0 24 24" id="clipboard" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>';
+                    const tick = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:none;" id="tick" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg>';
+                    button.innerHTML = clipboard + tick;
+                    button.className = 'copy-button';
+                    
+                    button.addEventListener('click', function() {
+                        const code = pre.querySelector('code');
+                        const range = document.createRange();
+                        range.selectNode(code);
+                        window.getSelection().removeAllRanges();
+                        window.getSelection().addRange(range);
+                        
+                        try {
+                            document.execCommand('copy');
+                            button.querySelector('#tick').style.display = 'block';
+                            button.querySelector('#clipboard').style.display = 'none';
+                            setTimeout(() => {
+                                button.querySelector('#tick').style.display = 'none';
+                                button.querySelector('#clipboard').style.display = 'block';
+                            }, 2000);
+                        } catch (err) {
+                            console.error('Failed to copy text: ', err);
+                        }
+                        
+                        window.getSelection().removeAllRanges();
+                    });
+                    pre.appendChild(button);
+                });
+
+                const style = document.createElement('style');
+                style.textContent = `
+                    .copy-button {
+                        appearance: none;
+                        position: fixed;
+                        top: 1rem;
+                        right: 1.5rem;
+                        padding: 4px;
+                        background-color: transparent;
+                        border: 1px solid;
+                        border-color: hsl(var(--border));
+                        color: hsl(var(--foreground));
+                        border-radius: 5px;
+                        cursor: pointer;
+                    }
+                    .copy-button:hover {
+                        background-color: hsl(var(--muted));
+                    }
+
+                `;
+                shadowRoot.appendChild(style);
+            }
+        });"""
+)
+
 tw_output_link = Link(href="../output.css", rel="stylesheet")
 
 app, rt = fast_app(
@@ -76,13 +190,12 @@ app, rt = fast_app(
         social_headers,
         favicon_headers,
         tw_output_link,
+        handle_theme_script,
     ),
     htmlkw={"lang": "en"},
 )
 
 toast_setup(app)
-
-render_copy_buttons(app)
 
 
 def MobileHeader():
@@ -311,6 +424,7 @@ def DocsLayout(*c, title: str):
 
 
 def render_md(link):
+    css = ".markdown-body{pre{position:relative;.copy-button{position:absolute; top:0.35rem; right:1rem;}}background-color:transparent} :host { display: block; position: relative; contain: content; } :host([hidden]) { display: none; }"
     css_template = Template(
         Link(
             rel="stylesheet",
@@ -334,6 +448,7 @@ def render_md(link):
             media="(prefers-color-scheme: dark)",
             cls="dark-theme",
         ),
+        Style(css),
     )
 
     with open(f"{link}.md") as f:

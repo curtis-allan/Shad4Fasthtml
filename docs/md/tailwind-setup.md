@@ -26,7 +26,7 @@ For more information on getting started with the standalone package, check out t
 4. **Configure Content:** Update the `content` section in `tailwind.config.js` to include files with Tailwind classes:
 
    ```javascript
-   content: ["./**/*.py", "./docs/**/*.py"],
+   content: ["./**/*.py"],
    ```
 
 5. **Development Mode:** Run the Tailwind CLI to watch for changes and generate `output.css`:

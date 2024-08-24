@@ -1,4 +1,4 @@
-## Usage
+## Setup
 
 All component imports are included when using the default setup. If you wish to seperately import components you can do so too. 
 
@@ -14,7 +14,7 @@ app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
 
 ---
-## Implementation
+## Usage
 
 ### FT Method
 
@@ -36,7 +36,7 @@ Card(
 
 ### Standard Method
 
-The standard method is similar to the FastHtml method, but follows the original Shadcn-ui method of passing in the `CardHeader`, `CardContent`, and `CardFooter` components. To ensure the component is rendered correctly, you must pass in the `standard` attribute as `True`.
+The standard method is similar to the FastHtml method, but follows the original Shadcn-ui method of passing in the `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, and `CardFooter` components. To ensure the component is rendered correctly, you must pass in the `standard` attribute as `True`.
 
 ```python+html
 Card(
@@ -61,9 +61,9 @@ Card(
 
 ## Parameters
 
-| Parameter | Description |
-| --- | --- |
-| `title` | The title of the card. |
-| `description` | The description of the card.
-| `footer` | The footer of the card.
-| `standard` | A boolean attribute to indicate if the component is rendered in the standard method. Defaults to `False`.
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `title` | `str` | Sets the title of the card.
+| `description` | `str` | Sets the description of the card.
+| `footer` | `any` | Sets the footer of the card. Can be any valid FT component/components.
+| `standard` | `bool` | A boolean attribute to indicate if the component is rendered in the standard method. Defaults to `False`.

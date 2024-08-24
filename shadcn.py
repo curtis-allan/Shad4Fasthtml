@@ -33,6 +33,7 @@ __all__ = [
     "DialogContent",
     "DialogFooter",
     "DialogTrigger",
+    "DialogCloseButton",
     "Button",
     "Input",
     "Textarea",
@@ -1011,15 +1012,22 @@ def TableCaption(*c, cls=None, **kwargs):
     return Caption(*c, **kwargs)
 
 
-def Checkbox(cls=None, state="unchecked", name=None, id=None, **kwargs):
+def Checkbox(cls=None, state="unchecked", name=None, value=None, id=None, **kwargs):
     curr_state = "true" if state == "checked" else None
+    assert state in ("checked", "unchecked"), '`state` not in ("checked", "unchecked")'
+
     new_cls = checkbox_base_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     indicator = Span(Lucide(icon="check", cls="size-4"), cls=checkbox_indicator_cls)
     value_holder = Input(
-        type="checkbox", style="display: none;", id=id, name=name, checked=curr_state
+        type="checkbox",
+        style="display: none;",
+        value=value,
+        id=id,
+        name=name,
+        checked=curr_state,
     )
     return Span(
         indicator,

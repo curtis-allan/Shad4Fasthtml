@@ -1,4 +1,4 @@
-## Usage
+## Setup
 
 All component imports are included when using the default setup. If you wish to seperately import components you can do so too. 
 
@@ -15,7 +15,7 @@ app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 
 ---
 
-## Implementation
+## Usage
 
 To use the Badge component, structure your code as with a normal FT method. The `variant` parameter specifies which variant of the badge to render, see the parameters table below for a full reference.
 
@@ -23,12 +23,13 @@ To use the Badge component, structure your code as with a normal FT method. The 
 Badge("v2.0", variant="default")
 ```
 
-> **Note:** If the `variant` attribute is not provided, the badge will be rendered with the `default` variant.
+> [!NOTE]
+>If the `variant` attribute is not provided, the badge will be rendered with the `default` variant.
 
 ---
 
 ## Parameters
 
-| Parameter | Description |
-| --- | --- |
-| `variant` | The variant of the badge. Options are `default`, `secondary`, `outline`, and `destructive`. Defaults to `default`.
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `variant` | `str` | Sets the variant of the badge. Options are `default`, `secondary`, `outline`, and `destructive`. Defaults to `default`.

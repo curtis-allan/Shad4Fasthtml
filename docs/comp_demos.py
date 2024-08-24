@@ -217,8 +217,96 @@ def AlertAltBlock():
 def button_block():
     return (
         Block(
-            Button("Default", variant="default"),
+            Button("Button"),
             id="button",
+        ),
+        H2(
+            "Variants",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        ButtonAltBlockVariants(),
+        H2(
+            "Sizes",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        ButtonAltBlockSizes(),
+        H2(
+            "States",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        ButtonAltBlockStates(),
+    )
+
+
+def ButtonAltBlockVariants():
+    return (
+        Block(
+            Div(
+                Button("Default", variant="default"),
+                Button("Secondary", variant="secondary"),
+                Button("Outline", variant="outline"),
+                Button(
+                    "Destructive",
+                    variant="destructive",
+                ),
+                Button("Link", variant="link"),
+                Button("Ghost", variant="ghost"),
+                cls="grid grid-cols-2 sm:grid-cols-3 sm:grid-rows-2 gap-4 max-w-[90%]",
+            ),
+            id="button2",
+        ),
+    )
+
+
+def ButtonAltBlockSizes():
+    return (
+        Block(
+            Div(
+                Button("Default", size="default"),
+                Button("Small", size="sm"),
+                Button("Large", size="lg"),
+                Button(
+                    Lucide(icon="settings"),
+                    size="icon",
+                ),
+                cls="grid grid-flow-row gap-4 place-items-center auto-rows-auto max-w-[90%]",
+            ),
+            id="button3",
+        ),
+    )
+
+
+def ButtonAltBlockStates():
+    return (
+        Block(
+            Div(
+                Span(
+                    Label(
+                        "Disabled:",
+                        htmlFor="button-disabled",
+                        cls="text-[15px] font-semibold",
+                    ),
+                    Button("Submit", id="button-secondary", disabled=True),
+                    cls="flex items-center justify-between",
+                ),
+                Separator(),
+                Span(
+                    Label(
+                        "Loading:",
+                        htmlFor="button-loading",
+                        cls="text-[15px] font-semibold",
+                    ),
+                    Button(
+                        Lucide(icon="loader2", cls="size-4 mr-1.5 animate-spin"),
+                        "Loading",
+                        id="button-loading",
+                        disabled=True,
+                    ),
+                    cls="flex items-center justify-between",
+                ),
+                cls="grid gap-3 w-[215px]",
+            ),
+            id="button4",
         ),
     )
 
@@ -282,7 +370,7 @@ def badge_block():
             Div(
                 H1(
                     "Shad4FastHtml",
-                    cls="text-2xl font-semibold tracking-tight leading-loose",
+                    cls="text-2xl font-semibold tracking-tight",
                 ),
                 Badge("v2.0"),
                 cls="flex gap-1.5 items-center justify-center",
@@ -302,26 +390,28 @@ def BadgeAltBlock():
         Block(
             Div(
                 Span(
-                    Label("Default:", htmlFor="badge-default"),
-                    BadgeDefault(),
+                    Label("Default:", htmlFor="badge-default", cls="font-semibold"),
+                    Badge("New Feature", variant="default", id="badge-default"),
                     cls="flex items-center justify-between",
                 ),
                 Separator(),
                 Span(
-                    Label("Secondary:", htmlFor="badge-secondary"),
-                    BadgeSecondary(),
+                    Label("Secondary:", htmlFor="badge-secondary", cls="font-semibold"),
+                    Badge("Updated", variant="secondary", id="badge-secondary"),
                     cls="flex items-center justify-between",
                 ),
                 Separator(),
                 Span(
-                    Label("Outline:", htmlFor="badge-outline"),
-                    BadgeOutline(),
+                    Label("Outline:", htmlFor="badge-outline", cls="font-semibold"),
+                    Badge("Terms v1.03", variant="outline", id="badge-outline"),
                     cls="flex items-center justify-between",
                 ),
                 Separator(),
                 Span(
-                    Label("Destructive:", htmlFor="badge-destructive"),
-                    BadgeDestructive(),
+                    Label(
+                        "Destructive:", htmlFor="badge-destructive", cls="font-semibold"
+                    ),
+                    Badge("Invalid", variant="destructive", id="badge-destructive"),
                     cls="flex items-center justify-between",
                 ),
                 cls="flex flex-col gap-3 justify-center w-[180px]",
@@ -329,22 +419,6 @@ def BadgeAltBlock():
             id="badge2",
         ),
     )
-
-
-def BadgeDefault():
-    return Badge("New Feature", variant="default", id="badge-default")
-
-
-def BadgeSecondary():
-    return Badge("Updated", variant="secondary", id="badge-secondary")
-
-
-def BadgeDestructive():
-    return Badge("Invalid", variant="destructive", id="badge-destructive")
-
-
-def BadgeOutline():
-    return Badge("Terms v1.03", variant="outline", id="badge-outline")
 
 
 def progress_block():
@@ -367,95 +441,129 @@ def progress_block():
             "Alternate Demo (JS + EventStream)",
             cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
         ),
-        ProgressAltBlock(),
+        # ProgressAltBlock(),
     )
 
 
-progress_script = Script(
-    """function startProgress(elt) {
-        const inner = elt.querySelector('#progress-bar-js-inner');
-        const progress = elt.querySelector('#progress-bar-js');
-        const button = elt.querySelector('#progress-button');
-        const button_text = button.querySelector('span')
-        const icon = elt.querySelector('#progress-loader');
+# progress_script = Script(
+#     """function startProgress(elt) {
+#         const inner = elt.querySelector('#progress-bar-js-inner');
+#         const progress = elt.querySelector('#progress-bar-js');
+#         const button = elt.querySelector('#progress-button');
+#         const button_text = button.querySelector('span')
+#         const icon = elt.querySelector('#progress-loader');
 
-        const eventSource = new EventSource('/progress-stream');
+#         const eventSource = new EventSource('/progress-stream');
 
-        progress.dataset.state = 'visible';
+#         progress.dataset.state = 'visible';
 
-        icon.classList.remove('hidden');
+#         icon.classList.remove('hidden');
 
-        button_text.innerHTML = 'Posting';
+#         button_text.innerHTML = 'Posting';
 
-        button.disabled = true;
+#         button.disabled = true;
 
-        eventSource.onmessage = function(event) {
-            const data = JSON.parse(event.data);
+#         eventSource.onmessage = function(event) {
+#             const data = JSON.parse(event.data);
 
-            inner.style.transform = `translateX(-${100 - (data.progress / data.total * 100)}%)`;
+#             inner.style.transform = `translateX(-${100 - (data.progress / data.total * 100)}%)`;
 
-            if (data.progress === data.total) {
-                icon.classList.add('hidden');
-                button.disabled = false;
-                button_text.innerHTML = 'Restart';
-                eventSource.close();
-            }
-        };
-        eventSource.onerror = function(error) {
-            console.error('EventSource failed:', error);
-            eventSource.close();
-        };
-    }
-    """
-)
+#             if (data.progress === data.total) {
+#                 icon.classList.add('hidden');
+#                 button.disabled = false;
+#                 button_text.innerHTML = 'Restart';
+#                 eventSource.close();
+#             }
+#         };
+#         eventSource.onerror = function(error) {
+#             console.error('EventSource failed:', error);
+#             eventSource.close();
+#         };
+#     }
+#     """
+# )
 
 
-def ProgressAltBlock():
-    return (
-        Block(
-            Div(
-                Button(
-                    Lucide(
-                        icon="loader-circle",
-                        cls="hidden size-4 animate-spin mr-1.5",
-                        id="progress-loader",
+# def ProgressAltBlock():
+#     return (
+#         Block(
+#             Div(
+#                 Button(
+#                     Lucide(
+#                         icon="loader-circle",
+#                         cls="hidden size-4 animate-spin mr-1.5",
+#                         id="progress-loader",
+#                     ),
+#                     Span("Post"),
+#                     cls="max-w-fit",
+#                     id="progress-button",
+#                     disabled=True,
+#                 ),
+#                 Badge("Work in progress", variant="destructive"),
+#                 # Progress(
+#                 #     id="progress-bar-js",
+#                 #     cls="data-[state=hidden]:hidden data-[state=visible]:animate-in data-[state=visible]:fade-in-0 data-[state=visible]:zoom-in-95",
+#                 #     data_state="hidden",
+#                 # ),
+#                 # progress_script,
+#                 cls="grid place-items-center w-[80%] gap-4",
+#                 # hx_post="/job",
+#                 # hx_swap="none",
+#                 # hx_on__before_request="startProgress(this)",
+#             ),
+#             id="progress2",
+#         ),
+#     )
+
+
+def DialogAltBlock():
+    return Block(
+        Div(
+            DialogTrigger("Toggle Dialog", dialog_id="demo-dialog"),
+            Dialog(
+                DialogContent(
+                    DialogHeader(
+                        DialogTitle("Edit Profile"),
+                        DialogDescription(
+                            "Make changes to your profile here. Click save when you're done."
+                        ),
                     ),
-                    Span("Post"),
-                    cls="max-w-fit",
-                    id="progress-button",
-                    disabled=True,
+                    Div(
+                        Div(
+                            Label("Name", cls="text-right"),
+                            Input(
+                                value="John",
+                                cls="col-span-3",
+                            ),
+                            cls="grid grid-cols-4 items-center gap-4",
+                        ),
+                        Div(
+                            Label("Email", cls="text-right"),
+                            Input(
+                                type="email",
+                                value="johnsmith@email.com",
+                                cls="col-span-3",
+                            ),
+                            cls="grid grid-cols-4 items-center gap-4",
+                        ),
+                        cls="grid gap-4 py-4",
+                    ),
+                    DialogFooter(DialogCloseButton("Save changes")),
+                    cls="sm:max-w-[425px]",
                 ),
-                Badge("Work in progress", variant="destructive"),
-                # Progress(
-                #     id="progress-bar-js",
-                #     cls="data-[state=hidden]:hidden data-[state=visible]:animate-in data-[state=visible]:fade-in-0 data-[state=visible]:zoom-in-95",
-                #     data_state="hidden",
-                # ),
-                # progress_script,
-                cls="grid place-items-center w-[80%] gap-4",
-                # hx_post="/job",
-                # hx_swap="none",
-                # hx_on__before_request="startProgress(this)",
+                standard=True,
+                id="demo-dialog",
             ),
-            id="progress2",
         ),
+        id="dialog2",
     )
 
 
 def dialog_block():
-    return (
-        Block(
+    return Block(
+        Div(
             DialogTrigger("Toggle Dialog", dialog_id="demo-dialog"),
-            id="dialog1",
-        ),
-        Dialog(
-            DialogContent(
-                DialogHeader(
-                    DialogTitle("Edit Profile"),
-                    DialogDescription(
-                        "Make changes to your profile here. Click save when you're done."
-                    ),
-                ),
+            Dialog(
                 Div(
                     Div(
                         Label("Name", cls="text-right"),
@@ -468,18 +576,23 @@ def dialog_block():
                     Div(
                         Label("Email", cls="text-right"),
                         Input(
-                            type="email", value="johnsmith@email.com", cls="col-span-3"
+                            type="email",
+                            value="johnsmith@email.com",
+                            cls="col-span-3",
                         ),
                         cls="grid grid-cols-4 items-center gap-4",
                     ),
                     cls="grid gap-4 py-4",
                 ),
-                DialogFooter(Button("Save changes")),
-                cls="sm:max-w-[425px]",
+                title="Edit Profile",
+                description="Make changes to your profile here. Click save when you're done.",
+                footer=Div(
+                    DialogCloseButton("Save changes"), cls="flex w-full justify-end"
+                ),
+                id="demo-dialog",
             ),
-            standard=True,
-            id="demo-dialog",
         ),
+        id="dialog",
     )
 
 
@@ -500,10 +613,11 @@ def label_block():
 def input_block():
     return (
         Block(
-            Div(
-                Label("Title", htmlFor="title"),
-                Input(placeholder="Enter a title", type="text", id="title"),
-                cls="space-y-5 max-w-[80%] w-full",
+            Input(
+                placeholder="Enter something",
+                type="text",
+                id="title",
+                cls="max-w-[80%]",
             ),
             id="input",
         ),
@@ -633,15 +747,14 @@ def checkbox_block():
                     Label(
                         "Agree to the terms",
                         htmlFor="terms1",
-                        cls="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
                     ),
                     P(
                         "You agree to our Terms of Service and Privacy Policy.",
                         cls="text-sm text-muted-foreground",
                     ),
-                    cls="grid gap-1.5 leading-none",
+                    cls="grid gap-1.5 max-w-[300px]",
                 ),
-                cls="items-top flex space-x-2 max-w-[80%] mx-auto",
+                cls="items-top justify-center flex space-x-2 container",
             ),
             id="checkbox",
         ),

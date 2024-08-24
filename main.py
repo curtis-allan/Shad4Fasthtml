@@ -180,7 +180,7 @@ handle_theme_script = Script(
         });"""
 )
 
-tw_output_link = Link(href="../output.css", rel="stylesheet")
+tw_output_link = Link(href="/output.css", rel="stylesheet")
 
 app, rt = fast_app(
     pico=False,

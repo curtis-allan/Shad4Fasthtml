@@ -44,7 +44,8 @@ dummy_data = [
 ]
 
 code_dict = {
-    "card1": """Card(
+    "card1": """
+Card(
     Input(
         type="text",
         placeholder="Title",
@@ -61,7 +62,8 @@ code_dict = {
             ),
             cls="w-[80%]",
         )""",
-    "alert2": """Alert(
+    "alert2": """
+Alert(
     Lucide(icon="circle-alert", cls="size-4"),
     AlertTitle("Error"),
     AlertDescription("An error occurred while processing your request."),
@@ -70,13 +72,15 @@ code_dict = {
     cls="max-w-[80%]",
 )
 """,
-    "alert1": """Alert(
+    "alert1": """
+Alert(
     title="New message!",
     description="Open your messages to view more details.",
     cls="max-w-[80%]",
 )
 """,
-    "separator": """H1(
+    "separator": """
+H1(
     "Welcome back",
     cls="text-3xl font-bold tracking-tight leading-loose",
 ),
@@ -90,42 +94,47 @@ Div(
     cls="flex gap-3 p-3",
 )
 """,
-    "badge": """Div(
+    "badge": """
+Div(
     H1(
         "Shad4FastHtml",
-        cls="text-2xl font-semibold tracking-tight leading-loose",
+        cls="text-2xl font-semibold tracking-tight",
     ),
-    Badge("v2.0", variant="default"),
+    Badge("v2.0"),
     cls="flex gap-1.5 items-center justify-center",
 )
 """,
-    "badge2": """Div(
+    "badge2": """
+Div(
     Span(
-        Label("Default:", htmlFor="badge-default"),
-        BadgeDefault(),
+        Label("Default:", htmlFor="badge-default", cls="font-semibold"),
+        Badge("New Feature", variant="default", id="badge-default"),
         cls="flex items-center justify-between",
     ),
     Separator(),
     Span(
-        Label("Secondary:", htmlFor="badge-secondary"),
-        BadgeSecondary(),
+        Label("Secondary:", htmlFor="badge-secondary", cls="font-semibold"),
+        Badge("Updated", variant="secondary", id="badge-secondary"),
         cls="flex items-center justify-between",
     ),
     Separator(),
     Span(
-        Label("Outline:", htmlFor="badge-outline"),
-        BadgeOutline(),
+        Label("Outline:", htmlFor="badge-outline", cls="font-semibold"),
+        Badge("Terms v1.03", variant="outline", id="badge-outline"),
         cls="flex items-center justify-between",
     ),
     Separator(),
     Span(
-        Label("Destructive:", htmlFor="badge-destructive"),
-        BadgeDestructive(),
+        Label(
+            "Destructive:", htmlFor="badge-destructive", cls="font-semibold"
+        ),
+        Badge("Invalid", variant="destructive", id="badge-destructive"),
         cls="flex items-center justify-between",
     ),
     cls="flex flex-col gap-3 justify-center w-[180px]",
 )""",
-    "progress": """Div(
+    "progress": """
+Div(
     Button(
         "Start",
         hx_post="/start",
@@ -187,63 +196,59 @@ def get():
     cls="grid place-items-center w-[80%]",
 )""",
     "toast": """
-    // import statements + app setup
+// Import statements + app setup
 
     toast_setup(app)
 
-    // route setup
+// Route setup
 
     Button("Send email", hx_get="/toast", hx_swap="none"),
 
-    // rest of code
+// Rest of code
     
     @rt("/toast")
     def get(sess):
         toast(sess=sess, title="Sent!", description="Email has been sent successfully.")
 """,
-    "dialog1": """
-// import statements + app setup
-
-@rt('/')
-def get():
-    return DialogTrigger("Toggle Dialog", target="modal"),
-    id="dialog1",
-    ),
-
-@rt('/modal')
-def get():
-    return
-        Dialog(
+    "dialog": """
+Div(
+    DialogTrigger("Toggle Dialog", dialog_id="demo-dialog"),
+    Dialog(
+        Div(
             Div(
-                P(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fringilla viverra orci, non ullamcorper quam rhoncus eget. Proin finibus turpis a sapien egestas eleifend.",
-                    cls="text-pretty",
+                Label("Name", cls="text-right"),
+                Input(
+                    value="John",
+                    cls="col-span-3",
                 ),
-            cls="sm:max-w-[425px]",
+                cls="grid grid-cols-4 items-center gap-4",
             ),
-            title="Dialog example",
-            description="An example of a dialog component, press 'x' to close.",
-            footer=P(
-                "Powered by htmx, fasthtml, and vanillaJS",
-                cls="text-center text-sm text-muted-foreground tracking-tight w-full",
+            Div(
+                Label("Email", cls="text-right"),
+                Input(
+                    type="email",
+                    value="johnsmith@email.com",
+                    cls="col-span-3",
+                ),
+                cls="grid grid-cols-4 items-center gap-4",
             ),
-        )""",
+            cls="grid gap-4 py-4",
+        ),
+        title="Edit Profile",
+        description="Make changes to your profile here. Click save when you're done.",
+        footer=Div(
+            DialogCloseButton("Save changes"), cls="flex w-full justify-end"
+        ),
+        id="demo-dialog",
+    )""",
     "dialog2": """
-// import statements + app setup
-
-@rt('/')
-def get():
-    return DialogTrigger("Toggle Dialog", target="modal-standard"),
-    id="dialog2",
-    ),
-
-@rt("/modal-standard")
-def get():
-    return (Dialog(
-            DialogContent(
-                DialogHeader(
-                    DialogTitle("Edit Profile"),
-                    DialogDescription(
+Div(
+    DialogTrigger("Toggle Dialog", dialog_id="demo-dialog"),
+    Dialog(
+        DialogContent(
+            DialogHeader(
+                DialogTitle("Edit Profile"),
+                DialogDescription(
                     "Make changes to your profile here. Click save when you're done."
                 ),
             ),
@@ -253,32 +258,32 @@ def get():
                     Input(
                         value="John",
                         cls="col-span-3",
-                        autofocus="true",
-                        onfocus="this.select()",
                     ),
                     cls="grid grid-cols-4 items-center gap-4",
                 ),
                 Div(
                     Label("Email", cls="text-right"),
-                    Input(type="email", value="john@gmail.com", cls="col-span-3"),
+                    Input(
+                        type="email",
+                        value="johnsmith@email.com",
+                        cls="col-span-3",
+                    ),
                     cls="grid grid-cols-4 items-center gap-4",
                 ),
                 cls="grid gap-4 py-4",
             ),
-            DialogFooter(Button("Save changes")),
+            DialogFooter(DialogCloseButton("Save changes")),
             cls="sm:max-w-[425px]",
         ),
         standard=True,
+        id="demo-dialog",
     )
-)
 """,
-    "input": """Div(
-        Label("Title", htmlFor="title"),
-        Input(placeholder="Enter a title", type="text", id="title"),
-        cls="space-y-5 max-w-[80%] w-full",
-    ),
+    "input": """
+Input(placeholder="Enter something", type="text", id="title", cls="max-w-[80%]")
 """,
-    "switch": """Div(
+    "switch": """
+Div(
     Label(
         "Agree to terms",
         htmlFor="switch-toggle",
@@ -307,7 +312,7 @@ Div(
 
 """,
     "table": """
-    // Dummy table data to indicate mapping
+// Dummy table data to indicate mapping
     
     dummy_data = data = [
     {
@@ -354,7 +359,7 @@ Div(
     },
     ]
 
-    // Mapping function for FT components with data
+// Mapping function for FT components with data
 
     def table_rows():
     results = []
@@ -369,7 +374,7 @@ Div(
         )
     return results
 
-    // Final composition
+// Final composition
 
     Table(
         TableCaption("View your recent spending history."),
@@ -389,7 +394,8 @@ Div(
         ),
         cls="max-w-[80%] mx-auto mt-5",
     ),""",
-    "select": """Select(
+    "select": """
+Select(
     SelectTrigger(
         SelectValue(placeholder="Pick a fruit"),
         cls="w-[180px]",
@@ -406,26 +412,29 @@ Div(
         SelectItem("Watermelon", value="watermelon"),
     ),
 ),""",
-    "checkbox": """Div(
-        Checkbox(id="terms1"),
-        Div(
-            Label(
-                "Agree to the terms",
-                htmlFor="terms1",
-                cls="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-            ),
-            P(
-                "You agree to our Terms of Service and Privacy Policy.",
-                cls="text-sm text-muted-foreground",
-            ),
-            cls="grid gap-1.5 leading-none",
+    "checkbox": """
+Div(
+    Checkbox(id="terms1"),
+    Div(
+        Label(
+            "Agree to the terms",
+            htmlFor="terms1",
         ),
-        cls="items-top flex space-x-2",
-    ),""",
-    "button": """Button("Default", variant='default')
+        P(
+            "You agree to our Terms of Service and Privacy Policy.",
+            cls="text-sm text-muted-foreground",
+        ),
+        cls="grid gap-1.5 max-w-[300px]",
+    ),
+    cls="items-top justify-center flex space-x-2 container",
+)""",
+    "button": """
+Button("Button")
     """,
-    "lucide": """Lucide(icon='home', cls='size-6')""",
-    "textarea": """Div(
+    "lucide": """
+Lucide(icon='home', cls='size-6')""",
+    "textarea": """
+Div(
     Label(
         "Content",
         htmlFor="content",
@@ -437,7 +446,8 @@ Div(
     ),
     cls="space-y-5 max-w-[80%] w-full",
 )""",
-    "label": """Div(
+    "label": """
+Div(
     Label(
         "Enter your email",
         htmlFor="email",
@@ -445,7 +455,8 @@ Div(
     Input(type="email", id="email"),
     cls="space-y-5 max-w-[80%] w-full",
 ),""",
-    "sheet": """Div(
+    "sheet": """
+Div(
     SheetTrigger("Toggle Sheet", sheet_id="demo-sheet"),
 ),
 Sheet(
@@ -458,5 +469,53 @@ Sheet(
     footer=Div(SheetCloseButton("Close")),
     content_cls="flex flex-col justify-between",
     id="demo-sheet",
+)""",
+    "button2": """
+Div(
+    Button("Default", variant="default"),
+
+    Button("Secondary", variant="secondary"),
+
+    Button("Outline", variant="outline"),
+
+    Button("Destructive", variant="destructive"),
+
+    Button("Link", variant="link"),
+
+    Button("Ghost", variant="ghost"),
+
+    cls="grid grid-cols-2 sm:grid-cols-3 sm:grid-rows-2 gap-4 max-w-[90%]",
+)""",
+    "button3": """
+Div(
+    Button("Default", size="default"),
+
+    Button("Small", size="sm"),
+
+    Button("Large", size="lg"),
+
+    Button(Lucide(icon="settings"),size="icon"),
+
+    cls="grid grid-flow-row gap-4 place-items-center auto-rows-auto max-w-[90%]",
+)""",
+    "button4": """
+Div(
+    Span(
+        Label("Disabled:", htmlFor="button-disabled",cls="text-[15px] font-semibold"),
+        Button("Submit", id="button-secondary", disabled=True),
+        cls="flex items-center justify-between",
+    ),
+    Separator(),
+    Span(
+        Label("Loading:", htmlFor="button-loading",cls="text-[15px] font-semibold"),
+        Button(
+            Lucide(icon="loader2", cls="size-4 mr-1.5 animate-spin"),
+            "Loading",
+            id="button-loading",
+            disabled=True,
+        ),
+        cls="flex items-center justify-between",
+    ),
+    cls="grid gap-3 w-[215px]",
 )""",
 }

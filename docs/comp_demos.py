@@ -693,24 +693,26 @@ def SwitchFormBlock():
 def table_block():
     return (
         Block(
-            Table(
-                TableCaption("View your recent spending history."),
-                TableHeader(
-                    TableRow(
-                        TableHead("Payment", cls="w-[100px]"),
-                        TableHead("Status"),
-                        TableHead("Method"),
-                        TableHead("Amount", cls="text-right"),
-                    )
+            Div(
+                Table(
+                    TableCaption("View your recent spending history."),
+                    TableHeader(
+                        TableRow(
+                            TableHead("Payment", cls="w-[100px]"),
+                            TableHead("Status"),
+                            TableHead("Method"),
+                            TableHead("Amount", cls="text-right"),
+                        )
+                    ),
+                    TableBody(*table_rows()),
+                    TableFooter(
+                        TableRow(
+                            TableCell("Total", colSpan="3"),
+                            TableCell("$2,500.00", cls="text-right"),
+                        )
+                    ),
                 ),
-                TableBody(*table_rows()),
-                TableFooter(
-                    TableRow(
-                        TableCell("Total", colSpan="3"),
-                        TableCell("$2,500.00", cls="text-right"),
-                    )
-                ),
-                cls="max-w-[80%] mx-auto mt-5",
+                cls="h-full container max-w-[80%] mt-4 overflow-auto",
             ),
             id="table",
         ),

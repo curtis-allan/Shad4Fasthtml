@@ -8,7 +8,8 @@ Getting started with Shadcn UI for FastHTML is quick and easy. Follow these simp
 
 1. Copy the `shadcn.py` file from the GitHub repository into your FastHTML project directory.
 
-   > **Note:** A pip module will be available in the near future. This is a temporary solution.
+> [!NOTE]
+>A pip module will be available in the near future. This is a temporary solution.
 
 2. Add the following import statements to the top of the file where you want to use the components:
 
@@ -30,9 +31,17 @@ Getting started with Shadcn UI for FastHTML is quick and easy. Follow these simp
 
 #### Tailwind Configuration
 
-Shadcn-ui components use TailwindCSS for styling by default. Shad4FastHtml now uses the Tailwind CSS standalone package by default, replacing the CDN version. This change allows for minification and bundling of used styles, optimizing the bundle size for production.
+Shadcn-ui components use TailwindCSS for styling by default. Shad4FastHtml now uses the Tailwind CSS standalone package by default, replacing the CDN version. This change allows for minification and bundling of used styles, optimizing the bundle size for production. If you wish to use the CDN instead, set the `tw_link` parameter to `True` in the `ShadHead` function.
 
-If you wish to use the CDN instead, set the `tw_link` parameter to `True` in the `ShadHead` function. See the <a hx-boost="true" href="/getting-started/tailwind-setup">Tailwind Setup Guide</a> for more information.
+```python
+app, rt = fast_app(
+    pico=False,
+    hdrs=(ShadHead(tw_link=True),),
+)
+```
+
+>[!TIP]
+> Refer to the <a hx-boost="true" href="/getting-started/tailwind-setup">Tailwind Setup Guide</a> for more information.
 
 #### Lucide Icons
 
@@ -47,24 +56,27 @@ app, rt = fast_app(
 
 ### You're All Set!
 
-Congratulations! You've successfully set up Shadcn UI for your FastHTML project. You're now ready to start using the UI components in your app.
+Congratulations! You've successfully set up Shad4FastHtml for your project! You're now ready to start using the UI components in your app.
+
+>[!WARNING]
+> This project is still in its youth. If you encounter any bugs or issues, please open an issue on the GitHub repository.
 
 ## Using Components
 
 To implement Shadcn UI components in your codebase, refer to the relevant component documentation. Each component has its own set of properties and usage guidelines.
 
-## Known Issuess
+## Known Issues
 
-* Using Lucide via the cdn results in icon flickering on page load.
+* Using Lucide via the cdn is not an ideal solution, as there are two seperate url's recommended for `dev` and `prod` environments. Will either implement a solution to automate the import or try to find a better solution.
 
-* Toast: Client side render + mobile touch handling + disable scroll while hovering.
+* Toast: Client side render + mobile touch handling. Currently relies on htmx server endpoints for rendering, which is not great for a client-focused UI component. Will update this soon to use the same JS solution as the `dialog` and `sheet` components.
 
-* Add assetions for all required parameters.
+* Add type assertions for all component attributes, with proper error handling and documentation.
 
 * Table demo - theme toggle fix
 
-* Documentation fixing and cleaning up
+* **IN PROGRESS** Documentation fixing and cleaning up.
 
 ## Need Help?
 
-If you encounter any issues or have questions, please open an issue on the GitHub repository and either myself or a member of the community will try to help.
+If you encounter any issues or have questions, please reach out either through the <a href="https://github.com/curtis-allan/shadcn-fasthtml-framework" target="_blank">Github</a> repo or send me a dm on<a href="https://x.com/CurtisJAllan" target="_blank">X aka twitter</a> and either myself or a member of the community will try to help out.

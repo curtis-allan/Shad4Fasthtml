@@ -448,13 +448,14 @@ Div(
 )""",
     "label": """
 Div(
-    Label(
-        "Enter your email",
-        htmlFor="email",
+    Label("Email", htmlFor="email"),
+    Input(
+        placeholder="Enter your email",
+        type="email",
+        id="email",
     ),
-    Input(type="email", id="email"),
-    cls="space-y-5 max-w-[80%] w-full",
-),""",
+    cls="flex flex-col sm:flex-row gap-1.5 sm:items-center w-full max-w-sm container justify-center items-start",
+)""",
     "sheet": """
 Div(
     SheetTrigger("Toggle Sheet", sheet_id="demo-sheet"),

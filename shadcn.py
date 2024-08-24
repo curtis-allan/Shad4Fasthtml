@@ -811,11 +811,14 @@ def Sheet(
     new_cls = "group sheet"
     overlay = Div(cls=sheet_overlay_cls)
     header_content = []
+    header = None
+    footer = None
+
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     if standard:
-        return Div(overlay, style="display: none;", data_state=state, *c, **kwargs)
+        return Div(overlay, *c, style="display: none;", data_state=state, **kwargs)
 
     if title:
         header_content.append(SheetTitle(title))
@@ -830,7 +833,7 @@ def Sheet(
 
     return Div(
         overlay,
-        SheetContent(header, *c, footer, variant=side, cls=content_cls),
+        SheetContent(header, *c, footer, side=side, cls=content_cls),
         data_state=state,
         role="dialog",
         tabindex="-1",
@@ -850,8 +853,8 @@ def SheetCloseButton(*c, cls=None, **kwargs):
     )
 
 
-def SheetContent(*c, cls=None, variant, **kwargs):
-    new_cls = f"{sheet_content_cls} {sheet_variants_cls[variant]}"
+def SheetContent(*c, cls=None, side="right", **kwargs):
+    new_cls = f"{sheet_content_cls} {sheet_variants_cls[side]}"
     closeBtn = ft_hx(
         "button",
         Span("Close", cls="sr-only"),

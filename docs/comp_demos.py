@@ -4,7 +4,7 @@ from fasthtml.components import Zero_md
 from shadcn import *
 
 __all__ = [
-    "card_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block, render_copy_buttons"
+    "card_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block"
 ]
 
 
@@ -79,7 +79,7 @@ def BlockChange():
 
 
 def render_code(content):
-    css = ".markdown-body{height:100%; overflow:hidden; box-sizing:border-box; pre {code {height:100%; box-sizing:border-box;}height:100%; max-width:100%; box-sizing:border-box;} } :host {box-sizing:border-box; height:100%; width:100%; display: block; position: relative; contain: content;} :host([hidden]) { display: none; }"
+    css = ".markdown-body{height:100%; overflow:hidden; pre {code {height:100%; box-sizing:border-box}height:100%;width:100%;box-sizing:border-box;}} :host {height:100%; width:100%; position: relative; contain: content;} :host([hidden]) { display: none; }"
     css_template = Template(
         Link(
             rel="stylesheet",
@@ -599,12 +599,13 @@ def dialog_block():
 def label_block():
     return Block(
         Div(
-            Label(
-                "Email",
-                htmlFor="email",
+            Label("Email", htmlFor="email"),
+            Input(
+                placeholder="Enter your email",
+                type="email",
+                id="email",
             ),
-            Input(type="email", id="email"),
-            cls="space-y-5 max-w-[80%] w-full",
+            cls="flex flex-col sm:flex-row gap-1.5 sm:items-center w-full max-w-sm container justify-center items-start",
         ),
         id="label",
     )

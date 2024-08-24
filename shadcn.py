@@ -327,7 +327,7 @@ if (closeButton) closeButton.addEventListener('click', dismissToast);
     """
 
     load_lucide = """
-    import 'https://unpkg.com/lucide@latest/dist/umd/lucide.js';
+    import 'https://unpkg.com/lucide@latest';
 
     const loadLucide = () => {
             lucide.createIcons();

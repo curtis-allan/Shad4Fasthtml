@@ -7,7 +7,7 @@ function filterDefault(values) {
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["selector"],
-  content: ["./**/*.py"],
+  content: ["./**/*.{py,js}", "./docs/**/*.py"],
     theme: {
     container: {
       center: true,

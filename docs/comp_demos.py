@@ -174,50 +174,46 @@ def CardAltBlock():
 
 
 def SelectAltBlock():
-    id = uuid.uuid4().hex[:8]
     return (
         Block(
             Select(
                 SelectTrigger(
                     SelectValue(placeholder="Choose a coding language"),
-                    cls="w-[250px]",
+                    cls="w-[250px]"
                 ),
                 SelectContent(
                     SelectGroup(
-                        SelectLabel("Popular Languages"),
-                        SelectItem("Python", value="python"),
+                        SelectLabel("Scripting Languages"),
                         SelectItem("JavaScript", value="javascript"),
-                        SelectItem("Java", value="java"),
-                        SelectItem("C++", value="cpp"),
                         SelectItem("TypeScript", value="typescript"),
-                        SelectItem("PHP", value="php"),
-                        SelectItem("C#", value="csharp"),
+                        SelectItem("Ruby", value="ruby"),
+                        SelectItem("Lua", value="lua"),
+                        SelectItem("PHP", value="php")
                     ),
                     SelectSeparator(),
                     SelectGroup(
-                        SelectLabel("Functional Languages"),
-                        SelectItem("Haskell", value="haskell"),
-                        SelectItem("Erlang", value="erlang"),
-                        SelectItem("Elixir", value="elixir"),
-                        SelectItem("Clojure", value="clojure"),
-                        SelectItem("Scala", value="scala"),
+                        SelectLabel("Mobile Development"),
+                        SelectItem("Swift", value="swift"),
+                        SelectItem("Kotlin", value="kotlin"),
+                        SelectItem("Flutter", value="flutter"),
+                        SelectItem("React Native", value="react-native"),
+                        SelectItem("Xamarin", value="xamarin"),
+                        SelectItem("Ionic", value="ionic")
                     ),
                     SelectSeparator(),
                     SelectGroup(
                         SelectLabel("Other Languages"),
-                        SelectItem("Ruby", value="ruby"),
                         SelectItem("Go", value="go"),
                         SelectItem("Rust", value="rust"),
-                        SelectItem("Swift", value="swift"),
-                        SelectItem("Kotlin", value="kotlin"),
-                        SelectItem("R", value="r"),
-                        SelectItem("Perl", value="perl"),
-                        SelectItem("Groovy", value="groovy"),
+                        SelectItem("C#", value="csharp"),
+                        SelectItem("Java", value="java"),
+                        SelectItem("Scala", value="scala"),
+                        SelectItem("Haskell", value="haskell")
                     ),
-                    id=id,
+                    id='select-alt',
                 ),
                 standard=True,
-                id=id,
+                id='select-alt',
                 name="select-alt"
             ),
             id="select2",
@@ -230,14 +226,14 @@ def select_block():
             Select(
                 placeholder="Pick a fruit",
                 label="Fruits",
-                items=["Apple", "Banana", "Blueberry", "Pineapple", "Orange"],
+                items=["Apple", "Banana", "Blueberry", "Orange"],
                 id="select-demo",
                 name="select-demo",
                 cls="[&>.select-trigger]:w-[180px]",
             ),
             id="select",
         ),
-        H2("Scrolling demo", cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4"),
+        H2("Scrolling & Seperators", cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4"),
         SelectAltBlock(),
     )
 

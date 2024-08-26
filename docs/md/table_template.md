@@ -1,14 +1,2 @@
-## Usage
-
-All component imports are included when using the default setup. If you wish to seperately import components you can do so too. 
-
-```python
-from fasthtml import *
-from shadcn import ShadHead, Card
-```
-
-Just make sure to import and setup `ShadHead()` as well:
-
-```python
-app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
-```
+>[!IMPORTANT]
+> This documentation is still under development. For a reference on how to use the table component, please refer to the <a href="https://ui.shadcn.com/docs/components/table" target="_blank">Shadcn-ui documentation</a> and the source code in the GitHub repository.

@@ -9,9 +9,8 @@ class SelectMenu {
         this.viewport = this.content.querySelector('.viewport');
         this.scrollUpBtn = this.content.querySelector('.scroll-up');
         this.scrollDownBtn = this.content.querySelector('.scroll-down');
-
-        this.setupEventListeners();
         this.initializePortal();
+        this.setupEventListeners();
     }
 
     setupEventListeners() {
@@ -46,25 +45,23 @@ class SelectMenu {
     }
 
     open() {
-        document.querySelectorAll('.select[data-state="open"]').forEach(select => new SelectMenu(select).close());
         this.select.dataset.state = 'open';
         this.content.dataset.state = 'open';
-        this.portal.style.display = 'flex';
+        this.portal.style.display = 'block';
+
         this.select.setAttribute('aria-expanded', 'true');
-        this.injectPortal();
+        this.trigger.classList.add('pointer-events-auto');
         this.updateScrollButtonVisibility(); 
         document.body.classList.add('pointer-events-none');
-        setTimeout(() => {
-            document.addEventListener('mousedown', this.closeOnClickOutside);
-            this.updateScrollButtonVisibility();
-        }, 0);
         this.initializeFocus();
+        this.injectPortal();
     }
 
     close() {
         this.select.dataset.state = 'closed';
         this.content.dataset.state = 'closed';
         this.portal.style.display = 'none';
+        this.trigger.classList.remove('pointer-events-auto');
         this.select.setAttribute('aria-expanded', 'false');
         document.body.classList.remove('pointer-events-none');
         document.removeEventListener('mousedown', this.closeOnClickOutside);
@@ -88,7 +85,7 @@ class SelectMenu {
             item.dataset.checked = 'true';
             item.setAttribute('aria-selected', 'true');
             const selectValue = this.trigger.querySelector('.select-value');
-            if (selectValue) selectValue.textContent = item.textContent;
+            if (selectValue) selectValue.textContent = item.textContent.trim();
             this.input.value = item.getAttribute('value');
             this.select.setAttribute('aria-activedescendant', item.id);
             this.input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -156,39 +153,45 @@ class SelectMenu {
     }
 
     injectPortal() {
-        const { left, right, top, bottom, width, height } = this.trigger.getBoundingClientRect();
-        const { innerWidth: viewportWidth, innerHeight: viewportHeight } = window;
-        const portalHeight = this.portal.getBoundingClientRect().height;
-        const portalWidth = this.portal.getBoundingClientRect().width;
+        requestAnimationFrame(() => {
+            const { left, right, top, bottom, width, height } = this.trigger.getBoundingClientRect();
+            const { innerWidth: viewportWidth, innerHeight: viewportHeight } = window;
 
-        let translateX = left;
-        let translateY = bottom;
-        let side = 'bottom';
+            // Set a fixed width for the portal based on the trigger width
+            this.portal.style.width = `${Math.max(width, 200)}px`; // Minimum width of 200px or trigger width
+            this.portal.style.maxWidth = 'max-content';
 
-        // Check vertical space
-        if (viewportHeight - bottom < portalHeight && top > portalHeight) {
-            translateY = top - portalHeight;
-            side = 'top';
-        }
+            const portalRect = this.portal.getBoundingClientRect();
+            const portalHeight = portalRect.height;
+            const portalWidth = portalRect.width;
 
-        // Check horizontal space
-        if (viewportWidth - right < portalWidth && left > portalWidth) {
-            translateX = right - portalWidth;
-            side = side === 'top' ? 'top-right' : 'bottom-right';
-        }
+            let translateX = left;
+            let translateY = bottom;
+            let side = 'bottom';
 
-        const availableWidth = viewportWidth - translateX;
-        const availableHeight = side.includes('top') ? top : viewportHeight - bottom;
+            // Check vertical space
+            if (viewportHeight - bottom <= portalHeight && top > portalHeight) {
+                translateY = Math.round(top - portalHeight);
+                side = 'top';
+            }
 
-        this.portal.style.setProperty('--radix-popper-transform-origin', `${side.includes('right') ? '100%' : '0%'} ${side.includes('top') ? '100%' : '0%'}`);
-        this.portal.style.setProperty('--radix-popper-available-width', `${availableWidth}px`);
-        this.portal.style.setProperty('--radix-popper-available-height', `${availableHeight}px`);
-        this.portal.style.setProperty('--radix-popper-anchor-width', `${width}px`);
-        this.portal.style.setProperty('--radix-popper-anchor-height', `${height}px`);
-        this.portal.style.transform = `translate(${translateX}px, ${translateY}px)`;
+            // Adjust horizontal position if it overflows the viewport
+            if (left + portalWidth > viewportWidth) {
+                translateX = Math.max(0, right - portalWidth);
+            }
 
-        this.content.dataset.side = side;
-        this.portal.offsetHeight; // Force a reflow
+            this.portal.style.willChange = 'transform';
+            this.portal.style.zIndex = '50';
+
+            this.portal.style.setProperty('--radix-popper-anchor-width', `${width}px`);
+            this.portal.style.setProperty('--radix-popper-anchor-height', `${height}px`);
+
+            this.content.dataset.side = side;
+            this.portal.style.transform = `translate(${translateX}px, ${translateY}px)`;
+
+            // Force a reflow to ensure styles are applied before the portal becomes visible
+            this.portal.offsetHeight;
+        });
     }
 
     updateScrollButtonVisibility() {

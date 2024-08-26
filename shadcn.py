@@ -810,7 +810,7 @@ def SelectScrollUpButton(cls=None, **kwargs):
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    ico = Lucide(icon="chevron-up", cls="h-4 w-4")
+    ico = Lucide(icon="chevron-up", cls="h-4 w-4 hidden sm:flex")
     return Div(ico, aria_hidden="true",**kwargs)
 
 
@@ -819,7 +819,7 @@ def SelectScrollDownButton(cls=None, **kwargs):
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    ico = Lucide(icon="chevron-down", cls="h-4 w-4")
+    ico = Lucide(icon="chevron-down", cls="h-4 w-4 hidden sm:flex")
     return Div(ico,aria_hidden="true", **kwargs)
 
 
@@ -834,7 +834,7 @@ def SelectContent(*c, cls=None, id=None, **kwargs):
             Div(*c,
             cls=select_viewport_cls,
             role="listbox",
-            style="position: relative; flex: 1 1 0%; overflow: auto;",
+            style="position:relative;flex:1 1 0%;overflow: auto;",
             id=f"{id}-viewport"
         ),
         SelectScrollDownButton(),
@@ -843,22 +843,22 @@ def SelectContent(*c, cls=None, id=None, **kwargs):
         id=f"{id}-content",
         **kwargs
     ), 
-    id=f"{id}-portal", cls="select-portal",
+    id=id,
     )
 
-def SelectGroup(*c, id=None, **kwargs):
-    return Div(*c, id=f"{id}-group", role="group", **kwargs)
+def SelectGroup(*c, **kwargs):
+    return Div(*c, role="group", **kwargs)
 
 
-def SelectLabel(*c, id=None, cls=None, **kwargs):
+def SelectLabel(*c, cls=None, **kwargs):
     new_cls = select_label_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Div(*c, id=f"{id}-label", **kwargs)
+    return Div(*c, **kwargs)
 
 
-def SelectItem(*c, cls=None, checked="false", id=None, value=None, **kwargs):
+def SelectItem(*c, cls=None, checked="false", value=None, **kwargs):
     new_cls = select_item_cls
     span_cls = "absolute left-2 hidden h-3.5 w-3.5 items-center justify-center group-data-[checked=true]:flex"
     ico = Lucide(icon="check", cls="h-4 w-4")
@@ -873,7 +873,6 @@ def SelectItem(*c, cls=None, checked="false", id=None, value=None, **kwargs):
         role="option",
         tabindex=-1,
         aria_selected=checked,
-        id=f"{id}-item",
         **kwargs
     )
 
@@ -887,12 +886,12 @@ def SelectSeparator(id=None, cls=None, **kwargs):
 def Portal(*c, id=None, **kwargs):
     if not id:
         raise ValueError("`id` is required")
-    return Div(*c, id=id, style="position:fixed;left:0;top:0;z-index:50;display:none;min-width:max-content;will-change:transform;", **kwargs)
+    return Div(*c, id=f"{id}-portal", style="position:fixed;left:0;top:0;display:none;",cls="select-portal", **kwargs)
 
 def Select(*c, cls=None, state="closed", placeholder:str=None, label:str=None, items: list = None, id=None, name=None, standard=False, **kwargs):
     if not id:
         raise ValueError("`id` is required")
-    new_cls = "select group relative data-[state=open]:no-bg-scroll contents"
+    new_cls = "select group relative data-[state=open]:no-bg-scroll"
     value_holder = Hidden(value="", name=name, id=f"{id}-input")
     render_items = ()
 
@@ -904,11 +903,11 @@ def Select(*c, cls=None, state="closed", placeholder:str=None, label:str=None, i
         return Div(value_holder, *c, data_state=state, id=id, role="combobox", aria_controls=f"{id}-content", aria_expanded="false", aria_haspopup="listbox", **kwargs)
 
     if items:
-        render_items = (SelectItem(item, value=item) for item in items)
+        render_items = (SelectItem(item, value=item.lower(), name=item) for item in items)
 
     select_trigger = SelectTrigger(SelectValue(placeholder))
     select_content = SelectContent(
-            SelectGroup(SelectLabel(label, id=id), *render_items, aria_labelledby=f"{id}-label", id=id),
+            SelectGroup(SelectLabel(label), *render_items),
             id=id
         ),
 

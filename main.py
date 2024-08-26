@@ -87,12 +87,12 @@ def source_code():
     return (
         Div(
             Span(
-                Lucide(icon="chevron-right", cls="size-4"),
+                Lucide(icon="terminal", cls="size-4"),
                 P(
                     "source code",
-                    style="font-variant:small-caps; font-size:1rem; font-weight:600; letter-spacing:0.05rem;"
+                    style="font-variant:small-caps; font-size:1.1rem; font-weight:600; letter-spacing:-0.05rem;"
                 ),
-                cls="text-center col-span-2 flex items-center gap-1 justify-start text-sm font-mono select-none bg-slate-900 p-1 border border-inset border-accent text-green-600",
+                cls="text-center col-span-2 gap-1.5 flex items-center justify-start text-sm font-mono select-none dark:bg-slate-900 bg-slate-700 p-1 border border-inset border-accent text-green-400 dark:text-green-600",
             ),
             Span(
                 Lucide(

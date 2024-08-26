@@ -1,12 +1,15 @@
 *This documentation is a work in progress. I appreciate your patience and feedback as I continue to build upon the repo. All credits go to <a href="https://x.com/shadcn" target="_blank">@Shadcn</a> for the component styles and <a href="https://x.com/jeremyphoward" target="_blank">@JeremyPHoward</a> for the fastHtml framework.*
 
+>[!WARNING]
+> The project is currently undergoing major refactoring and will continue to be. As such, breaking changes will most likely occur. Refer to the docs below for the latest information and installation methods.
+
 ## Quick Start Guide
 
 ### Setup & Installation
 
 Getting started with Shadcn UI for FastHTML is quick and easy. Follow these simple steps to set up your project:
 
-1. Copy the `shadcn.py` file from the GitHub repository into your FastHTML project directory.
+1. Copy the `shadcn.py` and `shadscripts.js` file from the GitHub repository into your FastHTML project directory, making sure they are both in the root directory.
 
 > [!NOTE]
 >A pip module will be available in the near future. This is a temporary solution.
@@ -73,7 +76,7 @@ To implement Shadcn UI components in your codebase, refer to the relevant compon
 
 * Add type assertions for all component attributes, with proper error handling and documentation.
 
-* Table demo - theme toggle fix
+* Complete aria attributes for all components. Enhance and optimize the JS implementation.
 
 * **IN PROGRESS** Documentation fixing and cleaning up.
 

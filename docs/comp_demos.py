@@ -1,3 +1,4 @@
+import uuid
 from docs.comp_code import code_dict, dummy_data
 from fasthtml.common import *
 from fasthtml.components import Zero_md
@@ -14,7 +15,7 @@ def ThemeToggle(variant="outline", cls=None, **kwargs):
         Lucide(icon="moon", id="theme-icon-moon"),
         variant=variant,
         size="icon",
-        cls=f"theme-toggle + {cls}",
+        cls=f"theme-toggle {cls}",
         **kwargs,
     )
 
@@ -172,28 +173,72 @@ def CardAltBlock():
     )
 
 
-def select_block():
+def SelectAltBlock():
+    id = uuid.uuid4().hex[:8]
     return (
         Block(
             Select(
                 SelectTrigger(
-                    SelectValue(placeholder="Pick a fruit"),
-                    cls="w-[180px]",
+                    SelectValue(placeholder="Choose a coding language"),
+                    cls="w-[250px]",
                 ),
                 SelectContent(
-                    SelectLabel("Fruits"),
-                    SelectItem("Apple", value="apple"),
-                    SelectItem("Banana", value="banana"),
-                    SelectItem("Blueberry", value="blueberry"),
-                    SelectItem("Pineapple", value="pineapple"),
-                    SelectItem("Orange", value="orange"),
-                    SelectItem("Mango", value="mango"),
-                    SelectItem("Guava", value="guava"),
-                    SelectItem("Watermelon", value="watermelon"),
+                    SelectGroup(
+                        SelectLabel("Popular Languages"),
+                        SelectItem("Python", value="python"),
+                        SelectItem("JavaScript", value="javascript"),
+                        SelectItem("Java", value="java"),
+                        SelectItem("C++", value="cpp"),
+                        SelectItem("TypeScript", value="typescript"),
+                        SelectItem("PHP", value="php"),
+                        SelectItem("C#", value="csharp"),
+                    ),
+                    SelectSeparator(),
+                    SelectGroup(
+                        SelectLabel("Functional Languages"),
+                        SelectItem("Haskell", value="haskell"),
+                        SelectItem("Erlang", value="erlang"),
+                        SelectItem("Elixir", value="elixir"),
+                        SelectItem("Clojure", value="clojure"),
+                        SelectItem("Scala", value="scala"),
+                    ),
+                    SelectSeparator(),
+                    SelectGroup(
+                        SelectLabel("Other Languages"),
+                        SelectItem("Ruby", value="ruby"),
+                        SelectItem("Go", value="go"),
+                        SelectItem("Rust", value="rust"),
+                        SelectItem("Swift", value="swift"),
+                        SelectItem("Kotlin", value="kotlin"),
+                        SelectItem("R", value="r"),
+                        SelectItem("Perl", value="perl"),
+                        SelectItem("Groovy", value="groovy"),
+                    ),
+                    id=id,
                 ),
+                standard=True,
+                id=id,
+                name="select-alt"
+            ),
+            id="select2",
+        ),
+    )
+
+def select_block():
+    return (
+        Block(
+            Select(
+                placeholder="Pick a fruit",
+                label="Fruits",
+                items=["Apple", "Banana", "Blueberry", "Pineapple", "Orange"],
+                id="select-demo",
+                name="select-demo",
+                cls="[&>.select-trigger]:w-[180px]",
             ),
             id="select",
         ),
+        H2("Scrolling demo", cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4"),
+        SelectAltBlock(),
     )
 
 
@@ -209,7 +254,6 @@ def AlertAltBlock():
                 cls="max-w-[80%]",
             ),
             id="alert2",
-            name="Destructive",
         ),
     )
 
@@ -437,84 +481,7 @@ def progress_block():
             ),
             id="progress",
         ),
-        H2(
-            "Alternate Demo (JS + EventStream)",
-            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
-        ),
-        # ProgressAltBlock(),
     )
-
-
-# progress_script = Script(
-#     """function startProgress(elt) {
-#         const inner = elt.querySelector('#progress-bar-js-inner');
-#         const progress = elt.querySelector('#progress-bar-js');
-#         const button = elt.querySelector('#progress-button');
-#         const button_text = button.querySelector('span')
-#         const icon = elt.querySelector('#progress-loader');
-
-#         const eventSource = new EventSource('/progress-stream');
-
-#         progress.dataset.state = 'visible';
-
-#         icon.classList.remove('hidden');
-
-#         button_text.innerHTML = 'Posting';
-
-#         button.disabled = true;
-
-#         eventSource.onmessage = function(event) {
-#             const data = JSON.parse(event.data);
-
-#             inner.style.transform = `translateX(-${100 - (data.progress / data.total * 100)}%)`;
-
-#             if (data.progress === data.total) {
-#                 icon.classList.add('hidden');
-#                 button.disabled = false;
-#                 button_text.innerHTML = 'Restart';
-#                 eventSource.close();
-#             }
-#         };
-#         eventSource.onerror = function(error) {
-#             console.error('EventSource failed:', error);
-#             eventSource.close();
-#         };
-#     }
-#     """
-# )
-
-
-# def ProgressAltBlock():
-#     return (
-#         Block(
-#             Div(
-#                 Button(
-#                     Lucide(
-#                         icon="loader-circle",
-#                         cls="hidden size-4 animate-spin mr-1.5",
-#                         id="progress-loader",
-#                     ),
-#                     Span("Post"),
-#                     cls="max-w-fit",
-#                     id="progress-button",
-#                     disabled=True,
-#                 ),
-#                 Badge("Work in progress", variant="destructive"),
-#                 # Progress(
-#                 #     id="progress-bar-js",
-#                 #     cls="data-[state=hidden]:hidden data-[state=visible]:animate-in data-[state=visible]:fade-in-0 data-[state=visible]:zoom-in-95",
-#                 #     data_state="hidden",
-#                 # ),
-#                 # progress_script,
-#                 cls="grid place-items-center w-[80%] gap-4",
-#                 # hx_post="/job",
-#                 # hx_swap="none",
-#                 # hx_on__before_request="startProgress(this)",
-#             ),
-#             id="progress2",
-#         ),
-#     )
-
 
 def DialogAltBlock():
     return Block(

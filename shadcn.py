@@ -1,4 +1,5 @@
 import sys
+import uuid
 
 from fasthtml.common import *
 from fasthtml.components import Button as OgButton
@@ -69,262 +70,8 @@ __all__ = [
 
 def ShadHead(lucide_link=True, tw_link=False):
 
-    shad_scripts = """
-    function toggleCheckbox(e) {
-    e.dataset.state = e.dataset.state === 'unchecked' ? 'checked' : 'unchecked';
-    e.querySelector('input').checked = e.dataset.state === 'checked';
-    }
-
-  function proc_htmx(sel, func) {
-  htmx.onLoad(elt => {
-    const elements = any(sel, elt, false);
-    if (elt.matches && elt.matches(sel)) elements.unshift(elt);
-    elements.forEach(func);
-  });
-}
-
-  proc_htmx('.theme-toggle', elt => {
-    elt.addEventListener('mousedown', event => {
-        const sunIcon = elt.querySelector('#theme-icon-sun');
-        const moonIcon = elt.querySelector('#theme-icon-moon');
-        event.preventDefault();
-        const zeroMd = document.querySelectorAll('zero-md');
-
-        if(localStorage.theme === 'dark' || document.documentElement.classList.contains('dark')) {
-            localStorage.theme = 'light'
-            document.documentElement.classList.remove('dark');
-        } else {
-            localStorage.theme = 'dark'
-            document.documentElement.classList.add('dark');
-        }
-        swapTheme();
-        zeroMd.forEach(zeroMd => {
-            if (zeroMd.shadowRoot) {
-                const links = zeroMd.shadowRoot.querySelectorAll('link');
-                links.forEach(link => handleMdThemeChange(link));
-            } else {
-            console.log('No shadow roots found');
-            }
-        });
-    })
-  })
-
-  proc_htmx('.preventdbclick', elt => {
-    elt.addEventListener('mousedown', event => {
-    if (event.detail > 1) event.preventDefault();
-    })
-  })
-
-  proc_htmx('.select', select => {
-    content = select.querySelector('.select-content');
-
-    function toggleClose() {
-      select.dataset.state = 'closed'
-      content.dataset.state= 'closed'
-    }
-
-   document.body.addEventListener('mousedown', event => {
-    if (!select.contains(event.target) && select.dataset.state === 'open') {
-      toggleClose();
-    }
-  })
-
-    const scrollUpBtn = select.querySelector('.scroll-up');
-    const scrollDownBtn = select.querySelector('.scroll-down');
-    viewport = select.querySelector('.viewport')
-    let scrollInterval;
-
-    function scrollContent(direction) {
-        const scrollAmount = direction === 'up' ? -5 : 5;
-        viewport.scrollTop += scrollAmount;
-    }
-
-    function startScrolling(direction) {
-        scrollInterval = setInterval(() => scrollContent(direction), 10);
-    }
-
-    function stopScrolling() {
-        clearInterval(scrollInterval);
-    }
-
-    function updateButtonVisibility() {
-        const isAtTop = viewport.scrollTop === 0;
-        const isAtBottom = viewport.scrollHeight - viewport.clientHeight <= viewport.scrollTop + 1;
-
-        scrollUpBtn.style.visibility = isAtTop ? 'hidden' : 'visible'
-        scrollDownBtn.style.visibility = isAtBottom ? 'hidden' : 'visible'
-    }
-
-    scrollUpBtn.addEventListener('mouseenter', () => startScrolling('up'));
-    scrollUpBtn.addEventListener('mouseleave', stopScrolling);
-
-    scrollDownBtn.addEventListener('mouseenter', () => startScrolling('down'));
-    scrollDownBtn.addEventListener('mouseleave', stopScrolling);
-
-    viewport.addEventListener('scroll', updateButtonVisibility);
-
-  select.addEventListener('mousedown', event => {
-    event.preventDefault();
-    trigger = select.querySelector('.select-trigger');
-    
-    inputval = select.querySelector('input').value;
-
-    newState = select.dataset.state === 'open' ? 'closed':'open';
-
-    if(trigger.contains(event.target)) {
-      openSide = select.getBoundingClientRect();
-      distBottom = window.innerHeight - openSide.bottom
-      switch(openSide.top > distBottom) {
-        case true:
-          content.dataset.side = 'top'
-          break;
-        case false:
-          content.dataset.side = 'bottom'
-          break;
-      }
-      select.dataset.state = newState
-      content.dataset.state=newState
-      return
-    } 
-
-    if(event.target.classList.contains('select-item')) {
-      const item = event.target;
-      if(inputval === item.getAttribute('value')) {
-        toggleClose();
-        return;
-      }
-
-      if(inputval !== 'undefined') {
-        const oldItem = content.querySelector(`.select-item[value="${inputval}"]`);
-        oldItem.dataset.checked = 'false';
-        oldItem.querySelector('span').dataset.checked = 'false';
-      }
-
-      item.dataset.checked = 'true';
-      item.querySelector('span').dataset.checked = 'true';
-
-      select.querySelector('.select-value').innerHTML = item.textContent;
-      select.querySelector('input').value= item.getAttribute('value');
-      trigger.focus();
-      toggleClose();
-    }
-  })
-  })
-
-  function openSheet(button) {
-    const sheet = document.querySelector(`#${button.getAttribute('sheet-id')}`);
-    sheet.dataset.state = 'open'
-    sheet.style.display = 'block';
-  }
-
-  proc_htmx('.sheet', elt => {
-    var fragment = document.createDocumentFragment();
-
-    fragment.appendChild(elt);
-
-    document.body.appendChild(fragment);
-
-    const overlay = elt.querySelector('.sheet-overlay');
-    const closeIcon = elt.querySelector('.sheet-close-x');
-    const closeBtn = elt.querySelector('.sheet-close-button');
-
-    function toggleClose() {
-    elt.dataset.state = 'closed'
-    setTimeout(() => elt.style.display = 'none', 110);
-  }
-
-    if (overlay) overlay.addEventListener('mousedown', toggleClose)
-    if (closeBtn) closeBtn.addEventListener('mousedown', toggleClose)
-    if (closeIcon) closeIcon.addEventListener('mousedown', toggleClose)
-
-  });
-
-function openDialog(button) {
-    const dialog = document.querySelector(`#${button.getAttribute('dialog-id')}`);
-    dialog.dataset.state = 'open'
-    dialog.style.display = 'block';
-  }
-
-  proc_htmx('.dialog', dialog => {
-    var fragment = document.createDocumentFragment();
-
-    fragment.appendChild(dialog);
-
-    document.body.appendChild(fragment);
-
-    const overlay = dialog.querySelector('.dialog-overlay');
-    const closeIcon = dialog.querySelector('.dialog-close-btn');
-    const closeBtn = dialog.querySelector('.dialog-close-button');
-
-    function toggleClose() {
-        dialog.dataset.state = 'closed'
-        setTimeout(() => dialog.style.display = 'none', 110);
-    }
-
-    if (overlay) overlay.addEventListener('mousedown', toggleClose)
-    if (closeBtn) closeBtn.addEventListener('mousedown', toggleClose)
-    if (closeIcon) closeIcon.addEventListener('mousedown', toggleClose)
-  });
-
-  proc_htmx('#toast-container', function(toast) {
-  let dismissTimeout;
-  const closeButton = toast.querySelector('.toast-close-button');
-  const duration = 6000;
-
-  function dismissToast() {
-    clearTimeout(dismissTimeout);
-    toast.style.transform = 'translateX(100%)';
-    setTimeout(() => toast.remove(), 300);
-  }
-
-  function resetTimer() {
-    clearTimeout(dismissTimeout);
-    dismissTimeout = setTimeout(dismissToast, duration);
-  }
-
-  // Mouse drag functionality
-  let isDragging = false;
-  let startX;
-  let originalTransform;
-  const threshold = 100;
-
-  toast.addEventListener('mousedown', e => {
-    e.preventDefault(); // Prevent text selection
-    toast.style.transition = 'none';
-    isDragging = true;
-    startX = e.clientX;
-    originalTransform = window.getComputedStyle(toast).transform;
-
-  });
-
-  toast.addEventListener('mousemove', e => {
-    if (!isDragging) return
-    resetTimer();
-    let deltaX = e.clientX - startX;
-    if (deltaX > 0) {
-      toast.style.transform = `translateX(${deltaX}px)`;
-    }
-  });
-
-  toast.addEventListener('mouseup', e => {
-    if (!isDragging) return;
-    toast.style.transition = 'transform 0.2s';
-    isDragging = false;
-    let deltaX = e.clientX - startX;
-    if (deltaX >= threshold) {
-      dismissToast();
-    } else {
-      toast.style.transform = 'translateX(0)';
-    }
-  });
-
-if (closeButton) closeButton.addEventListener('click', dismissToast);
-
-  toast.addEventListener('mouseleave', resetTimer);
-
-  resetTimer();
-});
-    """
+    with open('shadscripts.js', 'r') as file:
+        shad_scripts = file.read()
 
     load_lucide = """
     import 'https://unpkg.com/lucide@latest';
@@ -435,15 +182,13 @@ table_head_cls = "h-12 px-4 text-left align-middle font-medium text-muted-foregr
 table_cell_cls = "p-4 align-middle [&:has([role=checkbox])]:pr-0"
 checkbox_base_cls = "preventdbclick peer group h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
 checkbox_indicator_cls = "preventdbclick flex items-center justify-center text-current group-data-[state=unchecked]:hidden"
-select_trigger_cls = "select-trigger cursor-pointer flex h-10 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+select_trigger_cls = "select-trigger flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
 select_scrollup_cls = "scroll-up flex cursor-default items-center justify-center py-1"
-select_scrolldown_cls = (
-    "scroll-down flex cursor-default items-center justify-center py-1"
-)
-select_content_cls = "absolute min-w-full h-fit w-fit data-[side=top]:bottom-11 data-[side=bottom]:top-11 select-content data-[state=open]:no-bg-scroll z-50 max-h-96 rounded-md border bg-popover text-popover-foreground shadow-md data-[state=closed]:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
-select_label_cls = "py-1.5 pl-8 pr-2 text-sm font-semibold"
-select_item_cls = "select-item relative flex w-full cursor-default select-none hover:bg-muted items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[checked=true]:bg-muted data-[disabled]:opacity-50"
+select_scrolldown_cls = "scroll-down flex cursor-default items-center justify-center py-1"
+select_content_cls = "select-content relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
+select_item_cls = "group select-item relative flex w-full cursor-default select-none hover:bg-muted items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[checked=true]:bg-muted data-[disabled]:opacity-50"
 select_separator_cls = "-mx-1 my-1 h-px bg-muted"
+select_label_cls = "py-1.5 pl-8 pr-2 text-sm font-semibold"
 sheet_overlay_cls = "sheet-overlay group-data-[state=open]:no-bg-scroll fixed inset-0 z-50 bg-black/80 group-data-[state=open]:animate-in group-data-[state=closed]:animate-out group-data-[state=closed]:fade-out-0 group-data-[state=open]:fade-in-0"
 sheet_variants_cls = {
     "top": "inset-x-0 top-0 border-b group-data-[state=closed]:slide-out-to-top group-data-[state=open]:slide-in-from-top",
@@ -457,6 +202,8 @@ sheet_header_cls = "flex flex-col space-y-2 text-center sm:text-left"
 sheet_footer_cls = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
 sheet_title_cls = "text-lg font-semibold text-foreground"
 sheet_description_cls = "text-sm text-muted-foreground"
+select_content_styles_ = "box-sizing: border-box; display: flex; flex-direction: column; outline: none; --radix-select-content-transform-origin: var(--radix-popper-transform-origin); --radix-select-content-available-width: var(--radix-popper-available-width); --radix-select-content-available-height: var(--radix-popper-available-height); --radix-select-trigger-width: var(--radix-popper-anchor-width); --radix-select-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
+select_viewport_cls = "viewport p-1 h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] no-scrollbar"
 
 
 def Button(*c, size="default", variant="default", cls=None, **kwargs):
@@ -1047,11 +794,11 @@ def SelectTrigger(*c, cls=None, **kwargs):
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Div(*c, ico, tabindex=-1, **kwargs)
+    return ft_hx('button', *c, ico, **kwargs)
 
 
 def SelectValue(placeholder=None, cls=None, **kwargs):
-    new_cls = "select-value overflow-hidden text-ellipsis"
+    new_cls = "select-value pointer-events-none"
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
@@ -1064,7 +811,7 @@ def SelectScrollUpButton(cls=None, **kwargs):
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     ico = Lucide(icon="chevron-up", cls="h-4 w-4")
-    return Span(ico, style="visibility:hidden", **kwargs)
+    return Div(ico, aria_hidden="true",**kwargs)
 
 
 def SelectScrollDownButton(cls=None, **kwargs):
@@ -1073,64 +820,110 @@ def SelectScrollDownButton(cls=None, **kwargs):
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     ico = Lucide(icon="chevron-down", cls="h-4 w-4")
-    return Span(ico, **kwargs)
+    return Div(ico,aria_hidden="true", **kwargs)
 
 
-def SelectContent(*c, cls=None, **kwargs):
+def SelectContent(*c, cls=None, id=None, **kwargs):
+    if not id:
+        raise ValueError("`id` is required")
     new_cls = select_content_cls
-    scrollUp = SelectScrollUpButton()
-    scrollDown = SelectScrollDownButton()
-    viewport = Div(
-        *c,
-        cls="viewport overflow-y-scroll p-1 h-[188px] w-full min-w-[8rem] no-scrollbar",
-    )
-
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Div(scrollUp, viewport, scrollDown, data_state="closed", **kwargs)
+    return Portal(Div(SelectScrollUpButton(),
+            Div(*c,
+            cls=select_viewport_cls,
+            role="listbox",
+            style="position: relative; flex: 1 1 0%; overflow: auto;",
+            id=f"{id}-viewport"
+        ),
+        SelectScrollDownButton(),
+        tabindex="-1",
+        style=select_content_styles_,
+        id=f"{id}-content",
+        **kwargs
+    ), 
+    id=f"{id}-portal", cls="select-portal",
+    )
+
+def SelectGroup(*c, id=None, **kwargs):
+    return Div(*c, id=f"{id}-group", role="group", **kwargs)
 
 
-def SelectGroup(*c, **kwargs):
-    return Optgroup(*c, **kwargs)
-
-
-def SelectLabel(*c, cls=None, **kwargs):
+def SelectLabel(*c, id=None, cls=None, **kwargs):
     new_cls = select_label_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Label(*c, **kwargs)
+    return Div(*c, id=f"{id}-label", **kwargs)
 
 
-def SelectItem(*c, cls=None, checked="false", value=None, **kwargs):
+def SelectItem(*c, cls=None, checked="false", id=None, value=None, **kwargs):
     new_cls = select_item_cls
-    span_cls = "absolute left-2 flex h-3.5 w-3.5 items-center justify-center data-[checked=false]:hidden"
-    ico = Lucide(icon="check", cls=f"h-4 w-4")
+    span_cls = "absolute left-2 hidden h-3.5 w-3.5 items-center justify-center group-data-[checked=true]:flex"
+    ico = Lucide(icon="check", cls="h-4 w-4")
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Div(
-        Span(ico, cls=span_cls, data_checked=checked),
-        value=value,
-        *c,
+        Span(ico, cls=span_cls),
+        Span(*c),
         data_checked=checked,
-        **kwargs,
+        value=value,
+        role="option",
+        tabindex=-1,
+        aria_selected=checked,
+        id=f"{id}-item",
+        **kwargs
     )
 
-
-def SelectSeparator(**kwargs):
-    return Hr(cls=select_separator_cls, **kwargs)
-
-
-def Select(*c, cls=None, state="closed", id=None, name=None, **kwargs):
-    new_cls = "select relative w-fit"
+def SelectSeparator(id=None, cls=None, **kwargs):   
+    new_cls = select_separator_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    value_holder = Hidden(value="undefined", name=name, id=id)
-    return Div(value_holder, *c, data_state=state, **kwargs)
+    return Hr(id=f"{id}-separator", **kwargs)
 
+def Portal(*c, id=None, **kwargs):
+    if not id:
+        raise ValueError("`id` is required")
+    return Div(*c, id=id, style="position:fixed;left:0;top:0;z-index:50;display:none;min-width:max-content;will-change:transform;", **kwargs)
+
+def Select(*c, cls=None, state="closed", placeholder:str=None, label:str=None, items: list = None, id=None, name=None, standard=False, **kwargs):
+    if not id:
+        raise ValueError("`id` is required")
+    new_cls = "select group relative data-[state=open]:no-bg-scroll contents"
+    value_holder = Hidden(value="", name=name, id=f"{id}-input")
+    render_items = ()
+
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+
+    if standard:
+        return Div(value_holder, *c, data_state=state, id=id, role="combobox", aria_controls=f"{id}-content", aria_expanded="false", aria_haspopup="listbox", **kwargs)
+
+    if items:
+        render_items = (SelectItem(item, value=item) for item in items)
+
+    select_trigger = SelectTrigger(SelectValue(placeholder))
+    select_content = SelectContent(
+            SelectGroup(SelectLabel(label, id=id), *render_items, aria_labelledby=f"{id}-label", id=id),
+            id=id
+        ),
+
+    return Div(
+        value_holder,
+        select_trigger,
+        select_content,
+        data_state=state,
+        id=id,
+        role="combobox",
+        aria_controls=f"{id}-content",
+        aria_expanded="false",
+        aria_haspopup="listbox",
+        **kwargs
+    )
 
 component_map = [
     Button,

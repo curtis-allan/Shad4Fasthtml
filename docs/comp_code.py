@@ -394,24 +394,11 @@ Div(
         ),
         cls="max-w-[80%] mx-auto mt-5",
     ),""",
-    "select": """
-Select(
-    SelectTrigger(
-        SelectValue(placeholder="Pick a fruit"),
-        cls="w-[180px]",
-    ),
-    SelectContent(
-        SelectLabel("Fruits"),
-        SelectItem("Apple", value="apple"),
-        SelectItem("Banana", value="banana"),
-        SelectItem("Blueberry", value="blueberry"),
-        SelectItem("Pineapple", value="pineapple"),
-        SelectItem("Orange", value="orange"),
-        SelectItem("Mango", value="mango"),
-        SelectItem("Guava", value="guava"),
-        SelectItem("Watermelon", value="watermelon"),
-    ),
-),""",
+    "select": """Select(
+    placeholder="Pick a fruit",
+    label="Fruits",
+    items=["Apple", "Banana", "Blueberry", "Pineapple", "Orange", "Mango", "Guava", "Watermelon"],
+    )""",
     "checkbox": """
 Div(
     Checkbox(id="terms1"),
@@ -518,5 +505,21 @@ Div(
         cls="flex items-center justify-between",
     ),
     cls="grid gap-3 w-[215px]",
-)""",
+)""","select2": """Select(
+    SelectTrigger(
+        SelectValue(placeholder="Pick a fruit"),
+        cls="w-[180px]",
+    ),
+    SelectContent(
+        SelectLabel("Fruits"),
+        SelectItem("Apple", value="apple"),
+        SelectItem("Banana", value="banana"),
+        SelectItem("Blueberry", value="blueberry"),
+        SelectItem("Pineapple", value="pineapple"),
+        SelectItem("Orange", value="orange"),
+        SelectItem("Mango", value="mango"),
+        SelectItem("Guava", value="guava"),
+        SelectItem("Watermelon", value="watermelon"),
+    ),
+)"""
 }

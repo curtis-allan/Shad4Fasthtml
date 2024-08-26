@@ -1,4 +1,5 @@
 import sys
+import uuid
 
 from fasthtml.common import *
 from fasthtml.components import Button as OgButton
@@ -33,6 +34,7 @@ __all__ = [
     "DialogContent",
     "DialogFooter",
     "DialogTrigger",
+    "DialogCloseButton",
     "Button",
     "Input",
     "Textarea",
@@ -55,7 +57,6 @@ __all__ = [
     "SelectTrigger",
     "SelectGroup",
     "SelectValue",
-    "ThemeToggle",
     "Sheet",
     "SheetHeader",
     "SheetFooter",
@@ -67,670 +68,40 @@ __all__ = [
 ]
 
 
-def ShadHead(lucid=True):
-    tw_import = "https://cdn.tailwindcss.com"
+def ShadHead(lucide_link=True, tw_link=False):
 
-    tw_config = """
-    function filterDefault(values) {
-	return Object.fromEntries(
-		Object.entries(values).filter(([key]) => key !== "DEFAULT"),
-	)
-}
+    with open('shadscripts.js', 'r') as file:
+        shad_scripts = file.read()
 
-    tailwind.config = {
-    darkMode: 'selector',
-    theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
-    extend: {
-        animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-      },
-        animationDelay: ({ theme }) => ({
-					...theme("transitionDelay"),
-				}),
-				animationDuration: ({ theme }) => ({
-					0: "0ms",
-					...theme("transitionDuration"),
-				}),
-				animationTimingFunction: ({ theme }) => ({
-					...theme("transitionTimingFunction"),
-				}),
-				animationFillMode: {
-					none: "none",
-					forwards: "forwards",
-					backwards: "backwards",
-					both: "both",
-				},
-				animationDirection: {
-					normal: "normal",
-					reverse: "reverse",
-					alternate: "alternate",
-					"alternate-reverse": "alternate-reverse",
-				},
-				animationOpacity: ({ theme }) => ({
-					DEFAULT: 0,
-					...theme("opacity"),
-				}),
-				animationTranslate: ({ theme }) => ({
-					DEFAULT: "100%",
-					...theme("translate"),
-				}),
-				animationScale: ({ theme }) => ({
-					DEFAULT: 0,
-					...theme("scale"),
-				}),
-				animationRotate: ({ theme }) => ({
-					DEFAULT: "30deg",
-					...theme("rotate"),
-				}),
-				animationRepeat: {
-					0: "0",
-					1: "1",
-					infinite: "infinite",
-				},
-				keyframes: {
-					enter: {
-						from: {
-							opacity: "var(--tw-enter-opacity, 1)",
-							transform:
-								"translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0))",
-						},
-					},
-					exit: {
-						to: {
-							opacity: "var(--tw-exit-opacity, 1)",
-							transform:
-								"translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0))",
-						},
-					},
-				},
-      colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-      },
-      borderRadius: {
-        lg: `var(--radius)`,
-        md: `calc(var(--radius) - 2px)`,
-        sm: "calc(var(--radius) - 4px)",
-      },
-      },
-  },
-  plugins: [
-	function ({ addUtilities, matchUtilities, theme }) {
-		addUtilities({
-			"@keyframes enter": theme("keyframes.enter"),
-			"@keyframes exit": theme("keyframes.exit"),
-			".animate-in": {
-				animationName: "enter",
-				animationDuration: theme("animationDuration.DEFAULT"),
-				"--tw-enter-opacity": "initial",
-				"--tw-enter-scale": "initial",
-				"--tw-enter-rotate": "initial",
-				"--tw-enter-translate-x": "initial",
-				"--tw-enter-translate-y": "initial",
-			},
-			".animate-out": {
-				animationName: "exit",
-				animationDuration: theme("animationDuration.DEFAULT"),
-				"--tw-exit-opacity": "initial",
-				"--tw-exit-scale": "initial",
-				"--tw-exit-rotate": "initial",
-				"--tw-exit-translate-x": "initial",
-				"--tw-exit-translate-y": "initial",
-			},
-		})
+    load_lucide = """
+    import 'https://unpkg.com/lucide@latest';
 
-		matchUtilities(
-			{
-				"fade-in": (value) => ({ "--tw-enter-opacity": value }),
-				"fade-out": (value) => ({ "--tw-exit-opacity": value }),
-			},
-			{ values: theme("animationOpacity") },
-		)
-
-		matchUtilities(
-			{
-				"zoom-in": (value) => ({ "--tw-enter-scale": value }),
-				"zoom-out": (value) => ({ "--tw-exit-scale": value }),
-			},
-			{ values: theme("animationScale") },
-		)
-
-		matchUtilities(
-			{
-				"spin-in": (value) => ({ "--tw-enter-rotate": value }),
-				"spin-out": (value) => ({ "--tw-exit-rotate": value }),
-			},
-			{ values: theme("animationRotate") },
-		)
-
-		matchUtilities(
-			{
-				"slide-in-from-top": (value) => ({
-					"--tw-enter-translate-y": `-${value}`,
-				}),
-				"slide-in-from-bottom": (value) => ({
-					"--tw-enter-translate-y": value,
-				}),
-				"slide-in-from-left": (value) => ({
-					"--tw-enter-translate-x": `-${value}`,
-				}),
-				"slide-in-from-right": (value) => ({
-					"--tw-enter-translate-x": value,
-				}),
-				"slide-out-to-top": (value) => ({
-					"--tw-exit-translate-y": `-${value}`,
-				}),
-				"slide-out-to-bottom": (value) => ({
-					"--tw-exit-translate-y": value,
-				}),
-				"slide-out-to-left": (value) => ({
-					"--tw-exit-translate-x": `-${value}`,
-				}),
-				"slide-out-to-right": (value) => ({
-					"--tw-exit-translate-x": value,
-				}),
-			},
-			{ values: theme("animationTranslate") },
-		)
-
-		matchUtilities(
-			{ duration: (value) => ({ animationDuration: value }) },
-			{ values: filterDefault(theme("animationDuration")) },
-		)
-
-		matchUtilities(
-			{ delay: (value) => ({ animationDelay: value }) },
-			{ values: theme("animationDelay") },
-		)
-
-		matchUtilities(
-			{ ease: (value) => ({ animationTimingFunction: value }) },
-			{ values: filterDefault(theme("animationTimingFunction")) },
-		)
-
-		addUtilities({
-			".running": { animationPlayState: "running" },
-			".paused": { animationPlayState: "paused" },
-		})
-
-		matchUtilities(
-			{ "fill-mode": (value) => ({ animationFillMode: value }) },
-			{ values: theme("animationFillMode") },
-		)
-
-		matchUtilities(
-			{ direction: (value) => ({ animationDirection: value }) },
-			{ values: theme("animationDirection") },
-		)
-
-		matchUtilities(
-			{ repeat: (value) => ({ animationIterationCount: value }) },
-			{ values: theme("animationRepeat") },
-		)
-	},
-  ],
-}"""
-
-    tw_globals = """
-    @tailwind base;
-    @tailwind components;
-    @tailwind utilities;
-    
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-  }
-
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
-}
-
-@layer base {
-:root:has(.no-bg-scroll) {
-  overflow:hidden;
-}
-  * {
-    @apply border-border antialiased;
-  }
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-}
-
-@layer utilities {
-      /* Hide scrollbar for Chrome, Safari and Opera */
-      .no-scrollbar::-webkit-scrollbar {
-          display: none;
-      }
-     /* Hide scrollbar for IE, Edge and Firefox */
-      .no-scrollbar {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
-    }
-  }
-
-@keyframes slideInFromTop {
-  from { transform: translateY(-100%); }
-  to { transform: translateY(0); }
-}
-
-@keyframes slideInFromBottom {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
-.toast {
-  animation-duration: 0.2s;
-  animation-fill-mode: forwards;
-}
-
-@media (max-width: 640px) {
-  .toast {
-    animation-name: slideInFromTop;
-  }
-}
-
-@media (min-width: 641px) {
-  .toast {
-    animation-name: slideInFromBottom;
-  }
-}
-"""
-
-    shad_scripts = """
-    function toggleCheckbox(e) {
-    e.dataset.state = e.dataset.state === 'unchecked' ? 'checked' : 'unchecked';
-    e.querySelector('input').checked = e.dataset.state === 'checked';
-    }
-
-  function proc_htmx(sel, func) {
-  htmx.onLoad(elt => {
-    const elements = any(sel, elt, false);
-    if (elt.matches && elt.matches(sel)) elements.unshift(elt);
-    elements.forEach(func);
-  });
-}
-
-  proc_htmx('.theme-toggle', elt => {
-    elt.addEventListener('mousedown', event => {
-    event.preventDefault();
-      document.documentElement.classList.toggle('dark');
-      const sunIcon = elt.querySelector('#theme-icon-sun');
-      const moonIcon = elt.querySelector('#theme-icon-moon');
-
-      if(sunIcon) sunIcon.classList.toggle('hidden');
-      if(moonIcon) moonIcon.classList.toggle('hidden');
-    })
-  })
-
-  proc_htmx('.preventdbclick', elt => {
-    elt.addEventListener('mousedown', event => {
-    if (event.detail > 1) event.preventDefault();
-    })
-  })
-
-  proc_htmx('.select', select => {
-    content = select.querySelector('.select-content');
-
-    function toggleClose() {
-      select.dataset.state = 'closed'
-      content.dataset.state= 'closed'
-    }
-
-   document.body.addEventListener('mousedown', event => {
-    if (!select.contains(event.target) && select.dataset.state === 'open') {
-      toggleClose();
-    }
-  })
-
-    const scrollUpBtn = select.querySelector('.scroll-up');
-    const scrollDownBtn = select.querySelector('.scroll-down');
-    viewport = select.querySelector('.viewport')
-    let scrollInterval;
-
-    function scrollContent(direction) {
-        const scrollAmount = direction === 'up' ? -5 : 5;
-        viewport.scrollTop += scrollAmount;
-    }
-
-    function startScrolling(direction) {
-        scrollInterval = setInterval(() => scrollContent(direction), 10);
-    }
-
-    function stopScrolling() {
-        clearInterval(scrollInterval);
-    }
-
-    function updateButtonVisibility() {
-        const isAtTop = viewport.scrollTop === 0;
-        const isAtBottom = viewport.scrollHeight - viewport.clientHeight <= viewport.scrollTop + 1;
-
-        scrollUpBtn.style.visibility = isAtTop ? 'hidden' : 'visible'
-        scrollDownBtn.style.visibility = isAtBottom ? 'hidden' : 'visible'
-    }
-
-    scrollUpBtn.addEventListener('mouseenter', () => startScrolling('up'));
-    scrollUpBtn.addEventListener('mouseleave', stopScrolling);
-
-    scrollDownBtn.addEventListener('mouseenter', () => startScrolling('down'));
-    scrollDownBtn.addEventListener('mouseleave', stopScrolling);
-
-    viewport.addEventListener('scroll', updateButtonVisibility);
-
-  select.addEventListener('mousedown', event => {
-    event.preventDefault();
-    trigger = select.querySelector('.select-trigger');
-    
-    inputval = select.querySelector('input').value;
-
-    newState = select.dataset.state === 'open' ? 'closed':'open';
-
-    if(trigger.contains(event.target)) {
-      openSide = select.getBoundingClientRect();
-      distBottom = window.innerHeight - openSide.bottom
-      switch(openSide.top > distBottom) {
-        case true:
-          content.dataset.side = 'top'
-          break;
-        case false:
-          content.dataset.side = 'bottom'
-          break;
-      }
-      select.dataset.state = newState
-      content.dataset.state=newState
-      return
-    } 
-
-    if(event.target.classList.contains('select-item')) {
-      const item = event.target;
-      if(inputval === item.getAttribute('value')) {
-        toggleClose();
-        return;
-      }
-
-      if(inputval !== 'undefined') {
-        const oldItem = content.querySelector(`.select-item[value="${inputval}"]`);
-        oldItem.dataset.checked = 'false';
-        oldItem.querySelector('span').dataset.checked = 'false';
-      }
-
-      item.dataset.checked = 'true';
-      item.querySelector('span').dataset.checked = 'true';
-
-      select.querySelector('.select-value').innerHTML = item.textContent;
-      select.querySelector('input').value= item.getAttribute('value');
-      trigger.focus();
-      toggleClose();
-    }
-  })
-  })
-
-  function openSheet(button) {
-    const sheet = document.querySelector(`#${button.getAttribute('sheet-id')}`);
-    sheet.dataset.state = 'open'
-    sheet.style.display = 'block';
-  }
-
-  proc_htmx('.sheet', elt => {
-    var fragment = document.createDocumentFragment();
-
-    fragment.appendChild(elt);
-
-    document.body.appendChild(fragment);
-
-    const overlay = elt.querySelector('.sheet-overlay');
-    const closeIcon = elt.querySelector('.sheet-close-x');
-    const closeBtn = elt.querySelector('.sheet-close-button');
-
-    function toggleClose() {
-    elt.dataset.state = 'closed'
-    setTimeout(() => elt.style.display = 'none', 110);
-  }
-
-    if (overlay) overlay.addEventListener('mousedown', toggleClose)
-    if (closeBtn) closeBtn.addEventListener('mousedown', toggleClose)
-    if (closeIcon) closeIcon.addEventListener('mousedown', toggleClose)
-
-  });
-
-function openDialog(button) {
-    const dialog = document.querySelector(`#${button.getAttribute('dialog-id')}`);
-    dialog.dataset.state = 'open'
-    dialog.style.display = 'block';
-  }
-
-  proc_htmx('.dialog', dialog => {
-    var fragment = document.createDocumentFragment();
-
-    fragment.appendChild(dialog);
-
-    document.body.appendChild(fragment);
-
-    const overlay = dialog.querySelector('.dialog-overlay');
-    const closeIcon = dialog.querySelector('.dialog-close-btn');
-    const closeBtn = dialog.querySelector('.dialog-close-button');
-
-    function toggleClose() {
-        dialog.dataset.state = 'closed'
-        setTimeout(() => dialog.style.display = 'none', 110);
-    }
-
-    if (overlay) overlay.addEventListener('mousedown', toggleClose)
-    if (closeBtn) closeBtn.addEventListener('mousedown', toggleClose)
-    if (closeIcon) closeIcon.addEventListener('mousedown', toggleClose)
-  });
-
-  proc_htmx('#toast-container', function(toast) {
-  let dismissTimeout;
-  const closeButton = toast.querySelector('.toast-close-button');
-  const duration = 6000;
-
-  function dismissToast() {
-    clearTimeout(dismissTimeout);
-    toast.style.transform = 'translateX(100%)';
-    setTimeout(() => toast.remove(), 300);
-  }
-
-  function resetTimer() {
-    clearTimeout(dismissTimeout);
-    dismissTimeout = setTimeout(dismissToast, duration);
-  }
-
-  // Mouse drag functionality
-  let isDragging = false;
-  let startX;
-  let originalTransform;
-  const threshold = 100;
-
-  toast.addEventListener('mousedown', e => {
-    e.preventDefault(); // Prevent text selection
-    toast.style.transition = 'none';
-    isDragging = true;
-    startX = e.clientX;
-    originalTransform = window.getComputedStyle(toast).transform;
-
-  });
-
-  toast.addEventListener('mousemove', e => {
-    if (!isDragging) return
-    resetTimer();
-    let deltaX = e.clientX - startX;
-    if (deltaX > 0) {
-      toast.style.transform = `translateX(${deltaX}px)`;
-    }
-  });
-
-  toast.addEventListener('mouseup', e => {
-    if (!isDragging) return;
-    toast.style.transition = 'transform 0.2s';
-    isDragging = false;
-    let deltaX = e.clientX - startX;
-    if (deltaX >= threshold) {
-      dismissToast();
-    } else {
-      toast.style.transform = 'translateX(0)';
-    }
-  });
-
-if (closeButton) closeButton.addEventListener('click', dismissToast);
-
-  toast.addEventListener('mouseleave', resetTimer);
-
-  resetTimer();
-});
-    """
-
-    load_lucide = """  (function() {
-    // Function to load Lucide script
-    function loadLucide() {
-      return new Promise((resolve, reject) => {
-        if (window.lucide) {
-          resolve();
-          return;
-        }
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/lucide@latest';
-        script.async = true;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
-
-    // Function to create icons
-    function createIcons() {
-      if (window.lucide) {
-        lucide.createIcons();
-      }
-    }
-
-    // Function to set up HTMX event listeners
-    function setupEventListeners() {
-      document.body.addEventListener('htmx:afterSwap', createIcons);
-      document.body.addEventListener('htmx:load', createIcons);
-    }
-
-    // Main initialization function
-    function init() {
-      loadLucide()
-        .then(createIcons)
-        .then(setupEventListeners)
-        .catch(error => {
-          console.error('Failed to load Lucide:', error);
+    const loadLucide = () => {
+            lucide.createIcons();
+            document.body.addEventListener("htmx:afterSwap", function() {
+                lucide.createIcons();
         });
     }
-
-    // Run initialization when DOM is fully loaded
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
+    
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", loadLucide);
     } else {
-      init();
+        loadLucide();   
     }
-  })();"""
+    """
 
-    if lucid:
-        return (
-            Script(src=tw_import),
-            Script(tw_config),
-            Style(tw_globals, type="text/tailwindcss"),
-            Script(code=shad_scripts),
-            Script(load_lucide),
-        )
-    else:
-        return (
-            Script(src=tw_import),
-            Script(tw_config),
-            Style(tw_globals, type="text/tailwindcss"),
-            Script(code=shad_scripts),
-        )
+    tw_import = """"https://cdn.tailwindcss.com"""
+
+    headers = [
+        Script(shad_scripts),
+    ]
+
+    if lucide_link:
+        headers.append(Script(load_lucide, type="module"))
+    if tw_link:
+        headers.append(Script(src=tw_import))
+
+    return (*headers,)
 
 
 btn_variants = {
@@ -811,15 +182,13 @@ table_head_cls = "h-12 px-4 text-left align-middle font-medium text-muted-foregr
 table_cell_cls = "p-4 align-middle [&:has([role=checkbox])]:pr-0"
 checkbox_base_cls = "preventdbclick peer group h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
 checkbox_indicator_cls = "preventdbclick flex items-center justify-center text-current group-data-[state=unchecked]:hidden"
-select_trigger_cls = "select-trigger cursor-pointer flex h-10 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+select_trigger_cls = "select-trigger flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
 select_scrollup_cls = "scroll-up flex cursor-default items-center justify-center py-1"
-select_scrolldown_cls = (
-    "scroll-down flex cursor-default items-center justify-center py-1"
-)
-select_content_cls = "absolute min-w-full h-fit w-fit data-[side=top]:bottom-11 data-[side=bottom]:top-11 select-content data-[state=open]:no-bg-scroll z-50 max-h-96 rounded-md border bg-popover text-popover-foreground shadow-md data-[state=closed]:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
-select_label_cls = "py-1.5 pl-8 pr-2 text-sm font-semibold"
-select_item_cls = "select-item relative flex w-full cursor-default select-none hover:bg-muted items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[checked=true]:bg-muted data-[disabled]:opacity-50"
+select_scrolldown_cls = "scroll-down flex cursor-default items-center justify-center py-1"
+select_content_cls = "select-content relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
+select_item_cls = "group select-item relative flex w-full cursor-default select-none hover:bg-muted items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[checked=true]:bg-muted data-[disabled]:opacity-50"
 select_separator_cls = "-mx-1 my-1 h-px bg-muted"
+select_label_cls = "py-1.5 pl-8 pr-2 text-sm font-semibold"
 sheet_overlay_cls = "sheet-overlay group-data-[state=open]:no-bg-scroll fixed inset-0 z-50 bg-black/80 group-data-[state=open]:animate-in group-data-[state=closed]:animate-out group-data-[state=closed]:fade-out-0 group-data-[state=open]:fade-in-0"
 sheet_variants_cls = {
     "top": "inset-x-0 top-0 border-b group-data-[state=closed]:slide-out-to-top group-data-[state=open]:slide-in-from-top",
@@ -833,17 +202,8 @@ sheet_header_cls = "flex flex-col space-y-2 text-center sm:text-left"
 sheet_footer_cls = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
 sheet_title_cls = "text-lg font-semibold text-foreground"
 sheet_description_cls = "text-sm text-muted-foreground"
-
-
-def ThemeToggle(variant="outline", cls=None, **kwargs):
-    return Button(
-        Lucide(icon="sun", id="theme-icon-sun"),
-        Lucide(icon="moon", id="theme-icon-moon", cls="hidden"),
-        variant=variant,
-        size="icon",
-        cls=f"theme-toggle + {cls}",
-        **kwargs,
-    )
+select_content_styles_ = "box-sizing: border-box; display: flex; flex-direction: column; outline: none; --radix-select-content-transform-origin: var(--radix-popper-transform-origin); --radix-select-content-available-width: var(--radix-popper-available-width); --radix-select-content-available-height: var(--radix-popper-available-height); --radix-select-trigger-width: var(--radix-popper-anchor-width); --radix-select-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
+select_viewport_cls = "viewport p-1 h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] no-scrollbar"
 
 
 def Button(*c, size="default", variant="default", cls=None, **kwargs):
@@ -1178,6 +538,7 @@ def Dialog(
         DialogContent(header, *c, footer),
         style="display: none;",
         data_state=state,
+        tabindex="-1",
         **kwargs,
     )
 
@@ -1197,11 +558,14 @@ def Sheet(
     new_cls = "group sheet"
     overlay = Div(cls=sheet_overlay_cls)
     header_content = []
+    header = None
+    footer = None
+
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     if standard:
-        return Div(overlay, style="display: none;", data_state=state, *c, **kwargs)
+        return Div(overlay, *c, style="display: none;", data_state=state, **kwargs)
 
     if title:
         header_content.append(SheetTitle(title))
@@ -1216,7 +580,7 @@ def Sheet(
 
     return Div(
         overlay,
-        SheetContent(header, *c, footer, variant=side, cls=content_cls),
+        SheetContent(header, *c, footer, side=side, cls=content_cls),
         data_state=state,
         role="dialog",
         tabindex="-1",
@@ -1236,8 +600,8 @@ def SheetCloseButton(*c, cls=None, **kwargs):
     )
 
 
-def SheetContent(*c, cls=None, variant, **kwargs):
-    new_cls = f"{sheet_content_cls} {sheet_variants_cls[variant]}"
+def SheetContent(*c, cls=None, side="right", **kwargs):
+    new_cls = f"{sheet_content_cls} {sheet_variants_cls[side]}"
     closeBtn = ft_hx(
         "button",
         Span("Close", cls="sr-only"),
@@ -1398,15 +762,22 @@ def TableCaption(*c, cls=None, **kwargs):
     return Caption(*c, **kwargs)
 
 
-def Checkbox(cls=None, state="unchecked", name=None, id=None, **kwargs):
+def Checkbox(cls=None, state="unchecked", name=None, value=None, id=None, **kwargs):
     curr_state = "true" if state == "checked" else None
+    assert state in ("checked", "unchecked"), '`state` not in ("checked", "unchecked")'
+
     new_cls = checkbox_base_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     indicator = Span(Lucide(icon="check", cls="size-4"), cls=checkbox_indicator_cls)
     value_holder = Input(
-        type="checkbox", style="display: none;", id=id, name=name, checked=curr_state
+        type="checkbox",
+        style="display: none;",
+        value=value,
+        id=id,
+        name=name,
+        checked=curr_state,
     )
     return Span(
         indicator,
@@ -1423,11 +794,11 @@ def SelectTrigger(*c, cls=None, **kwargs):
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Div(*c, ico, tabindex=-1, **kwargs)
+    return ft_hx('button', *c, ico, **kwargs)
 
 
 def SelectValue(placeholder=None, cls=None, **kwargs):
-    new_cls = "select-value overflow-hidden text-ellipsis"
+    new_cls = "select-value pointer-events-none"
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
@@ -1439,8 +810,8 @@ def SelectScrollUpButton(cls=None, **kwargs):
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    ico = Lucide(icon="chevron-up", cls="h-4 w-4")
-    return Span(ico, style="visibility:hidden", **kwargs)
+    ico = Lucide(icon="chevron-up", cls="h-4 w-4 hidden sm:flex")
+    return Div(ico, aria_hidden="true",**kwargs)
 
 
 def SelectScrollDownButton(cls=None, **kwargs):
@@ -1448,27 +819,35 @@ def SelectScrollDownButton(cls=None, **kwargs):
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    ico = Lucide(icon="chevron-down", cls="h-4 w-4")
-    return Span(ico, **kwargs)
+    ico = Lucide(icon="chevron-down", cls="h-4 w-4 hidden sm:flex")
+    return Div(ico,aria_hidden="true", **kwargs)
 
 
-def SelectContent(*c, cls=None, **kwargs):
+def SelectContent(*c, cls=None, id=None, **kwargs):
+    if not id:
+        raise ValueError("`id` is required")
     new_cls = select_content_cls
-    scrollUp = SelectScrollUpButton()
-    scrollDown = SelectScrollDownButton()
-    viewport = Div(
-        *c,
-        cls="viewport overflow-y-scroll p-1 h-[188px] w-full min-w-[8rem] no-scrollbar",
-    )
-
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Div(scrollUp, viewport, scrollDown, data_state="closed", **kwargs)
-
+    return Portal(Div(SelectScrollUpButton(),
+            Div(*c,
+            cls=select_viewport_cls,
+            role="listbox",
+            style="position:relative;flex:1 1 0%;overflow: auto;",
+            id=f"{id}-viewport"
+        ),
+        SelectScrollDownButton(),
+        tabindex="-1",
+        style=select_content_styles_,
+        id=f"{id}-content",
+        **kwargs
+    ), 
+    id=id,
+    )
 
 def SelectGroup(*c, **kwargs):
-    return Optgroup(*c, **kwargs)
+    return Div(*c, role="group", **kwargs)
 
 
 def SelectLabel(*c, cls=None, **kwargs):
@@ -1476,37 +855,74 @@ def SelectLabel(*c, cls=None, **kwargs):
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Label(*c, **kwargs)
+    return Div(*c, **kwargs)
 
 
 def SelectItem(*c, cls=None, checked="false", value=None, **kwargs):
     new_cls = select_item_cls
-    span_cls = "absolute left-2 flex h-3.5 w-3.5 items-center justify-center data-[checked=false]:hidden"
-    ico = Lucide(icon="check", cls=f"h-4 w-4")
+    span_cls = "absolute left-2 hidden h-3.5 w-3.5 items-center justify-center group-data-[checked=true]:flex"
+    ico = Lucide(icon="check", cls="h-4 w-4")
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     return Div(
-        Span(ico, cls=span_cls, data_checked=checked),
-        value=value,
-        *c,
+        Span(ico, cls=span_cls),
+        Span(*c),
         data_checked=checked,
-        **kwargs,
+        value=value,
+        role="option",
+        tabindex=-1,
+        aria_selected=checked,
+        **kwargs
     )
 
-
-def SelectSeparator(**kwargs):
-    return Hr(cls=select_separator_cls, **kwargs)
-
-
-def Select(*c, cls=None, state="closed", id=None, name=None, **kwargs):
-    new_cls = "select relative w-fit"
+def SelectSeparator(id=None, cls=None, **kwargs):   
+    new_cls = select_separator_cls
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    value_holder = Hidden(value="undefined", name=name, id=id)
-    return Div(value_holder, *c, data_state=state, **kwargs)
+    return Hr(id=f"{id}-separator", **kwargs)
 
+def Portal(*c, id=None, **kwargs):
+    if not id:
+        raise ValueError("`id` is required")
+    return Div(*c, id=f"{id}-portal", style="position:fixed;left:0;top:0;display:none;",cls="select-portal", **kwargs)
+
+def Select(*c, cls=None, state="closed", placeholder:str=None, label:str=None, items: list = None, id=None, name=None, standard=False, **kwargs):
+    if not id:
+        raise ValueError("`id` is required")
+    new_cls = "select group relative data-[state=open]:no-bg-scroll"
+    value_holder = Hidden(value="", name=name, id=f"{id}-input")
+    render_items = ()
+
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+
+    if standard:
+        return Div(value_holder, *c, data_state=state, id=id, role="combobox", aria_controls=f"{id}-content", aria_expanded="false", aria_haspopup="listbox", **kwargs)
+
+    if items:
+        render_items = (SelectItem(item, value=item.lower(), name=item) for item in items)
+
+    select_trigger = SelectTrigger(SelectValue(placeholder))
+    select_content = SelectContent(
+            SelectGroup(SelectLabel(label), *render_items),
+            id=id
+        ),
+
+    return Div(
+        value_holder,
+        select_trigger,
+        select_content,
+        data_state=state,
+        id=id,
+        role="combobox",
+        aria_controls=f"{id}-content",
+        aria_expanded="false",
+        aria_haspopup="listbox",
+        **kwargs
+    )
 
 component_map = [
     Button,

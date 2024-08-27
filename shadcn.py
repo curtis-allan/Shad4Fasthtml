@@ -65,10 +65,387 @@ __all__ = [
     "SheetContent",
     "SheetTrigger",
     "SheetCloseButton",
+    "Carousel",
+    "CarouselContent",
+    "CarouselItem",
+    "CarouselPrevious",
+    "CarouselNext",
+    "Slider",
 ]
 
 
 def ShadHead(lucide_link=True, tw_link=False):
+
+    tw_config = Script("""
+    function filterDefault(values) {
+	return Object.fromEntries(
+		Object.entries(values).filter(([key]) => key !== "DEFAULT"),
+	)
+}
+
+tailwind.config = {
+  darkMode: ["selector"],
+  content: ["./**/*.{py,js}", "./docs/**/*.py"],
+    theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+        animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+        animationDelay: ({ theme }) => ({
+					...theme("transitionDelay"),
+				}),
+				animationDuration: ({ theme }) => ({
+					0: "0ms",
+					...theme("transitionDuration"),
+				}),
+				animationTimingFunction: ({ theme }) => ({
+					...theme("transitionTimingFunction"),
+				}),
+				animationFillMode: {
+					none: "none",
+					forwards: "forwards",
+					backwards: "backwards",
+					both: "both",
+				},
+				animationDirection: {
+					normal: "normal",
+					reverse: "reverse",
+					alternate: "alternate",
+					"alternate-reverse": "alternate-reverse",
+				},
+				animationOpacity: ({ theme }) => ({
+					DEFAULT: 0,
+					...theme("opacity"),
+				}),
+				animationTranslate: ({ theme }) => ({
+					DEFAULT: "100%",
+					...theme("translate"),
+				}),
+				animationScale: ({ theme }) => ({
+					DEFAULT: 0,
+					...theme("scale"),
+				}),
+				animationRotate: ({ theme }) => ({
+					DEFAULT: "30deg",
+					...theme("rotate"),
+				}),
+				animationRepeat: {
+					0: "0",
+					1: "1",
+					infinite: "infinite",
+				},
+				keyframes: {
+					enter: {
+						from: {
+							opacity: "var(--tw-enter-opacity, 1)",
+							transform:
+								"translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0))",
+						},
+					},
+					exit: {
+						to: {
+							opacity: "var(--tw-exit-opacity, 1)",
+							transform:
+								"translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0))",
+						},
+					},
+				},
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: `var(--radius)`,
+        md: `calc(var(--radius) - 2px)`,
+        sm: "calc(var(--radius) - 4px)",
+      },
+      },
+  },
+  plugins: [
+	function ({ addUtilities, matchUtilities, theme }) {
+		addUtilities({
+			"@keyframes enter": theme("keyframes.enter"),
+			"@keyframes exit": theme("keyframes.exit"),
+			".animate-in": {
+				animationName: "enter",
+				animationDuration: theme("animationDuration.DEFAULT"),
+				"--tw-enter-opacity": "initial",
+				"--tw-enter-scale": "initial",
+				"--tw-enter-rotate": "initial",
+				"--tw-enter-translate-x": "initial",
+				"--tw-enter-translate-y": "initial",
+			},
+			".animate-out": {
+				animationName: "exit",
+				animationDuration: theme("animationDuration.DEFAULT"),
+				"--tw-exit-opacity": "initial",
+				"--tw-exit-scale": "initial",
+				"--tw-exit-rotate": "initial",
+				"--tw-exit-translate-x": "initial",
+				"--tw-exit-translate-y": "initial",
+			},
+		})
+
+		matchUtilities(
+			{
+				"fade-in": (value) => ({ "--tw-enter-opacity": value }),
+				"fade-out": (value) => ({ "--tw-exit-opacity": value }),
+			},
+			{ values: theme("animationOpacity") },
+		)
+
+		matchUtilities(
+			{
+				"zoom-in": (value) => ({ "--tw-enter-scale": value }),
+				"zoom-out": (value) => ({ "--tw-exit-scale": value }),
+			},
+			{ values: theme("animationScale") },
+		)
+
+		matchUtilities(
+			{
+				"spin-in": (value) => ({ "--tw-enter-rotate": value }),
+				"spin-out": (value) => ({ "--tw-exit-rotate": value }),
+			},
+			{ values: theme("animationRotate") },
+		)
+
+		matchUtilities(
+			{
+				"slide-in-from-top": (value) => ({
+					"--tw-enter-translate-y": `-${value}`,
+				}),
+				"slide-in-from-bottom": (value) => ({
+					"--tw-enter-translate-y": value,
+				}),
+				"slide-in-from-left": (value) => ({
+					"--tw-enter-translate-x": `-${value}`,
+				}),
+				"slide-in-from-right": (value) => ({
+					"--tw-enter-translate-x": value,
+				}),
+				"slide-out-to-top": (value) => ({
+					"--tw-exit-translate-y": `-${value}`,
+				}),
+				"slide-out-to-bottom": (value) => ({
+					"--tw-exit-translate-y": value,
+				}),
+				"slide-out-to-left": (value) => ({
+					"--tw-exit-translate-x": `-${value}`,
+				}),
+				"slide-out-to-right": (value) => ({
+					"--tw-exit-translate-x": value,
+				}),
+			},
+			{ values: theme("animationTranslate") },
+		)
+
+		matchUtilities(
+			{ duration: (value) => ({ animationDuration: value }) },
+			{ values: filterDefault(theme("animationDuration")) },
+		)
+
+		matchUtilities(
+			{ delay: (value) => ({ animationDelay: value }) },
+			{ values: theme("animationDelay") },
+		)
+
+		matchUtilities(
+			{ ease: (value) => ({ animationTimingFunction: value }) },
+			{ values: filterDefault(theme("animationTimingFunction")) },
+		)
+
+		addUtilities({
+			".running": { animationPlayState: "running" },
+			".paused": { animationPlayState: "paused" },
+		})
+
+		matchUtilities(
+			{ "fill-mode": (value) => ({ animationFillMode: value }) },
+			{ values: theme("animationFillMode") },
+		)
+
+		matchUtilities(
+			{ direction: (value) => ({ animationDirection: value }) },
+			{ values: theme("animationDirection") },
+		)
+
+		matchUtilities(
+			{ repeat: (value) => ({ animationIterationCount: value }) },
+			{ values: theme("animationRepeat") },
+		)
+	},
+  ],
+}
+""", type="module")
+
+    tw_styles = Script("""@tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        --primary: 240 5.9% 10%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        --accent: 240 4.8% 95.9%;
+        --accent-foreground: 240 5.9% 10%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 240 5.9% 10%;
+        --radius: 0.5rem;
+        --chart-1: 12 76% 61%;
+        --chart-2: 173 58% 39%;
+        --chart-3: 197 37% 24%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
+    }
+
+    .dark {
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 240 10% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 240 10% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 240 5.9% 10%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
+        --accent: 240 3.7% 15.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 240 4.9% 83.9%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+    }
+}
+
+@layer base {
+    :root:has(.no-bg-scroll) {
+        overflow: hidden;
+    }
+
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground antialiased min-h-screen;
+        font-feature-settings: "rlig" 1, "calt" 1;
+    }
+}
+
+@layer utilities {
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+        -webkit-overflow-scrolling:touch;
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+}
+
+@keyframes slideInFromTop {
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromBottom {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.toast {
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+}
+
+@media (max-width: 640px) {
+    .toast {
+        animation-name: slideInFromTop;
+    }
+}
+
+@media (min-width: 641px) {
+    .toast {
+        animation-name: slideInFromBottom;
+    }
+}""", type="text/tailwindcss")
 
     with open('shadscripts.js', 'r') as file:
         shad_scripts = file.read()
@@ -99,7 +476,7 @@ def ShadHead(lucide_link=True, tw_link=False):
     if lucide_link:
         headers.append(Script(load_lucide, type="module"))
     if tw_link:
-        headers.append(Script(src=tw_import))
+        headers.append(Script(src=tw_import), tw_config, tw_styles)
 
     return (*headers,)
 
@@ -921,6 +1298,206 @@ def Select(*c, cls=None, state="closed", placeholder:str=None, label:str=None, i
         aria_controls=f"{id}-content",
         aria_expanded="false",
         aria_haspopup="listbox",
+        **kwargs
+    )
+
+
+def Carousel(*c, cls=None, orientation:str='horizontal', autoplay:bool=False, duration:str='500', **kwargs):
+    new_cls = "relative w-full"
+
+    surreal_script = Script("""
+    proc_htmx('[data-ref="carousel"]', carousel => {
+    const items = any('[data-carousel-item]', carousel)
+    const content = me('[data-ref="content"]', carousel)
+    const prevButton = me('[data-ref="prevButton"]', carousel)
+    const nextButton = me('[data-ref="nextButton"]', carousel)
+
+    const {autoplay, orientation, duration} = carousel.dataset
+
+    let currentIndex = 0;
+
+            if (orientation === 'vertical') {
+                items.run(item => {
+                    item.classAdd('pt-4');
+                });
+                content.classAdd('-mt-4', 'flex-col')
+                prevButton.classList.add('-top-12', 'left-1/2', '-translate-x-1/2', 'rotate-90');
+                nextButton.classList.add('-bottom-12', 'left-1/2', '-translate-x-1/2', 'rotate-90');
+
+            } else {
+                items.run(item => {
+                    item.classAdd('pl-4');
+                });
+                content.classAdd('-ml-4');
+                prevButton.classList.add('-left-12', 'top-1/2', '-translate-y-1/2');
+                nextButton.classList.add('-right-12', 'top-1/2', '-translate-y-1/2');
+            }
+
+            function updateCarousel() {
+                content.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+
+            prevButton.on('click', () => {
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+                updateCarousel();
+            });
+
+    nextButton.on('click', () => {
+        currentIndex = (currentIndex + 1) % items.length;
+        updateCarousel();
+    });
+
+
+    if (autoplay === 'true') {
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % items.length;
+            updateCarousel();
+        }, 5000);
+        }
+    })""")
+
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] =new_cls
+
+    return Div(
+            surreal_script,
+            *c,
+            data_autoplay='true' if autoplay else 'false',
+            data_orientation=orientation,
+            data_duration=duration,
+            data_ref="carousel",
+            role="region",
+            aria_roledescription="carousel",
+            **kwargs
+        )
+
+def CarouselContent(*c, cls=None, **kwargs):
+    new_cls = "flex transition-transform ease-in-out duration-500"
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Div(Div(*c, data_ref="content", **kwargs), cls="overflow-hidden")
+
+def CarouselItem(*c, cls=None, **kwargs):
+    new_cls = "min-w-0 shrink-0 grow-0 basis-full",
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Div(*c, data_carousel_item=True, **kwargs)
+
+def CarouselPrevious(icon='arrow-left', cls=None, **kwargs):
+    new_cls = "absolute h-8 w-8 !rounded-full"
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Button(Lucide(icon=icon, cls='size-4'),
+                variant="outline",
+                size="icon", data_ref="prevButton", **kwargs)
+
+def CarouselNext(icon='arrow-right', cls=None, **kwargs):
+    new_cls = "absolute h-8 w-8 !rounded-full"
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+    return Button(Lucide(icon=icon, cls='size-4'),
+                variant="outline",
+                size="icon", data_ref="nextButton", **kwargs)
+
+def Slider(cls=None, min=0, max=100, step=1, value=0, name=None, **kwargs):
+    new_cls = "relative flex w-full touch-none select-none items-center"
+
+    surreal_script = Script("""
+proc_htmx('[data-ref="slider"]', slider => {
+    const track = me('[data-ref="track"]', slider)
+    const range = me('[data-ref="range"]', slider)
+    const thumb = me('[data-ref="thumb"]', slider)
+    const hiddenInput = me('[data-ref="hidden-input"]', slider)
+
+    const {min, max, step, value} = slider.dataset
+    let currentValue = parseInt(value) || 0
+
+    function updateSlider() {
+        const percentage = ((currentValue - min) / (max - min)) * 100
+        range.style.width = `${percentage}%`
+        thumb.style.left = `${percentage}%`
+        hiddenInput.value = currentValue
+    }
+
+    function handleMove(clientX) {
+        const rect = track.getBoundingClientRect()
+        const percentage = (clientX - rect.left) / rect.width
+        currentValue = Math.round((percentage * (max - min) + parseInt(min)) / step) * step
+        currentValue = Math.max(min, Math.min(max, currentValue))
+        updateSlider()
+        slider.dispatchEvent(new CustomEvent('change', { detail: { value: currentValue } }))
+    }
+
+    function addDragListeners(startEvent) {
+        if (startEvent.button !== 0 && startEvent.type !== 'touchstart') return; // Only proceed for left mouse button or touch
+        startEvent.preventDefault()
+        const moveHandler = moveEvent => handleMove(moveEvent.clientX || moveEvent.touches[0].clientX)
+        const upHandler = () => {
+            document.removeEventListener('mousemove', moveHandler)
+            document.removeEventListener('mouseup', upHandler)
+            document.removeEventListener('touchmove', moveHandler)
+            document.removeEventListener('touchend', upHandler)
+        }
+        document.addEventListener('mousemove', moveHandler)
+        document.addEventListener('mouseup', upHandler)
+        document.addEventListener('touchmove', moveHandler)
+        document.addEventListener('touchend', upHandler)
+    }
+
+    track.on('mousedown', e => {
+        if (e.button === 0) { // Only proceed for left mouse button
+            handleMove(e.clientX)
+            addDragListeners(e)
+        }
+    })
+
+    track.on('touchstart', e => {
+        handleMove(e.touches[0].clientX)
+        addDragListeners(e)
+    })
+
+    thumb.on('mousedown', e => {
+        if (e.button === 0) addDragListeners(e) // Only proceed for left mouse button
+    })
+
+    thumb.on('touchstart', e => {
+        addDragListeners(e)
+    })
+
+    updateSlider()
+})
+""")
+
+    if cls:
+        new_cls += f" {cls}"
+    kwargs["cls"] = new_cls
+
+    return Div(
+        surreal_script,
+        Div(
+            Div(data_ref="range", cls="absolute h-full bg-primary"),
+            data_ref="track",
+            cls="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary"
+        ),
+        Div(
+            data_ref="thumb",
+            cls="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+        ),
+        Input(type="hidden", data_ref="hidden-input", name=name, value=value),
+        data_max=max,
+        data_step=step,
+        data_value=value,
+        role="slider",
+        data_min=min,
+        data_ref="slider",
+        aria_valuemin=min,
+        aria_valuemax=max,
+        aria_valuenow=value,
         **kwargs
     )
 

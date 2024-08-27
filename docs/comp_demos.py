@@ -730,7 +730,7 @@ def carousel_block():
 
 def slider_block():
     return Block(
-        Slider(max='100', value='50', step='1', cls='w-64', min='0', id="demo-slider", name="demo-slider"),id="slider")
+        Slider(max='100', value='50', step='1', cls='max-w-64', min='0', id="demo-slider", name="demo-slider"),id="slider")
     
 
 

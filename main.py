@@ -23,6 +23,7 @@ from docs.comp_demos import (
     toast_block,
     carousel_block,
     slider_block,
+    tabs_block,
 )
 from fasthtml.common import *
 from fasthtml.components import Zero_md
@@ -254,6 +255,7 @@ link_groups = {
         "sheet",
         "carousel",
         "slider",
+        "tabs",
     ),
 }
 
@@ -439,8 +441,8 @@ demo_comps = {
     "sheet": sheet_block,
     "carousel": carousel_block,
     "slider": slider_block,
+    "tabs": tabs_block,
 }
-
 
 @rt("/components/{title}")
 def get(title: str):
@@ -513,35 +515,5 @@ def get():
         )
 
     return ProgressBar(progress)
-
-
-# loaded = 0
-# total = 8000
-
-
-# @rt("/progress-stream")
-# async def get():
-#     global loaded
-#     global total
-
-#     async def event_stream():
-#         while loaded <= total:
-#             yield f"data: {json.dumps({'progress': loaded, 'total': total})}\n\n"
-#             await asyncio.sleep(0.4)
-
-#     return StreamingResponse(event_stream(), media_type="text/event-stream")
-
-
-# @rt("/job")
-# async def post():
-#     global total
-#     global loaded
-#     loaded = 0
-
-#     while loaded < total:
-#         loaded += 200
-#         await asyncio.sleep(0.05)
-
-#     return Response(status_code=204)
 
 serve()

@@ -566,5 +566,39 @@ Carousel(
 )
 """, "slider": """
 Slider(max='100', value='50', step='1', cls='w-64', min='0', id="demo-slider", name="demo-slider")
+""", "tabs": """Tabs(
+    TabsList(
+        TabsTrigger("Post", value="tab1"),
+        TabsTrigger("Settings", value="tab2"),
+        cls="grid w-full grid-cols-2"
+    ),
+    TabsContent(Card(Div(Label("Username", htmlFor="tab-title"),Input(type="text", placeholder="Title", id="tab-title"),),
+                title="Create a post",
+                description="Enter your post title below",
+                footer=Div(
+                    Button(
+                        "Cancel",
+                        variant="outline",
+                    ),
+                    Button("Submit"),
+                    cls="flex w-full justify-end gap-2",
+                ),
+            ), value="tab1"),
+    TabsContent(Card(
+                Div(Label("Username", htmlFor="tab-settings"),Input(type="text", value="@JohnDoe", disabled='true', id="tab-settings"),),
+                title="Settings",
+                description="Change your settings here",
+                footer=Div(
+                    Button(
+                        "Cancel",
+                        variant="outline",
+                    ),
+                    Button("Submit"),
+                    cls="flex w-full justify-end gap-2",
+                ),
+            ), value="tab2"),
+            default_value="tab1",
+            cls="max-w-[80%] w-full mx-auto"
+        )
 """
 }

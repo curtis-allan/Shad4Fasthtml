@@ -1,11 +1,10 @@
-import uuid
 from docs.comp_code import code_dict, dummy_data
 from fasthtml.common import *
 from fasthtml.components import Zero_md
 from shadcn import *
 
 __all__ = [
-    "card_block,carousel_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block"
+    "card_block,carousel_block,tabs_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block"
 ]
 
 
@@ -755,7 +754,6 @@ def sheet_block():
         ),
     )
 
-
 def checkbox_block():
     return (
         Block(
@@ -776,4 +774,44 @@ def checkbox_block():
             ),
             id="checkbox",
         ),
+    )
+
+def tabs_block():
+    return Block(
+        Tabs(
+    TabsList(
+        TabsTrigger("Post", value="tab1"),
+        TabsTrigger("Settings", value="tab2"),
+        cls="grid w-full grid-cols-2"
+    ),
+    TabsContent(Card(Div(Label("Username", htmlFor="tab-title"),Input(type="text", placeholder="Title", id="tab-title"),),
+                title="Create a post",
+                description="Enter your post title below",
+                footer=Div(
+                    Button(
+                        "Cancel",
+                        variant="outline",
+                    ),
+                    Button("Submit"),
+                    cls="flex w-full justify-end gap-2",
+                ),
+            ), value="tab1"),
+    TabsContent(Card(
+                Div(Label("Username", htmlFor="tab-settings"),Input(type="text", value="@JohnDoe", disabled='true', id="tab-settings"),),
+                title="Settings",
+                description="Change your settings here",
+                footer=Div(
+                    Button(
+                        "Cancel",
+                        variant="outline",
+                    ),
+                    Button("Submit"),
+                    cls="flex w-full justify-end gap-2",
+                ),
+            ), value="tab2"),
+            default_value="tab1",
+            cls="sm:max-w-[80%] w-full max-w-[70%] mx-auto"
+        ),
+
+        id="tabs",
     )

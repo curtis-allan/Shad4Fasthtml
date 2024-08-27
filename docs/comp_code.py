@@ -521,5 +521,50 @@ Div(
         SelectItem("Guava", value="guava"),
         SelectItem("Watermelon", value="watermelon"),
     ),
-)"""
+)""", "carousel": """
+        Carousel(
+            CarouselContent(
+                CarouselItem(
+                    Card(
+                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        title="Card #1",
+                        description="Carousel demo card #1",
+                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        title="Card #2",
+                        description="Carousel demo card #2",
+                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        title="Card #3",
+                        description="Carousel demo card #3",
+                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        title="Card #4",
+                        description="Carousel demo card #4",
+                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                    ),
+                ),
+            ),
+            CarouselPrevious(),
+            CarouselNext(),
+            cls="w-[65%] sm:w-1/2 mx-auto",
+            autoplay=False,
+            orientation="horizontal",
+            id="carousel-demo"
+        )
+""", "slider": """
+Slider(max='100', value='50', step='1', cls='w-64', min='0', id="demo-slider", name="demo-slider")
+"""
 }

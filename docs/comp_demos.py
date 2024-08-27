@@ -5,7 +5,7 @@ from fasthtml.components import Zero_md
 from shadcn import *
 
 __all__ = [
-    "card_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block"
+    "card_block,carousel_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block"
 ]
 
 
@@ -680,6 +680,58 @@ def table_block():
             id="table",
         ),
     )
+
+def carousel_block():
+    return Block(
+        Carousel(
+            CarouselContent(
+                CarouselItem(
+                    Card(
+                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        title="Card #1",
+                        description="Carousel demo card #1",
+                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        title="Card #2",
+                        description="Carousel demo card #2",
+                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        title="Card #3",
+                        description="Carousel demo card #3",
+                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        title="Card #4",
+                        description="Carousel demo card #4",
+                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                    ),
+                ),
+            ),
+            CarouselPrevious(),
+            CarouselNext(),
+            cls="w-[65%] sm:w-1/2 mx-auto",
+            autoplay=False,
+            orientation="horizontal",
+            id="carousel-demo"
+        ),
+        id="carousel",
+    )
+
+def slider_block():
+    return Block(
+        Slider(max='100', value='50', step='1', cls='w-64', min='0', id="demo-slider", name="demo-slider"),id="slider")
+    
 
 
 def sheet_block():

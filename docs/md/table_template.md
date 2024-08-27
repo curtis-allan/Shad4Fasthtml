@@ -1,2 +1,2 @@
 >[!IMPORTANT]
-> This documentation is still under development. For a reference on how to use the table component, please refer to the <a href="https://ui.shadcn.com/docs/components/table" target="_blank">Shadcn-ui documentation</a> and the source code in the GitHub repository.
+> This documentation is still under development. For a reference on how to use the component, please refer to the <a href="https://ui.shadcn.com/docs/components" target="_blank">Shadcn-ui documentation</a> and the source code in the GitHub repository.

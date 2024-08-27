@@ -21,6 +21,8 @@ from docs.comp_demos import (
     table_block,
     textarea_block,
     toast_block,
+    carousel_block,
+    slider_block,
 )
 from fasthtml.common import *
 from fasthtml.components import Zero_md
@@ -177,10 +179,10 @@ def get():
                         ThemeToggle(cls="shrink-0"),
                         cls="container flex justify-center items-center gap-1.5",
                     ),
-                    cls="flex flex-col justify-center items-center container min-h-[calc(100svh-56px)]",
+                    cls="flex flex-col justify-center gap-4 items-center container min-h-[calc(100svh-56px)]",
                 ),
             ),
-            cls="pt-[50px] sm:p-0 min-h-screen",
+            cls="pt-[50px] sm:pt-0",
         ),
     )
 
@@ -250,6 +252,8 @@ link_groups = {
         "checkbox",
         "select",
         "sheet",
+        "carousel",
+        "slider",
     ),
 }
 
@@ -409,7 +413,7 @@ def get(title: str):
                 ),
                 title=title,
             ),
-            cls="pt-[50px] sm:p-0 min-h-screen",
+            cls="pt-[50px] sm:p-0",
         ),
     )
 
@@ -433,6 +437,8 @@ demo_comps = {
     "textarea": textarea_block,
     "table": table_block,
     "sheet": sheet_block,
+    "carousel": carousel_block,
+    "slider": slider_block,
 }
 
 
@@ -457,7 +463,7 @@ def get(title: str):
                 ),
                 title=title,
             ),
-            cls="pt-[50px] sm:p-0 min-h-screen",
+            cls="pt-[50px] sm:p-0",
         ),
     )
 

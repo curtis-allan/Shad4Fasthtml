@@ -720,7 +720,7 @@ def carousel_block():
             ),
             CarouselPrevious(),
             CarouselNext(),
-            cls="w-[65%] sm:w-1/2 mx-auto",
+            cls="max-w-[65%] mx-auto",
             autoplay=False,
             orientation="horizontal",
             id="carousel-demo"

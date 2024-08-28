@@ -600,5 +600,13 @@ Slider(max='100', value='50', step='1', cls='w-64', min='0', id="demo-slider", n
             default_value="tab1",
             cls="max-w-[80%] w-full mx-auto"
         )
-"""
+""",
+    "radio": """RadioGroup(
+    Div(RadioGroupItem(value="option1", id="option1"), Label("Claude 3.5 Sonnet", htmlFor="option1"), cls="flex items-center space-x-2"),
+    Div(RadioGroupItem(value="option2", id="option2"), Label("Gpt 4o", htmlFor="option2"), cls="flex items-center space-x-2"),
+    Div(RadioGroupItem(value="option3", id="option3"), Label("Gpt 4 Turbo", htmlFor="option3"), cls="flex items-center space-x-2"),
+    name="my-radio-group",
+    defaultValue="option1",
+)
+""",
 }

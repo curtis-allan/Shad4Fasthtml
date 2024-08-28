@@ -248,6 +248,33 @@ class SelectMenu {
             this.close();
         }
     }
+    static closeAllSelectMenus() {
+        document.querySelectorAll('.select[data-state="open"]').forEach(select => {
+            const selectMenu = new SelectMenu(select);
+            selectMenu.close();
+        });
+    }
+}
+
+function resetDialogAndSheet() {
+    document.querySelectorAll('[role="dialog"], .sheet').forEach(element => {
+        element.dataset.state = 'closed';
+        element.style.display = 'none';
+    });
+}
+
+htmx.on('htmx:historyRestore', function() {
+    resetDialogAndSheet();
+});
+
+window.addEventListener('popstate', SelectMenu.closeAllSelectMenus);
+
+if ('navigation' in window) {
+    navigation.addEventListener('navigate', (event) => {
+        if (event.navigationType === 'push' || event.navigationType === 'replace') {
+            SelectMenu.closeAllSelectMenus();
+        }
+    });
 }
 
 htmx.onLoad((content) => {

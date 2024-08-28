@@ -178,7 +178,7 @@ def SelectAltBlock():
             Select(
                 SelectTrigger(
                     SelectValue(placeholder="Choose a coding language"),
-                    cls="w-[250px]"
+                    cls="!w-[250px]",
                 ),
                 SelectContent(
                     SelectGroup(
@@ -213,7 +213,7 @@ def SelectAltBlock():
                 ),
                 standard=True,
                 id='select-alt',
-                name="select-alt"
+                name="select-alt",
             ),
             id="select2",
         ),
@@ -815,3 +815,12 @@ def tabs_block():
 
         id="tabs",
     )
+
+def radio_block():
+    return Block(RadioGroup(
+        Div(RadioGroupItem(value="option1", id="option1"), Label("Claude 3.5 Sonnet", htmlFor="option1"), cls="flex items-center space-x-2"),
+        Div(RadioGroupItem(value="option2", id="option2"), Label("Gpt 4o", htmlFor="option2"), cls="flex items-center space-x-2"),
+        Div(RadioGroupItem(value="option3", id="option3"), Label("Gpt 4 Turbo", htmlFor="option3"), cls="flex items-center space-x-2"),
+        name="radio-demo",
+        defaultValue="option1",
+    ), id="radio")

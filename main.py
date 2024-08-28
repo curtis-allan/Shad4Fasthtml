@@ -24,6 +24,7 @@ from docs.comp_demos import (
     carousel_block,
     slider_block,
     tabs_block,
+    radio_block,
 )
 from fasthtml.common import *
 from fasthtml.components import Zero_md
@@ -93,9 +94,10 @@ def source_code():
                 Lucide(icon="terminal", cls="size-4"),
                 P(
                     "source code",
-                    style="font-variant:small-caps; font-size:1.1rem; font-weight:600; letter-spacing:-0.05rem;"
+                    style="font-variant:small-caps;",
+                    cls="text-sm sm:text-base md:text-lg",
                 ),
-                cls="text-center col-span-2 gap-1.5 flex items-center justify-start text-sm font-mono select-none dark:bg-slate-900 bg-slate-700 p-1 border border-inset border-accent text-green-400 dark:text-green-600",
+                cls="text-center col-span-2 gap-1.5 flex items-center justify-start text-sm font-mono select-none p-1 border border-inset border-accent text-green-400 dark:text-green-600",
             ),
             Span(
                 Lucide(
@@ -223,7 +225,6 @@ def MobileNav():
         ),
     )
 
-
 def format_title(str: str):
     if "-" in str:
         words = str.split("-")
@@ -256,6 +257,7 @@ link_groups = {
         "carousel",
         "slider",
         "tabs",
+        "radio",
     ),
 }
 
@@ -268,7 +270,7 @@ def NavItem(title, i):
                     i,
                 ),
                 variant="link",
-                cls="link-btn w-full tracking-tight !justify-start mt-2 !p-0 h-fit !text-muted-foreground text-sm tracking-tight !items-start",
+                cls="link-btn w-full tracking-tight !justify-start mt-2 !p-0 !pl-4 h-fit !text-muted-foreground text-sm tracking-tight !items-start",
             ),
             href=f"/{title}/{i}",
             hx_boost="true",
@@ -287,7 +289,7 @@ def RenderNav():
                         Li(
                             H1(
                                 format_title(title),
-                                cls="font-semibold tracking-tight",
+                                cls="font-semibold pl-2 tracking-tight",
                             ),
                             Ul(
                                 *[
@@ -329,11 +331,11 @@ def Sidebar():
                     RenderNav(),
                     cls="w-full min-h-full",
                 ),
-                cls="flex flex-col overflow-x-hidden no-scrollbar overflow-y-scroll overscroll-y-contain w-full max-h-[calc(100vh-4rem)]",
+                cls="flex flex-col overflow-x-hidden overflow-y-scroll no-scrollbar overscroll-y-contain w-full h-full",
             ),
             Separator(),
             source_code(),
-            cls="hidden sm:flex fixed flex-col gap-2 items-start h-screen top-0 inset-x-0 border-r w-[180px] pl-6 pt-6",
+            cls="hidden sm:flex fixed flex-col gap-2 items-center overflow-hidden h-screen top-0 inset-x-0 border-r w-[180px] pt-6 m-0",
         ),
     )
 
@@ -442,6 +444,7 @@ demo_comps = {
     "carousel": carousel_block,
     "slider": slider_block,
     "tabs": tabs_block,
+    "radio": radio_block,
 }
 
 @rt("/components/{title}")

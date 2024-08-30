@@ -1,6 +1,3 @@
-import sys
-import uuid
-
 from fasthtml.common import *
 from fasthtml.components import Button as OgButton
 from fasthtml.components import Input as OgInput
@@ -8,6 +5,7 @@ from fasthtml.components import Label as OgLabel
 from fasthtml.components import Table as OgTable
 from fasthtml.components import Textarea as OgTextarea
 from fasthtml.toaster import *
+from lucide4py import Lucide
 
 __all__ = [
     "CardHeader",
@@ -20,7 +18,6 @@ __all__ = [
     "Alert",
     "AlertTitle",
     "AlertDescription",
-    "Lucide",
     "Badge",
     "Separator",
     "Progress",
@@ -49,14 +46,6 @@ __all__ = [
     "TableCell",
     "TableCaption",
     "Checkbox",
-    "Select",
-    "SelectContent",
-    "SelectLabel",
-    "SelectItem",
-    "SelectSeparator",
-    "SelectTrigger",
-    "SelectGroup",
-    "SelectValue",
     "Sheet",
     "SheetHeader",
     "SheetFooter",
@@ -65,11 +54,6 @@ __all__ = [
     "SheetContent",
     "SheetTrigger",
     "SheetCloseButton",
-    "Carousel",
-    "CarouselContent",
-    "CarouselItem",
-    "CarouselPrevious",
-    "CarouselNext",
     "Slider",
     "Tabs",
     "TabsTrigger",
@@ -80,7 +64,7 @@ __all__ = [
 ]
 
 
-def ShadHead(lucide_link=True, tw_link=False):
+def ShadHead(tw_link=False):
 
     tw_config = Script("""
     function filterDefault(values) {
@@ -454,32 +438,9 @@ tailwind.config = {
     }
 }""", type="text/tailwindcss")
 
-    with open('shadscripts.js', 'r') as file:
-        shad_scripts = file.read()
-
-    load_lucide = Script("""
-    import 'https://unpkg.com/lucide@latest';
-
-    const loadLucide = () => {
-            lucide.createIcons();
-            document.body.addEventListener("htmx:afterSwap", function() {
-                lucide.createIcons();
-        });
-    }
-    
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", loadLucide);
-    } else {
-        loadLucide();   
-    }
-    """, type="module")
-
     headers = [
-        Script(shad_scripts),
+        Script(src='/shadscripts.js'),
     ]
-
-    if lucide_link:
-        headers.append(load_lucide)
     if tw_link:
         headers.append(Script(src="https://cdn.tailwindcss.com"))
         headers.append(tw_styles)
@@ -554,7 +515,7 @@ dialog_header_cls = "flex flex-col space-y-1.5 text-center sm:text-left"
 dialog_footer_cls = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
 textarea_cls = "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 label_cls = "preventdbclick text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-switch_base_cls = "group peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+switch_base_cls = "group peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
 switch_thumb_cls = "pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform group-data-[state=checked]:translate-x-5 group-data-[state=unchecked]:translate-x-0"
 table_base_cls = "w-full caption-bottom text-sm"
 table_head_cls = "[&_tr]:border-b"
@@ -567,13 +528,6 @@ table_head_cls = "h-12 px-4 text-left align-middle font-medium text-muted-foregr
 table_cell_cls = "p-4 align-middle [&:has([role=checkbox])]:pr-0"
 checkbox_base_cls = "preventdbclick peer group h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
 checkbox_indicator_cls = "preventdbclick flex items-center justify-center text-current group-data-[state=unchecked]:hidden"
-select_trigger_cls = "select-trigger flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
-select_scrollup_cls = "scroll-up flex cursor-default items-center justify-center py-1"
-select_scrolldown_cls = "scroll-down flex cursor-default items-center justify-center py-1"
-select_content_cls = "select-content relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
-select_item_cls = "group select-item relative flex w-full cursor-default select-none hover:bg-muted items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[checked=true]:bg-muted data-[disabled]:opacity-50"
-select_separator_cls = "-mx-1 my-1 h-px bg-muted"
-select_label_cls = "py-1.5 pl-8 pr-2 text-sm font-semibold"
 sheet_overlay_cls = "sheet-overlay group-data-[state=open]:no-bg-scroll fixed inset-0 z-50 bg-black/80 group-data-[state=open]:animate-in group-data-[state=closed]:animate-out group-data-[state=closed]:fade-out-0 group-data-[state=open]:fade-in-0"
 sheet_variants_cls = {
     "top": "inset-x-0 top-0 border-b group-data-[state=closed]:slide-out-to-top group-data-[state=open]:slide-in-from-top",
@@ -587,8 +541,6 @@ sheet_header_cls = "flex flex-col space-y-2 text-center sm:text-left"
 sheet_footer_cls = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
 sheet_title_cls = "text-lg font-semibold text-foreground"
 sheet_description_cls = "text-sm text-muted-foreground"
-select_content_styles_ = "box-sizing: border-box; display: flex; flex-direction: column; outline: none; --radix-select-content-transform-origin: var(--radix-popper-transform-origin); --radix-select-content-available-width: var(--radix-popper-available-width); --radix-select-content-available-height: var(--radix-popper-available-height); --radix-select-trigger-width: var(--radix-popper-anchor-width); --radix-select-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
-select_viewport_cls = "viewport p-1 h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] no-scrollbar"
 
 
 def Button(*c, size="default", variant="default", cls=None, **kwargs):
@@ -742,11 +694,6 @@ def Alert(
         headers.append(AlertDescription(description))
 
     return Div(*headers, *c, **kwargs)
-
-
-def Lucide(icon: str = "x", cls="size-5", **kwargs):
-    kwargs["cls"] = f"lucide {cls}"
-    return I(data_lucide=icon, **kwargs)
 
 
 def Badge(*c, variant: str = "default", cls=None, **kwargs):
@@ -1173,244 +1120,6 @@ def Checkbox(cls=None, state="unchecked", name=None, value=None, id=None, **kwar
     )
 
 
-def SelectTrigger(*c, cls=None, **kwargs):
-    ico = Lucide(icon="chevron-down", cls="h-4 w-4 opacity-50 shrink-0")
-    new_cls = select_trigger_cls
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return ft_hx('button', *c, ico, **kwargs)
-
-
-def SelectValue(placeholder=None, cls=None, **kwargs):
-    new_cls = "select-value pointer-events-none"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Span(placeholder, **kwargs)
-
-
-def SelectScrollUpButton(cls=None, **kwargs):
-    new_cls = select_scrollup_cls
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    ico = Lucide(icon="chevron-up", cls="h-4 w-4 hidden sm:flex")
-    return Div(ico, aria_hidden="true",**kwargs)
-
-
-def SelectScrollDownButton(cls=None, **kwargs):
-    new_cls = select_scrolldown_cls
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    ico = Lucide(icon="chevron-down", cls="h-4 w-4 hidden sm:flex")
-    return Div(ico,aria_hidden="true", **kwargs)
-
-
-def SelectContent(*c, cls=None, id=None, **kwargs):
-    if not id:
-        raise ValueError("`id` is required")
-    new_cls = select_content_cls
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Portal(Div(SelectScrollUpButton(),
-            Div(*c,
-            cls=select_viewport_cls,
-            role="listbox",
-            style="position:relative;flex:1 1 0%;overflow: auto;",
-            id=f"{id}-viewport"
-        ),
-        SelectScrollDownButton(),
-        tabindex="-1",
-        style=select_content_styles_,
-        id=f"{id}-content",
-        **kwargs
-    ), 
-    id=id,
-    )
-
-def SelectGroup(*c, **kwargs):
-    return Div(*c, role="group", **kwargs)
-
-
-def SelectLabel(*c, cls=None, **kwargs):
-    new_cls = select_label_cls
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Div(*c, **kwargs)
-
-
-def SelectItem(*c, cls=None, checked="false", value=None, **kwargs):
-    new_cls = select_item_cls
-    span_cls = "absolute left-2 hidden h-3.5 w-3.5 items-center justify-center group-data-[checked=true]:flex"
-    ico = Lucide(icon="check", cls="h-4 w-4")
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Div(
-        Span(ico, cls=span_cls),
-        Span(*c),
-        data_checked=checked,
-        value=value,
-        role="option",
-        tabindex=-1,
-        aria_selected=checked,
-        **kwargs
-    )
-
-def SelectSeparator(id=None, cls=None, **kwargs):   
-    new_cls = select_separator_cls
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Hr(id=f"{id}-separator", **kwargs)
-
-def Portal(*c, id=None, **kwargs):
-    if not id:
-        raise ValueError("`id` is required")
-    return Div(*c, id=f"{id}-portal", style="position:fixed;left:0;top:0;display:none;",cls="select-portal", **kwargs)
-
-def Select(*c, cls=None, state="closed", placeholder:str=None, label:str=None, items: list = None, id=None, name=None, standard=False, **kwargs):
-    if not id:
-        raise ValueError("`id` is required")
-    new_cls = "select group relative data-[state=open]:no-bg-scroll"
-    value_holder = Hidden(value="", name=name, id=f"{id}-input")
-    render_items = ()
-
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-
-    if standard:
-        return Div(value_holder, *c, data_state=state, id=id, role="combobox", aria_controls=f"{id}-content", aria_expanded="false", aria_haspopup="listbox", **kwargs)
-
-    if items:
-        render_items = (SelectItem(item, value=item.lower(), name=item) for item in items)
-
-    select_trigger = SelectTrigger(SelectValue(placeholder))
-    select_content = SelectContent(
-            SelectGroup(SelectLabel(label), *render_items),
-            id=id
-        ),
-
-    return Div(
-        value_holder,
-        select_trigger,
-        select_content,
-        data_state=state,
-        id=id,
-        role="combobox",
-        aria_controls=f"{id}-content",
-        aria_expanded="false",
-        aria_haspopup="listbox",
-        **kwargs
-    )
-
-
-def Carousel(*c, cls=None, orientation:str='horizontal', autoplay:bool=False, duration:str='500', **kwargs):
-    new_cls = "relative w-full"
-
-    surreal_script = Script("""
-    proc_htmx('[data-ref="carousel"]', carousel => {
-    const items = any('[data-carousel-item]', carousel)
-    const content = me('[data-ref="content"]', carousel)
-    const prevButton = me('[data-ref="prevButton"]', carousel)
-    const nextButton = me('[data-ref="nextButton"]', carousel)
-
-    const {autoplay, orientation, duration} = carousel.dataset
-
-    let currentIndex = 0;
-
-            if (orientation === 'vertical') {
-                items.run(item => {
-                    item.classAdd('pt-4');
-                });
-                content.classAdd('-mt-4', 'flex-col')
-                prevButton.classList.add('-top-12', 'left-1/2', '-translate-x-1/2', 'rotate-90');
-                nextButton.classList.add('-bottom-12', 'left-1/2', '-translate-x-1/2', 'rotate-90');
-
-            } else {
-                items.run(item => {
-                    item.classAdd('pl-4');
-                });
-                content.classAdd('-ml-4');
-                prevButton.classList.add('-left-12', 'top-1/2', '-translate-y-1/2');
-                nextButton.classList.add('-right-12', 'top-1/2', '-translate-y-1/2');
-            }
-
-            function updateCarousel() {
-                content.style.transform = `translateX(-${currentIndex * 100}%)`;
-            }
-
-            prevButton.on('click', () => {
-                currentIndex = (currentIndex - 1 + items.length) % items.length;
-                updateCarousel();
-            });
-
-    nextButton.on('click', () => {
-        currentIndex = (currentIndex + 1) % items.length;
-        updateCarousel();
-    });
-
-
-    if (autoplay === 'true') {
-        setInterval(() => {
-            currentIndex = (currentIndex + 1) % items.length;
-            updateCarousel();
-        }, 5000);
-        }
-    })""")
-
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] =new_cls
-
-    return Div(
-            surreal_script,
-            *c,
-            data_autoplay='true' if autoplay else 'false',
-            data_orientation=orientation,
-            data_duration=duration,
-            data_ref="carousel",
-            role="region",
-            aria_roledescription="carousel",
-            **kwargs
-        )
-
-def CarouselContent(*c, cls=None, **kwargs):
-    new_cls = "flex transition-transform ease-in-out duration-500"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Div(Div(*c, data_ref="content", **kwargs), cls="overflow-hidden")
-
-def CarouselItem(*c, cls=None, **kwargs):
-    new_cls = "min-w-0 shrink-0 grow-0 basis-full",
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Div(*c, data_carousel_item=True, **kwargs)
-
-def CarouselPrevious(icon='arrow-left', cls=None, **kwargs):
-    new_cls = "absolute h-8 w-8 !rounded-full"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Button(Lucide(icon=icon, cls='size-4'),
-                variant="outline",
-                size="icon", data_ref="prevButton", **kwargs)
-
-def CarouselNext(icon='arrow-right', cls=None, **kwargs):
-    new_cls = "absolute h-8 w-8 !rounded-full"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Button(Lucide(icon=icon, cls='size-4'),
-                variant="outline",
-                size="icon", data_ref="nextButton", **kwargs)
 
 def Slider(cls=None, min=0, max=100, step=1, value=0, name=None, **kwargs):
     new_cls = "relative flex w-full touch-none select-none items-center"
@@ -1649,26 +1358,3 @@ def RadioGroupItem(cls=None, value=None, **kwargs):
         tabindex="0",
         **kwargs
     )
-
-component_map = [
-    Button,
-    Input,
-    Card,
-    Progress,
-    Dialog,
-    Textarea,
-    Label,
-    Checkbox,
-    Select,
-]
-
-
-def override_components():
-    module_name = "fasthtml.common"
-    module = sys.modules[module_name]
-    for component in component_map:
-        component_name = component.__name__
-        setattr(module, component_name, component)
-
-
-override_components()

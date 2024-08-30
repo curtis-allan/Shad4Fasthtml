@@ -80,7 +80,5 @@ Work is also in progress to split the code into smaller, more modular components
   ],
   ```
 
-> [!WARNING] 
+> [!NOTE] 
 > Support for third-party plugins is currently unavailable. I'm working on a solution for this. Since Shadcn's component library uses `tailwindcss-animate` for animations, I had to port the plugin directly into the `tailwind.config.js` file. This is a temporary solution, and I will update the documentation if i find a better solution.
-
----

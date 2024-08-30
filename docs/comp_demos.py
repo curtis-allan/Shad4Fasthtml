@@ -1,7 +1,8 @@
 from docs.comp_code import code_dict, dummy_data
 from fasthtml.common import *
 from fasthtml.components import Zero_md
-from shadcn import *
+from shad4fast import *
+from lucide4py import Lucide
 
 __all__ = [
     "card_block,carousel_block,tabs_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block"
@@ -10,8 +11,8 @@ __all__ = [
 
 def ThemeToggle(variant="outline", cls=None, **kwargs):
     return Button(
-        Lucide(icon="sun", id="theme-icon-sun"),
-        Lucide(icon="moon", id="theme-icon-moon"),
+        Lucide(icon="sun", id="theme-icon-sun", cls="dark:flex hidden"),
+        Lucide(icon="moon", id="theme-icon-moon", cls="dark:hidden"),
         variant=variant,
         size="icon",
         cls=f"theme-toggle {cls}",
@@ -80,6 +81,7 @@ def BlockChange():
 
 def render_code(content):
     css = ".markdown-body{height:100%; overflow:hidden; pre {code {height:100%; box-sizing:border-box}height:100%;width:100%;box-sizing:border-box;}} :host {height:100%; width:100%; position: relative; contain: content;} :host([hidden]) { display: none; }"
+
     css_template = Template(
         Link(
             rel="stylesheet",
@@ -89,7 +91,6 @@ def render_code(content):
         Link(
             rel="stylesheet",
             href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github-dark.min.css",
-            media="(prefers-color-scheme: dark)",
             cls="dark-theme",
         ),
         Link(
@@ -100,25 +101,23 @@ def render_code(content):
         Link(
             rel="stylesheet",
             href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.6.1/github-markdown-dark.min.css",
-            media="(prefers-color-scheme: dark)",
             cls="dark-theme",
         ),
         Style(css),
     )
 
     return Zero_md(
-        css_template,
-        Script(
-            f"```\n{content}\n```",
-            type="text/markdown",
-        ),
-    )
-
+            css_template,
+            Script(
+                f"```\n{content}\n```",
+                type="text/markdown",
+            ),
+        )
 
 def CodeContent(id: str = None):
     return Div(
         render_code(code_dict[id]),
-        cls="code-content flex items-center justify-center h-[350px] hidden ",
+        cls="code-content items-center justify-center h-[350px] hidden",
     )
 
 
@@ -228,7 +227,7 @@ def select_block():
                 items=["Apple", "Banana", "Blueberry", "Orange"],
                 id="select-demo",
                 name="select-demo",
-                cls="[&>.select-trigger]:w-[180px]",
+                cls="[&>button]:w-[180px]",
             ),
             id="select",
         ),
@@ -336,7 +335,7 @@ def ButtonAltBlockStates():
                         cls="text-[15px] font-semibold",
                     ),
                     Button(
-                        Lucide(icon="loader2", cls="size-4 mr-1.5 animate-spin"),
+                        Lucide(icon="loader-circle", cls="size-4 mr-1.5 animate-spin"),
                         "Loading",
                         id="button-loading",
                         disabled=True,

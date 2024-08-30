@@ -1,7 +1,4 @@
 import random
-
-from starlette.responses import StreamingResponse
-
 from docs.comp_demos import (
     ThemeToggle,
     alert_block,
@@ -28,7 +25,8 @@ from docs.comp_demos import (
 )
 from fasthtml.common import *
 from fasthtml.components import Zero_md
-from shadcn import *
+from shad4fast import *
+from lucide4py import Lucide
 
 zeromd_headers = Script(
     type="module", src="https://cdn.jsdelivr.net/npm/zero-md@3?register"
@@ -82,53 +80,38 @@ def MobileHeader():
             hx_boost="true",
         ),
         ThemeToggle(cls="shrink-0"),
-        cls="sm:hidden fixed flex top-0 z-50 items-center justify-between bg-background w-full px-4 py-2 shadow dark:shadow-border",
+        cls="sm:hidden sticky flex top-0 z-50 items-center justify-between bg-background w-full px-4 py-2 shadow dark:shadow-border",
         tabindex="-1",
     )
 
 
-def source_code():
+def source_button():
     return (
-        Div(
-            Span(
-                Lucide(icon="terminal", cls="size-4"),
-                P(
-                    "source code",
-                    style="font-variant:small-caps;",
-                    cls="text-sm sm:text-base md:text-lg",
-                ),
-                cls="text-center col-span-2 gap-1.5 flex items-center justify-start text-sm font-mono select-none p-1 border border-inset border-accent text-green-400 dark:text-green-600",
+        Span(
+        A(
+            Button(
+                Lucide(icon="github", cls="mr-2 size-5"),
+                "Source",
+                variant="outline",
+                cls="w-full"
             ),
-            Span(
-                Lucide(
-                    icon="corner-down-right",
-                    cls="w-5 h-7 text-muted-foreground skew-y-6",
-                ),
-                cls="justify-self-end w-fit select-none",
-            ),
-            A(
-                Button(
-                    Lucide(icon="github"),
-                    size="icon",
-                    variant="outline",
-                ),
-                href="https://github.com/curtis-allan/shadcn-fasthtml-framework",
-                target="_blank",
-                cls="self-start",
-            ),
-            cls="grid grid-flow-row-dense auto-cols-fr gap-1 w-[140px]",
+            href="https://github.com/curtis-allan/shadcn-fasthtml-framework",
+            target="_blank",
+            cls="w-full"
         ),
+    cls="w-full flex justify-center items-center px-2",
+    )
     )
 
 
 @rt("/")
 def get():
     return (
+        Title("Shadcn components in FastHtml"),
         Body(
-            Title("Shadcn components in FastHtml"),
             Main(
+                MobileHeader(),
                 Section(
-                    MobileHeader(),
                     Header(
                         H1(
                             "Shadcn-ui components, made for FastHtml",
@@ -164,28 +147,15 @@ def get():
                                 ),
                                 href="/getting-started/installation",
                                 hx_boost="true",
-                                hx_swap="outerHTML",
                             ),
                             cls="flex container max-w-md p-2 my-6 gap-4 justify-between border rounded-xl shadow-md",
                         ),
                         cls="flex flex-col text-balance max-w-3xl",
                     ),
-                    Div(
-                        H2(
-                            "Click this button to change the theme",
-                            cls="text-lg text-muted-foreground",
-                        ),
-                        Lucide(
-                            icon="arrow-right",
-                            cls="size-5 shrink-0 text-muted-foreground",
-                        ),
-                        ThemeToggle(cls="shrink-0"),
-                        cls="container flex justify-center items-center gap-1.5",
-                    ),
-                    cls="flex flex-col justify-center gap-4 items-center container min-h-[calc(100svh-56px)]",
+                    cls="flex flex-col grow justify-center gap-4 items-center container h-full",
                 ),
+                cls="h-screen flex flex-col",
             ),
-            cls="pt-[50px] sm:pt-0",
         ),
     )
 
@@ -211,14 +181,14 @@ def MobileNav():
                         RenderNav(),
                         cls="overflow-auto block min-h-max no-scrollbar",
                     ),
-                    cls="overflow-hidden pl-2 w-full grid grow max-h-[calc(100vh-8rem)]",
+                    cls="overflow-hidden w-full grid grow max-h-[calc(100vh-8rem)]",
                 ),
                 Separator(),
                 SheetFooter(
-                    source_code(),
+                    source_button(),
                 ),
                 side="left",
-                cls="w-[215px] sm:w-[250px] flex flex-col h-svh items-start",
+                cls="w-[215px] flex flex-col h-svh",
             ),
             id="mobile-nav",
             standard=True,
@@ -270,10 +240,10 @@ def NavItem(title, i):
                     i,
                 ),
                 variant="link",
-                cls="link-btn w-full tracking-tight !justify-start mt-2 !p-0 !pl-4 h-fit !text-muted-foreground text-sm tracking-tight !items-start",
+                cls=f"w-full tracking-tight !justify-start mt-2 !p-0 !pl-6 h-fit !text-muted-foreground text-sm !items-start group-data-[active={i}]:border-r-2 group-data-[active={i}]:!border-primary group-data-[active={i}]:font-semibold group-data-[active={i}]:rounded-none group-data-[active={i}]:!text-muted-foreground",
             ),
             href=f"/{title}/{i}",
-            hx_boost="true",
+            hx_boost='true',
         ),
     )
 
@@ -289,7 +259,7 @@ def RenderNav():
                         Li(
                             H1(
                                 format_title(title),
-                                cls="font-semibold pl-2 tracking-tight",
+                                cls="font-semibold pl-5 tracking-tight",
                             ),
                             Ul(
                                 *[
@@ -308,7 +278,7 @@ def RenderNav():
     return Ul(*nav_items, cls="space-y-2")
 
 
-def Sidebar():
+def Sidebar(active=None):
     return (
         Aside(
             Div(
@@ -334,8 +304,14 @@ def Sidebar():
                 cls="flex flex-col overflow-x-hidden overflow-y-scroll no-scrollbar overscroll-y-contain w-full h-full",
             ),
             Separator(),
-            source_code(),
-            cls="hidden sm:flex fixed flex-col gap-2 items-center overflow-hidden h-screen top-0 inset-x-0 border-r w-[180px] pt-6 m-0",
+            Span(
+            source_button(),
+            ThemeToggle(cls="shrink-0"),
+            cls="w-full flex items-center gap-2 justify-center pr-2 pt-1",
+            ),
+            cls="hidden group sm:flex fixed flex-col gap-2 items-center overflow-hidden h-screen top-0 inset-x-0 border-r w-[180px] pt-6 pb-2 m-0",
+            id="sidebar",
+            data_active=active,
         ),
     )
 
@@ -356,6 +332,7 @@ def DocsLayout(*c, title: str):
                 cls="max-w-4xl container my-14",
             ),
             cls="flex flex-col sm:ml-[180px]",
+            id="docs-layout"
         ),
     )
 
@@ -371,7 +348,6 @@ def render_md(link):
         Link(
             rel="stylesheet",
             href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.6.1/github-markdown-dark.min.css",
-            media="(prefers-color-scheme: dark)",
             cls="dark-theme",
         ),
         Link(
@@ -382,7 +358,6 @@ def render_md(link):
         Link(
             rel="stylesheet",
             href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github-dark.min.css",
-            media="(prefers-color-scheme: dark)",
             cls="dark-theme",
         ),
         Style(css),
@@ -402,14 +377,13 @@ def render_md(link):
 @rt("/getting-started/{title}")
 def get(title: str):
     content = f"docs/md/{title}"
-    print(content)
     if title == "installation":
         content = "README"
     name = format_title(title)
     return (
         Title(name),
         Body(
-            Sidebar(),
+            Sidebar(active=title),
             MobileHeader(),
             DocsLayout(
                 Div(
@@ -417,8 +391,7 @@ def get(title: str):
                 ),
                 title=title,
             ),
-            cls="pt-[50px] sm:p-0",
-        ),
+        )
     )
 
 
@@ -454,7 +427,7 @@ def get(title: str):
     return (
         Title(name),
         Body(
-            Sidebar(),
+            Sidebar(active=title),
             MobileHeader(),
             DocsLayout(
                 Div(
@@ -468,9 +441,8 @@ def get(title: str):
                 ),
                 title=title,
             ),
-            cls="pt-[50px] sm:p-0",
+        )
         ),
-    )
 
 
 @rt("/toast")

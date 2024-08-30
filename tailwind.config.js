@@ -5,9 +5,9 @@ function filterDefault(values) {
 }
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: ["selector"],
-  content: ["./**/*.{py,js}", "./docs/**/*.py"],
+  content: ["./**/*.{py,js}", "./docs/**/*.py", "./shad4fast/**/*.py", "./shad4fast/components/**/*.py"],
     theme: {
     container: {
       center: true,

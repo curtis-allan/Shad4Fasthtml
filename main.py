@@ -9,7 +9,6 @@ from docs.comp_demos import (
     dialog_block,
     input_block,
     label_block,
-    lucide_block,
     progress_block,
     select_block,
     separator_block,
@@ -26,7 +25,7 @@ from docs.comp_demos import (
 from fasthtml.common import *
 from fasthtml.components import Zero_md
 from shad4fast import *
-from lucide4py import Lucide
+from lucide_fasthtml import Lucide
 
 zeromd_headers = Script(
     type="module", src="https://cdn.jsdelivr.net/npm/zero-md@3?register"
@@ -60,7 +59,6 @@ app, rt = fast_app(
 )
 
 toast_setup(app)
-
 
 def MobileHeader():
     return Div(
@@ -170,7 +168,7 @@ def MobileNav():
                         cls="tracking-tight select-none",
                     ),
                     Badge(
-                        "v1.0",
+                        "v1.1",
                         variant="outline",
                     ),
                     cls="flex flex-col items-start w-full",
@@ -203,7 +201,6 @@ def format_title(str: str):
         return formatted
     res = str.capitalize()
     return res
-
 
 link_groups = {
     "getting-started": ("installation", "tailwind-setup"),
@@ -277,7 +274,6 @@ def RenderNav():
         nav_items += link_group
     return Ul(*nav_items, cls="space-y-2")
 
-
 def Sidebar(active=None):
     return (
         Aside(
@@ -291,7 +287,7 @@ def Sidebar(active=None):
                     hx_boost="true",
                 ),
                 Span(
-                    Badge("Version 1.0", variant="outline"),
+                    Badge("Version 1.1", variant="outline"),
                 ),
                 cls="flex flex-col justify-center gap-1 items-center",
             ),
@@ -312,6 +308,7 @@ def Sidebar(active=None):
             cls="hidden group sm:flex fixed flex-col gap-2 items-center overflow-hidden h-screen top-0 inset-x-0 border-r w-[180px] pt-6 pb-2 m-0",
             id="sidebar",
             data_active=active,
+            hx_preserve=True,
         ),
     )
 
@@ -407,12 +404,10 @@ demo_comps = {
     "dialog": dialog_block,
     "input": input_block,
     "label": label_block,
-    "tabel": table_block,
+    "table": table_block,
     "checkbox": checkbox_block,
     "switch": switch_block,
-    "lucide": lucide_block,
     "textarea": textarea_block,
-    "table": table_block,
     "sheet": sheet_block,
     "carousel": carousel_block,
     "slider": slider_block,

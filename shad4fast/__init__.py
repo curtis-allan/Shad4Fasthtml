@@ -1,2 +1,2 @@
 from .components import *
-from .shadcn import *
+from .headers import *

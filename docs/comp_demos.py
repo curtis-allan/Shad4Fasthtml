@@ -2,10 +2,10 @@ from docs.comp_code import code_dict, dummy_data
 from fasthtml.common import *
 from fasthtml.components import Zero_md
 from shad4fast import *
-from lucide4py import Lucide
+from lucide_fasthtml import Lucide
 
 __all__ = [
-    "card_block,carousel_block,tabs_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, lucide_block, textarea_block"
+    "card_block,carousel_block,tabs_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, textarea_block"
 ]
 
 
@@ -67,7 +67,7 @@ def BlockChange():
             Lucide(icon="arrow-left-right", cls="size-8 text-muted-foreground"),
             variant="outline",
             cls="flex w-full py-8",
-            onclick=f"toggleView(this)",
+            onclick="toggleView(this)",
         ),
         Script(
             """function toggleView(elt) {
@@ -349,10 +349,6 @@ def ButtonAltBlockStates():
     )
 
 
-def lucide_block():
-    return Block(H1("Placeholder"), id="lucide")
-
-
 def alert_block():
     return (
         Block(
@@ -374,7 +370,7 @@ def alert_block():
 def toast_block():
     return (
         Block(
-            Button("Send email", hx_get="/toast", hx_swap="none"),
+            Button("Send email", hx_get="/toast", hx_target="body", hx_swap="beforeend"),
             id="toast",
         ),
     )

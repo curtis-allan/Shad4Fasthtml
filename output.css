@@ -660,14 +660,6 @@ body {
   pointer-events: auto;
 }
 
-.invisible {
-  visibility: hidden;
-}
-
-.collapse {
-  visibility: collapse;
-}
-
 .fixed {
   position: fixed;
 }
@@ -850,10 +842,6 @@ body {
 
 .block {
   display: block;
-}
-
-.inline {
-  display: inline;
 }
 
 .flex {
@@ -1151,10 +1139,6 @@ body {
   flex: 1 1 0%;
 }
 
-.shrink {
-  flex-shrink: 1;
-}
-
 .shrink-0 {
   flex-shrink: 0;
 }
@@ -1177,10 +1161,6 @@ body {
 
 .caption-bottom {
   caption-side: bottom;
-}
-
-.border-collapse {
-  border-collapse: collapse;
 }
 
 .-translate-x-1\/2 {
@@ -1248,21 +1228,6 @@ body {
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
-}
-
-.columns-2 {
-  -moz-columns: 2;
-       columns: 2;
-}
-
-.columns-3 {
-  -moz-columns: 3;
-       columns: 3;
-}
-
-.columns-4 {
-  -moz-columns: 4;
-       columns: 4;
 }
 
 .grid-flow-row {
@@ -1740,10 +1705,6 @@ body {
   text-transform: capitalize;
 }
 
-.italic {
-  font-style: italic;
-}
-
 .leading-loose {
   line-height: 2;
 }
@@ -1806,10 +1767,6 @@ body {
 
 .text-secondary-foreground {
   color: hsl(var(--secondary-foreground));
-}
-
-.underline {
-  text-decoration-line: underline;
 }
 
 .underline-offset-4 {
@@ -1888,11 +1845,6 @@ body {
 
 .blur {
   --tw-blur: blur(8px);
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-}
-
-.invert {
-  --tw-invert: invert(100%);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
@@ -2070,10 +2022,6 @@ body {
   animation-play-state: paused;
 }
 
-.repeat-1 {
-  animation-iteration-count: 1;
-}
-
 /* Hide scrollbar for Chrome, Safari and Opera */
 
 .no-scrollbar::-webkit-scrollbar {
@@ -2088,14 +2036,6 @@ body {
   /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
-}
-
-.\[oldPosition\:self\.data\.position\] {
-  old-position: self.data.position;
-}
-
-.\[start\:delim\] {
-  start: delim;
 }
 
 @keyframes slideInFromTop {

@@ -1,14 +1,15 @@
-from fasthtml.components import Div, Script
-from shad4fast.shadcn import Button, Lucide
+from fasthtml.components import Div
+from fasthtml.xtend import ScriptX
+from .button import Button
+from lucide_fasthtml import Lucide
 
-__all__ =     ["Carousel",
+__all__ = ["Carousel",
     "CarouselContent",
     "CarouselItem",
     "CarouselPrevious",
     "CarouselNext",]
 
-def carousel_script():
-    return Script(src="/shad4fast/js/carousel.js", defer=True)
+carousel_script = ScriptX('shad4fast/js/carousel.js', _async=True, defer=True)
 
 def Carousel(*c, cls=None, orientation:str='horizontal', autoplay:bool=False, duration:str='500', **kwargs):
     new_cls = "relative w-full"
@@ -19,7 +20,7 @@ def Carousel(*c, cls=None, orientation:str='horizontal', autoplay:bool=False, du
 
     return Div(
             *c,
-            carousel_script(),
+            carousel_script,
             data_autoplay='true' if autoplay else 'false',
             data_orientation=orientation,
             data_duration=duration,

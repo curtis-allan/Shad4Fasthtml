@@ -1,6 +1,6 @@
 from fasthtml.components import Div, ft_hx, Span, Hr, Script, NotStr
 from fasthtml.xtend import Hidden
-from shad4fast.shadcn import Lucide
+from lucide_fasthtml import Lucide
 
 __all__ = ["Select",
     "SelectContent",

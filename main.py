@@ -51,6 +51,7 @@ app, rt = fast_app(
         zeromd_headers,
         social_headers,
         favicon_headers,
+        ScriptX(fname="md_theme.js"),
     ),
     htmlkw={"lang": "en"},
 )

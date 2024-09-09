@@ -1,21 +1,24 @@
-from fasthtml.components import Div, Input, Span
-from fasthtml.xtend import ScriptX
+from fasthtml.components import Div, Input, Span, Script, NotStr
 from lucide_fasthtml import Lucide
 from fasthtml.common import ft_hx
+import os
 
 __all__ = ["RadioGroup", "RadioGroupItem"]
 
+with open(os.path.join(os.path.dirname(__file__), '../js/radio.js')) as radio:
+    radio_scr = radio.read()
+
+script = Script(NotStr(radio_scr), _async=True, defer=True)
+
 def RadioGroup(*c, cls=None, name=None, defaultValue=None, **kwargs):
     new_cls = "grid gap-2"
-
-    radio_script = ScriptX('shad4fast/js/radio.js', _async=True, defer=True)
 
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
 
     return Div(
-        radio_script,
+        script,
         *c,
         Input(type="hidden", data_ref="hidden-input", name=name, value=defaultValue),
         data_ref="radio-group",

@@ -1,6 +1,7 @@
 from fasthtml.components import Div, ft_hx, Span, Hr, Script, NotStr
 from fasthtml.xtend import Hidden
 from lucide_fasthtml import Lucide
+import os
 
 __all__ = ["Select",
     "SelectContent",
@@ -23,6 +24,11 @@ select_cls = {"trigger": "flex h-10 w-full items-center justify-between rounded-
  "viewport":"p-1 h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] no-scrollbar"}
 
 select_content_styles = "box-sizing: border-box; display: flex; flex-direction: column; outline: none; --radix-select-content-transform-origin: var(--radix-popper-transform-origin); --radix-select-content-available-width: var(--radix-popper-available-width); --radix-select-content-available-height: var(--radix-popper-available-height); --radix-select-trigger-width: var(--radix-popper-anchor-width); --radix-select-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
+
+with open(os.path.join(os.path.dirname(__file__), '../js/select.js')) as select:
+    select_scr = select.read()
+
+script = Script(NotStr(select_scr), _async=True, defer=True, type="module")
 
 def SelectTrigger(*c, cls=None, **kwargs):
     ico = Lucide(icon="chevron-down", cls="h-4 w-4 opacity-50 shrink-0")
@@ -132,19 +138,12 @@ def Select(*c, cls=None, state="closed", placeholder:str=None, label:str=None, i
     value_holder = Hidden(value="", name=name, id=f"{id}-input")
     render_items = ()
 
-    select_script = Script(NotStr(f"""
-        import('/shad4fast/js/select.js').then(module => {{
-            const select = document.getElementById('{id}');
-            select._selectInstance = new module.Select(select);
-        }});
-    """), type="module", _async=True, defer=True)
-
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
 
     if standard:
-        return Div(value_holder, *c, select_script, data_ref="select", data_state=state, id=id, role="combobox", aria_controls=f"{id}-content", aria_expanded="false", aria_haspopup="listbox", **kwargs)
+        return Div(value_holder, *c, script, data_ref="select", data_state=state, id=id, role="combobox", aria_controls=f"{id}-content", aria_expanded="false", aria_haspopup="listbox", **kwargs)
 
     if items:
         render_items = (SelectItem(item, value=item.lower(), name=item) for item in items)
@@ -159,7 +158,7 @@ def Select(*c, cls=None, state="closed", placeholder:str=None, label:str=None, i
         value_holder,
         select_trigger,
         select_content,
-        select_script,
+        script,
         data_state=state,
         data_ref="select",
         id=id,

@@ -1,5 +1,5 @@
-from fasthtml.components import Script, Style
-from fasthtml.xtend import ScriptX
+from fasthtml.components import Script, Style, NotStr
+import os
 
 __all__ = ["ShadHead"]
 
@@ -376,9 +376,14 @@ tailwind.config = {
         animation-name: slideInFromBottom;
     }
 }""", type="text/tailwindcss")
+    
+    with open(os.path.join(os.path.dirname(__file__), '../js/main_scripts.js')) as main:
+      main_scr = main.read()
+
+    script = Script(NotStr(main_scr), _async=True, defer=True)
 
     headers = [
-        ScriptX(fname='shad4fast/js/main_scripts.js', _async=True, defer=True),
+script,
     ]
     if tw_link:
         headers.append(Script(src="https://cdn.tailwindcss.com"))

@@ -1,7 +1,7 @@
-from fasthtml.components import Div, P, H1, Span
+from fasthtml.components import Div, P, H1, Span, Script, NotStr
 from lucide_fasthtml import Lucide
 from .button import Button
-from fasthtml.xtend import ScriptX
+import os
 
 __all__ = ["Dialog", "DialogHeader", "DialogFooter", "DialogTitle", "DialogCloseButton", "DialogDescription", "DialogContent", "DialogTrigger"]
 
@@ -12,6 +12,11 @@ dialog_title_cls = "text-lg font-semibold leading-none tracking-tight"
 dialog_description_cls = "text-sm text-muted-foreground"
 dialog_header_cls = "flex flex-col space-y-1.5 text-center sm:text-left"
 dialog_footer_cls = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
+
+with open(os.path.join(os.path.dirname(__file__), '../js/dialog.js')) as dialog:
+    dialog_scr = dialog.read()
+
+script = Script(NotStr(dialog_scr), _async=True, defer=True)
 
 def DialogHeader(*c, cls=None, **kwargs):
     new_cls = dialog_header_cls
@@ -69,8 +74,7 @@ def DialogContent(*c, cls=None, **kwargs):
 def DialogTrigger(*c, dialog_id=None, **kwargs):
     return Button(
         *c,
-        dialog_id=dialog_id,
-        onclick="event.preventDefault();openDialog(this)",
+        data_dialog_id=dialog_id,
         **kwargs,
     )
 
@@ -86,7 +90,6 @@ def Dialog(
     **kwargs,
 ):
     overlay = Div(cls=dialog_overlay_cls)
-    dialog_script= ScriptX('shad4fast/js/dialog.js', _async=True, defer=True)
 
     new_cls = "dialog group"
     if cls:
@@ -109,7 +112,7 @@ def Dialog(
             *header_content,
         )
 
-    return Div(dialog_script,
+    return Div(script,
         overlay,
         DialogContent(header, *c, footer),
         style="display: none;",

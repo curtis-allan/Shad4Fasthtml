@@ -1,4 +1,5 @@
-export class Select {
+if (typeof window.Select === 'undefined') {
+    window.Select = class Select {
     constructor(select) {
         this.select = select;
         this.trigger = select.querySelector('[data-ref="select-trigger"]');
@@ -240,8 +241,9 @@ export class Select {
         }
     }
 }
+}
 
-export function handleSelectClose() {
+function handleSelectClose() {
     document.querySelectorAll('[data-ref="select"]').forEach(select => {
         if (select._selectInstance) {
             select._selectInstance.close();
@@ -250,6 +252,9 @@ export function handleSelectClose() {
 }
 if (!window.selectInitialized) {
     window.selectInitialized = true;
+    proc_htmx('[data-ref="select"]', select => {
+        select._selectInstance = new window.Select(select);
+    })
     window.onresize = (event) => {handleSelectClose()};
     window.onpopstate = (event) => {handleSelectClose()};
 }

@@ -1,19 +1,22 @@
-from fasthtml.components import Div, Input
-from fasthtml.xtend import ScriptX
+from fasthtml.components import Div, Input, Script, NotStr
+import os
 
 __all__ = ["Slider"]
 
+with open(os.path.join(os.path.dirname(__file__), '../js/slider.js')) as slider:
+    slider_scr = slider.read()
+
+script = Script(NotStr(slider_scr), _async=True, defer=True)
+
 def Slider(cls=None, min=0, max=100, step=1, value=0, name=None, **kwargs):
     new_cls = "relative flex w-full touch-none select-none items-center"
-
-    slider_script = ScriptX('shad4fast/js/slider.js', _async=True, defer=True)
 
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
 
     return Div(
-        slider_script,
+        script,
         Div(
             Div(data_ref="range", cls="absolute h-full bg-primary"),
             data_ref="track",

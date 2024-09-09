@@ -1,8 +1,8 @@
-from fasthtml.components import Div, P, H1, Span
+from fasthtml.components import Div, P, H1, Span, Script
 from lucide_fasthtml import Lucide
 from .button import Button
-from fasthtml.common import ft_hx
-from fasthtml.xtend import ScriptX
+from fasthtml.common import ft_hx, NotStr
+import os
 
 __all__ = ["Sheet", "SheetCloseButton", "SheetContent", "SheetHeader", "SheetTitle", "SheetDescription", "SheetFooter", "SheetTrigger"]
 
@@ -20,6 +20,12 @@ sheet_footer_cls = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-
 sheet_title_cls = "text-lg font-semibold text-foreground"
 sheet_description_cls = "text-sm text-muted-foreground"
 
+with open(os.path.join(os.path.dirname(__file__), '../js/sheet.js')) as sheet:
+    sheet_scr = sheet.read()
+
+script = Script(NotStr(sheet_scr), _async=True, defer=True)
+
+
 def Sheet(
     *c,
     cls=None,
@@ -34,7 +40,6 @@ def Sheet(
 ):
     new_cls = "group sheet"
     overlay = Div(cls=sheet_overlay_cls)
-    sheet_script= ScriptX('shad4fast/js/sheet.js', _async=True, defer=True)
     header_content = []
     header = None
     footer = None
@@ -56,7 +61,7 @@ def Sheet(
     if footer:
         footer = SheetFooter(footer)
 
-    return Div(sheet_script,
+    return Div(script,
         overlay,
         SheetContent(header, *c, footer, side=side, cls=content_cls),
         data_state=state,
@@ -124,8 +129,7 @@ def SheetTrigger(*c, cls=None, sheet_id: str = None, **kwargs):
     kwargs["cls"] = new_cls
     return Button(
         *c,
-        onclick="event.preventDefault();openSheet(this)",
-        sheet_id=sheet_id,
+        data_sheet_id=sheet_id,
         **kwargs,
     )
 

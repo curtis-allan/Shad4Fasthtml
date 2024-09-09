@@ -1,7 +1,7 @@
-from fasthtml.components import Div
-from fasthtml.xtend import ScriptX
+from fasthtml.components import Div, Script, NotStr
 from .button import Button
 from lucide_fasthtml import Lucide
+import os
 
 __all__ = ["Carousel",
     "CarouselContent",
@@ -9,7 +9,11 @@ __all__ = ["Carousel",
     "CarouselPrevious",
     "CarouselNext",]
 
-carousel_script = ScriptX('shad4fast/js/carousel.js', _async=True, defer=True)
+
+with open(os.path.join(os.path.dirname(__file__), '../js/carousel.js')) as carousel:
+    carousel_scr = carousel.read()
+
+script = Script(NotStr(carousel_scr), _async=True, defer=True)
 
 def Carousel(*c, cls=None, orientation:str='horizontal', autoplay:bool=False, duration:str='500', **kwargs):
     new_cls = "relative w-full"
@@ -20,7 +24,7 @@ def Carousel(*c, cls=None, orientation:str='horizontal', autoplay:bool=False, du
 
     return Div(
             *c,
-            carousel_script,
+            script,
             data_autoplay='true' if autoplay else 'false',
             data_orientation=orientation,
             data_duration=duration,

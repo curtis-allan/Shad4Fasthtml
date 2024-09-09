@@ -1,14 +1,17 @@
-from fasthtml.components import Div
-from fasthtml.xtend import ScriptX
+from fasthtml.components import Div, NotStr, Script
 from fasthtml.common import ft_hx
+import os
 
 __all__ = ["Tabs", "TabsList", "TabsTrigger", "TabsContent"]
 
+with open(os.path.join(os.path.dirname(__file__), '../js/tabs.js')) as tabs:
+    tabs_scr = tabs.read()
+
+script = Script(NotStr(tabs_scr), _async=True, defer=True)
+
 def Tabs(*c, default_value=None, **kwargs):
 
-    tabs_script = ScriptX('shad4fast/js/tabs.js', _async=True, defer=True)
-
-    return Div(*c,tabs_script, data_ref="tabs", data_default_value=default_value, **kwargs)
+    return Div(*c, script, data_ref="tabs", data_default_value=default_value, **kwargs)
 
 def TabsList(*c, cls=None, **kwargs):
     new_cls = "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground"

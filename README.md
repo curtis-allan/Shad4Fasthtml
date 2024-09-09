@@ -5,8 +5,8 @@
 
 ## Quick Start Guide
 
-[![PyPI - Version](https://img.shields.io/pypi/v/init.svg)](https://pypi.org/project/init)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/init.svg)](https://pypi.org/project/init)
+[![PyPI - Version](https://img.shields.io/pypi/v/shad4fast.svg)](https://pypi.org/project/shad4fast)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/shad4fast.svg)](https://pypi.org/project/shad4fast)
 
 ### Setup & Installation
 

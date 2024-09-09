@@ -48,7 +48,7 @@ def Sheet(
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     if standard:
-        return Div(overlay, *c, style="display: none;", data_state=state, **kwargs)
+        return Div(script, overlay, *c, style="display: none;", data_state=state, **kwargs)
 
     if title:
         header_content.append(SheetTitle(title))

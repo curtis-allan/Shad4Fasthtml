@@ -1,4 +1,4 @@
-from fasthtml.components import Script, Style, NotStr
+from fasthtml.components import Script, Style, NotStr, Link
 import os
 
 __all__ = ["ShadHead"]
@@ -377,13 +377,15 @@ tailwind.config = {
     }
 }""", type="text/tailwindcss")
     
-    with open(os.path.join(os.path.dirname(__file__), '../js/main_scripts.js')) as main:
+    with open(os.path.join(os.path.dirname(__file__), 'js/main_scripts.js')) as main:
       main_scr = main.read()
+
+    tw_output_link = Link(href="/output.css", rel="stylesheet")
 
     script = Script(NotStr(main_scr), _async=True, defer=True)
 
     headers = [
-script,
+script, tw_output_link
     ]
     if tw_link:
         headers.append(Script(src="https://cdn.tailwindcss.com"))

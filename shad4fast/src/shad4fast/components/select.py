@@ -123,7 +123,7 @@ def SelectItem(*c, cls=None, checked="false", value=None, **kwargs):
     )
 
 def SelectSeparator(**kwargs):
-    cls=f"{kwargs.pop("cls", '')} {select_cls['separator']}"
+    cls=f"{kwargs.pop('cls', '')} {select_cls['separator']}"
     return Hr(cls=cls, **kwargs)
 
 def Portal(*c, id=None, **kwargs):

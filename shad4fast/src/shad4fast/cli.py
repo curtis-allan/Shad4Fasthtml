@@ -31,6 +31,9 @@ def get_tailwind_binary():
 
 
 def setup():
+    if os.path.isfile("tailwindcss"):
+        print("Tailwindcss is already installed")
+        return
     binary_name = get_tailwind_binary()
     url = f"https://github.com/tailwindlabs/tailwindcss/releases/latest/download/{binary_name}"
 
@@ -38,7 +41,17 @@ def setup():
     if platform.system().lower() != "windows":
         subprocess.run(["chmod", "+x", binary_name], check=True)
     os.rename(binary_name, "tailwindcss")
-    subprocess.run(["./tailwindcss", "init"], check=True)
+
+    globals_css_url = "https://raw.githubusercontent.com/curtis-allan/shadcn-fasthtml-framework/main/globals.css"
+    tailwind_config_url = "https://raw.githubusercontent.com/curtis-allan/shadcn-fasthtml-framework/main/tailwind.config.js"
+
+    if not os.path.isfile("globals.css"):
+        subprocess.run(["curl", "-sLO", globals_css_url], check=True)
+    if not os.path.isfile("tailwind.config.js"):
+        subprocess.run(["curl", "-sLO", tailwind_config_url], check=True)
+    if not os.path.isfile("output.css"):
+        subprocess.run(["touch" if platform.system().lower() != "windows" else "ni", "output.css"], check=True)
+
 
 
 def watch():
@@ -46,7 +59,7 @@ def watch():
         [
             "./tailwindcss",
             "-i",
-            "shad4fast/globals.css",
+            "./globals.css",
             "-o",
             "./output.css",
             "--watch",
@@ -60,9 +73,9 @@ def build():
         [
             "./tailwindcss",
             "-i",
-            "shad4fast/globals.css",
+            "./globals.css",
             "-o",
-            "output.css",
+            "./output.css",
             "--minify",
         ],
         check=True,

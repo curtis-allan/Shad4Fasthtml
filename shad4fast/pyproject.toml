@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "Shad4fast"
+name = "Shad4Fast"
 dynamic = ["version"]
 description = 'Shadcn style components to be used with fasthtml'
 readme = "README.md"
@@ -24,7 +24,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = ["lucide_fasthtml", "python-fasthtml"]
+dependencies = ["lucide_fasthtml>=0.0.6", "python-fasthtml"]
 
 [project.urls]
 Documentation = "https://github.com/curtis-allan/shadcn-fasthtml-framework#readme"

@@ -1,1 +1,3 @@
-python.fasthtml
+python-fasthtml
+shad4fast
+

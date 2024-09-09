@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "Shad4Fast"
+dynamic = ["version"]
+description = 'Shadcn style components to be used with fasthtml'
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = ["shadcn", "components", "ui", "tailwindcss"]
+authors = [
+  { name = "Curtis Allan", email = "curtisjallan98@gmail.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = ["lucide_fasthtml>=0.0.6", "python-fasthtml"]
+
+[project.urls]
+Documentation = "https://github.com/curtis-allan/shadcn-fasthtml-framework#readme"
+Issues = "https://github.com/curtis-allan/shadcn-fasthtml-framework/issues"
+Source = "https://github.com/curtis-allan/shadcn-fasthtml-framework"
+
+[tool.hatch.version]
+path = "src/shad4fast/__about__.py"
+
+[tool.hatch.envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/shad4fast tests}"
+
+[tool.coverage.run]
+source_pkgs = ["shad4fast", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/shad4fast/__about__.py",
+]
+
+[tool.coverage.paths]
+shad4fast = ["src/shad4fast", "*/shad4fast/src/shad4fast"]
+tests = ["tests", "*/shad4fast/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[project.scripts]
+shad4fast = "shad4fast.cli:main"

@@ -1,13 +1,20 @@
-function filterDefault(values) {
+from fasthtml.components import Script, Style, NotStr, Link
+import os
+
+__all__ = ["ShadHead"]
+
+def ShadHead(tw_link=False):
+
+    tw_config = Script("""
+    function filterDefault(values) {
 	return Object.fromEntries(
 		Object.entries(values).filter(([key]) => key !== "DEFAULT"),
 	)
 }
 
-/** @type {import('tailwindcss').Config} */
-export default {
+tailwind.config = {
   darkMode: ["selector"],
-  content: ["./**/*.{py,js}", "./.venv/lib/python3.12/site-packages/shad4fast/**/*.py"],
+  content: ["./**/*.{py,js}", "./docs/**/*.py"],
     theme: {
     container: {
       center: true,
@@ -238,3 +245,216 @@ export default {
 	},
   ],
 }
+""")
+
+    tw_styles = Style("""
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        --primary: 240 5.9% 10%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        --accent: 240 4.8% 95.9%;
+        --accent-foreground: 240 5.9% 10%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 240 5.9% 10%;
+        --radius: 0.5rem;
+        --chart-1: 12 76% 61%;
+        --chart-2: 173 58% 39%;
+        --chart-3: 197 37% 24%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
+    }
+
+    .dark {
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 240 10% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 240 10% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 240 5.9% 10%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
+        --accent: 240 3.7% 15.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 240 4.9% 83.9%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+    }
+}
+
+@layer base {
+    :root:has(.no-bg-scroll) {
+        overflow: hidden;
+    }
+
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground antialiased min-h-screen;
+        font-feature-settings: "rlig" 1, "calt" 1;
+    }
+}
+
+@layer utilities {
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+        -webkit-overflow-scrolling:touch;
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+}
+
+@keyframes slideInFromTop {
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromBottom {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.toast {
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+}
+
+@media (max-width: 640px) {
+    .toast {
+        animation-name: slideInFromTop;
+    }
+}
+
+@media (min-width: 641px) {
+    .toast {
+        animation-name: slideInFromBottom;
+    }
+}""", type="text/tailwindcss")
+    
+    with open(os.path.join(os.path.dirname(__file__), 'js/main_scripts.js')) as main:
+      main_scr = main.read()
+
+    tw_output_link = Link(href="/output.css", rel="stylesheet")
+
+    script = Script(NotStr(main_scr), _async=True, defer=True)
+
+    headers = [
+script, tw_output_link
+    ]
+    if tw_link:
+        headers.append(Script(src="https://cdn.tailwindcss.com"))
+        headers.append(tw_styles)
+        headers.append(tw_config)
+
+
+    return (*headers,)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

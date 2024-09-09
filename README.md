@@ -5,6 +5,9 @@
 
 ## Quick Start Guide
 
+[![PyPI - Version](https://img.shields.io/pypi/v/shad4fast.svg)](https://pypi.org/project/shad4fast)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/shad4fast.svg)](https://pypi.org/project/shad4fast)
+
 ### Setup & Installation
 
 Getting started with Shadcn UI for FastHTML is quick and easy. Follow these simple steps to set up your project:

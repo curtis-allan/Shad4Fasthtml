@@ -44,8 +44,6 @@ favicon_headers = Favicon(
     light_icon="/public/light_favicon.ico", dark_icon="/public/dark_favicon.ico"
 )
 
-tw_output_link = Link(href="/output.css", rel="stylesheet")
-
 app, rt = fast_app(
     pico=False,
     hdrs=(
@@ -53,7 +51,6 @@ app, rt = fast_app(
         zeromd_headers,
         social_headers,
         favicon_headers,
-        tw_output_link,
     ),
     htmlkw={"lang": "en"},
 )

@@ -201,7 +201,7 @@ def format_title(str: str):
     return res
 
 link_groups = {
-    "getting-started": ("installation", "tailwind-setup"),
+    "getting-started": ("installation", "tailwind-setup", "theme-configuration"),
     "components": (
         "card",
         "alert",

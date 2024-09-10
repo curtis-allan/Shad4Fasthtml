@@ -11,8 +11,8 @@ __all__ = [
 
 def ThemeToggle(variant="outline", cls=None, **kwargs):
     return Button(
-        Lucide(icon="sun", id="theme-icon-sun", cls="dark:flex hidden"),
-        Lucide(icon="moon", id="theme-icon-moon", cls="dark:hidden"),
+        Lucide("sun", cls="dark:flex hidden"),
+        Lucide("moon", cls="dark:hidden"),
         variant=variant,
         size="icon",
         cls=f"theme-toggle {cls}",

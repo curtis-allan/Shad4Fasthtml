@@ -47,7 +47,7 @@ favicon_headers = Favicon(
 app, rt = fast_app(
     pico=False,
     hdrs=(
-        ShadHead(),
+        ShadHead(theme_handle=True),
         zeromd_headers,
         social_headers,
         favicon_headers,

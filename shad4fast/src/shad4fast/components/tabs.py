@@ -1,5 +1,4 @@
-from fasthtml.components import Div, NotStr, Script
-from fasthtml.common import ft_hx
+from fasthtml.common import Div, Script, ft_hx
 import os
 
 __all__ = ["Tabs", "TabsList", "TabsTrigger", "TabsContent"]
@@ -7,7 +6,7 @@ __all__ = ["Tabs", "TabsList", "TabsTrigger", "TabsContent"]
 with open(os.path.join(os.path.dirname(__file__), '../js/tabs.js')) as tabs:
     tabs_scr = tabs.read()
 
-script = Script(NotStr(tabs_scr), _async=True, defer=True)
+script = Script(tabs_scr, _async=True, defer=True)
 
 def Tabs(*c, default_value=None, **kwargs):
 

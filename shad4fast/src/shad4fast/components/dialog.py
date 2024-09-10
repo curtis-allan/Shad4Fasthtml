@@ -1,4 +1,5 @@
-from fasthtml.components import Div, P, H1, Span, Script, NotStr
+from fasthtml.components import Div, P, H1, Span, ft_hx
+from fasthtml.common import Script
 from lucide_fasthtml import Lucide
 from .button import Button
 import os
@@ -16,7 +17,7 @@ dialog_footer_cls = "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x
 with open(os.path.join(os.path.dirname(__file__), '../js/dialog.js')) as dialog:
     dialog_scr = dialog.read()
 
-script = Script(NotStr(dialog_scr), _async=True, defer=True)
+script = Script(dialog_scr, _async=True, defer=True)
 
 def DialogHeader(*c, cls=None, **kwargs):
     new_cls = dialog_header_cls
@@ -47,7 +48,7 @@ def DialogCloseButton(*c, cls=None, **kwargs):
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return Button(*c, **kwargs)
+    return Button(*c, type="button", **kwargs)
 
 
 def DialogDescription(*c, cls=None, **kwargs):
@@ -59,9 +60,11 @@ def DialogDescription(*c, cls=None, **kwargs):
 
 
 def DialogContent(*c, cls=None, **kwargs):
-    closeBtn = Div(
+    closeBtn = ft_hx('button',
         Lucide(icon="x", cls="size-4"),
         Span("Close", cls="sr-only"),
+        type="button",
+        tabindex=0,
         cls=dialog_closeBtn_cls,
     )
     new_cls = dialog_content_cls
@@ -75,6 +78,7 @@ def DialogTrigger(*c, dialog_id=None, **kwargs):
     return Button(
         *c,
         data_dialog_id=dialog_id,
+        type="button",
         **kwargs,
     )
 

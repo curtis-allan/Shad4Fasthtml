@@ -1,4 +1,4 @@
-from fasthtml.components import Div, Input, Script, NotStr
+from fasthtml.common import Div, Input, Script
 import os
 
 __all__ = ["Slider"]
@@ -6,7 +6,7 @@ __all__ = ["Slider"]
 with open(os.path.join(os.path.dirname(__file__), '../js/slider.js')) as slider:
     slider_scr = slider.read()
 
-script = Script(NotStr(slider_scr), _async=True, defer=True)
+script = Script(slider_scr, _async=True, defer=True)
 
 def Slider(cls=None, min=0, max=100, step=1, value=0, name=None, **kwargs):
     new_cls = "relative flex w-full touch-none select-none items-center"

@@ -1,7 +1,6 @@
-from fasthtml.components import Div, P, H1, Span, Script
+from fasthtml.common import Div, P, H1, Span,ft_hx, Script
 from lucide_fasthtml import Lucide
 from .button import Button
-from fasthtml.common import ft_hx, NotStr
 import os
 
 __all__ = ["Sheet", "SheetCloseButton", "SheetContent", "SheetHeader", "SheetTitle", "SheetDescription", "SheetFooter", "SheetTrigger"]
@@ -23,7 +22,7 @@ sheet_description_cls = "text-sm text-muted-foreground"
 with open(os.path.join(os.path.dirname(__file__), '../js/sheet.js')) as sheet:
     sheet_scr = sheet.read()
 
-script = Script(NotStr(sheet_scr), _async=True, defer=True)
+script = Script(sheet_scr, _async=True, defer=True)
 
 
 def Sheet(
@@ -79,6 +78,7 @@ def SheetCloseButton(*c, cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Button(
         *c,
+        type="button",
         **kwargs,
     )
 
@@ -130,6 +130,7 @@ def SheetTrigger(*c, cls=None, sheet_id: str = None, **kwargs):
     return Button(
         *c,
         data_sheet_id=sheet_id,
+        type="button",
         **kwargs,
     )
 

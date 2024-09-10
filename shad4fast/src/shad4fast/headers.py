@@ -1,9 +1,9 @@
-from fasthtml.components import Script, Style, NotStr, Link
+from fasthtml.common import Script, Style, Link
 import os
 
 __all__ = ["ShadHead"]
 
-def ShadHead(tw_link=False):
+def ShadHead(tw_cdn=False, theme_handle=False):
 
     tw_config = Script("""
     function filterDefault(values) {
@@ -12,9 +12,8 @@ def ShadHead(tw_link=False):
 	)
 }
 
-tailwind.config = {
-  darkMode: ["selector"],
-  content: ["./**/*.{py,js}", "./docs/**/*.py"],
+    tailwind.config = {
+    darkMode: 'selector',
     theme: {
     container: {
       center: true,
@@ -86,6 +85,14 @@ tailwind.config = {
 								"translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0))",
 						},
 					},
+          "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
 				},
       colors: {
         border: "hsl(var(--border))",
@@ -244,8 +251,7 @@ tailwind.config = {
 		)
 	},
   ],
-}
-""")
+}""")
 
     tw_styles = Style("""
     @tailwind base;
@@ -382,15 +388,23 @@ tailwind.config = {
 
     tw_output_link = Link(href="/output.css", rel="stylesheet")
 
-    script = Script(NotStr(main_scr), _async=True, defer=True)
+    script = Script(main_scr)
 
     headers = [
-script, tw_output_link
+      script,
     ]
-    if tw_link:
+    if tw_cdn:
         headers.append(Script(src="https://cdn.tailwindcss.com"))
-        headers.append(tw_styles)
         headers.append(tw_config)
+        headers.append(tw_styles)
+
+    else:
+       headers.append(tw_output_link)
+
+    if theme_handle:
+        with open(os.path.join(os.path.dirname(__file__), 'js/theme.js')) as theme:
+          theme_scr = theme.read()
+        headers.append(Script(theme_scr))
 
 
     return (*headers,)

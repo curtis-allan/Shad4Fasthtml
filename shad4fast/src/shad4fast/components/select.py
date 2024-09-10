@@ -1,4 +1,4 @@
-from fasthtml.components import Div, ft_hx, Span, Hr, Script, NotStr
+from fasthtml.common import Div, ft_hx, Span, Hr, Script
 from fasthtml.xtend import Hidden
 from lucide_fasthtml import Lucide
 import os
@@ -28,7 +28,7 @@ select_content_styles = "box-sizing: border-box; display: flex; flex-direction: 
 with open(os.path.join(os.path.dirname(__file__), '../js/select.js')) as select:
     select_scr = select.read()
 
-script = Script(NotStr(select_scr), _async=True, defer=True, type="module")
+script = Script(select_scr, _async=True, defer=True, type="module")
 
 def SelectTrigger(*c, cls=None, **kwargs):
     ico = Lucide(icon="chevron-down", cls="h-4 w-4 opacity-50 shrink-0")
@@ -36,7 +36,7 @@ def SelectTrigger(*c, cls=None, **kwargs):
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
-    return ft_hx('button', *c, ico, data_ref="select-trigger", **kwargs)
+    return ft_hx('button', *c, ico, data_ref="select-trigger", type="button", **kwargs)
 
 
 def SelectValue(placeholder=None, cls=None, **kwargs):

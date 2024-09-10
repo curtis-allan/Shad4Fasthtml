@@ -1,4 +1,4 @@
-from fasthtml.components import Div, P, Script, NotStr
+from fasthtml.common import Div, P, Script
 from lucide_fasthtml import Lucide
 from fasthtml.toaster import *
 import os
@@ -8,7 +8,7 @@ __all__ = ["toast", "Toaster", "toast_setup"]
 with open(os.path.join(os.path.dirname(__file__), '../js/toast.js')) as toast:
     toast_scr = toast.read()
 
-script = Script(NotStr(toast_scr), _async=True, defer=True)
+script = Script(toast_scr, _async=True, defer=True)
 
 toast_container_cls = "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px] transition-transform duration-300"
 toast_base_cls = "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg toast"

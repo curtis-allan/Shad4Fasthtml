@@ -1,6 +1,5 @@
-from fasthtml.components import Div, Input, Span, Script, NotStr
+from fasthtml.common import Div, Input, Span, Script, ft_hx
 from lucide_fasthtml import Lucide
-from fasthtml.common import ft_hx
 import os
 
 __all__ = ["RadioGroup", "RadioGroupItem"]
@@ -8,7 +7,7 @@ __all__ = ["RadioGroup", "RadioGroupItem"]
 with open(os.path.join(os.path.dirname(__file__), '../js/radio.js')) as radio:
     radio_scr = radio.read()
 
-script = Script(NotStr(radio_scr), _async=True, defer=True)
+script = Script(radio_scr, _async=True, defer=True)
 
 def RadioGroup(*c, cls=None, name=None, defaultValue=None, **kwargs):
     new_cls = "grid gap-2"

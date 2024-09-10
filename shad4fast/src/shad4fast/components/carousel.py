@@ -1,4 +1,4 @@
-from fasthtml.components import Div, Script, NotStr
+from fasthtml.common import Div, Script
 from .button import Button
 from lucide_fasthtml import Lucide
 import os
@@ -13,7 +13,7 @@ __all__ = ["Carousel",
 with open(os.path.join(os.path.dirname(__file__), '../js/carousel.js')) as carousel:
     carousel_scr = carousel.read()
 
-script = Script(NotStr(carousel_scr), _async=True, defer=True)
+script = Script(carousel_scr, _async=True, defer=True)
 
 def Carousel(*c, cls=None, orientation:str='horizontal', autoplay:bool=False, duration:str='500', **kwargs):
     new_cls = "relative w-full"
@@ -55,7 +55,7 @@ def CarouselPrevious(icon='arrow-left', cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Button(Lucide(icon=icon, cls='size-4'),
                 variant="outline",
-                size="icon", data_ref="prevButton", **kwargs)
+                size="icon", data_ref="prevButton", type="button", **kwargs)
 
 def CarouselNext(icon='arrow-right', cls=None, **kwargs):
     new_cls = "absolute h-8 w-8 !rounded-full"
@@ -64,4 +64,4 @@ def CarouselNext(icon='arrow-right', cls=None, **kwargs):
     kwargs["cls"] = new_cls
     return Button(Lucide(icon=icon, cls='size-4'),
                 variant="outline",
-                size="icon", data_ref="nextButton", **kwargs)
+                size="icon", data_ref="nextButton", type="button", **kwargs)

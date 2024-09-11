@@ -9,6 +9,10 @@ htmx.on('htmx:historyRestore', function() {
     resetDialogAndSheet();
 });
 
+htmx.on('htmx:beforeSwap', function() {
+  resetDialogAndSheet();
+})
+
 function toggleCheckbox(e) {
   e.dataset.state = e.dataset.state === "unchecked" ? "checked" : "unchecked";
   e.querySelector("input").checked = e.dataset.state === "checked";

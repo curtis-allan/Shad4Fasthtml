@@ -54,9 +54,13 @@ app, rt = fast_app(
         ScriptX(fname="md_theme.js"),
     ),
     htmlkw={"lang": "en"},
+    bodykw={
+        "hx-on::load": "path = location.pathname.split('/')[2]; if (path) {this.querySelectorAll('button[data-state=active]').forEach((btn) => {if(btn.dataset.link !== path) btn.dataset.state='inactive'}); active=this.querySelectorAll(`[data-link=${path}]`).forEach((link) => link.dataset.state='active')}"
+    },
 )
 
 toast_setup(app)
+
 
 def MobileHeader():
     return Div(
@@ -82,31 +86,28 @@ def MobileHeader():
 
 
 def source_button():
-    return (
-        Span(
+    return Span(
         A(
             Button(
                 Lucide(icon="github", cls="mr-2 size-5"),
                 "Source",
                 variant="outline",
-                cls="w-full"
+                cls="w-full",
             ),
             href="https://github.com/curtis-allan/shadcn-fasthtml-framework",
             target="_blank",
-            cls="w-full"
+            cls="w-full",
         ),
-    cls="w-full flex justify-center items-center px-2",
-    )
+        cls="w-full flex justify-center items-center px-2",
     )
 
 
 @rt("/")
 def get():
     return (
-        Title("Shadcn components in FastHtml"),
+        Title("Shad4Fast"),
         Body(
             Main(
-                MobileHeader(),
                 Section(
                     Header(
                         H1(
@@ -184,12 +185,13 @@ def MobileNav():
                     source_button(),
                 ),
                 side="left",
-                cls="w-[215px] flex flex-col h-svh",
+                cls="w-[215px] flex flex-col h-full",
             ),
             id="mobile-nav",
             standard=True,
         ),
     )
+
 
 def format_title(str: str):
     if "-" in str:
@@ -200,8 +202,9 @@ def format_title(str: str):
     res = str.capitalize()
     return res
 
+
 link_groups = {
-    "getting-started": ("installation", "tailwind-setup", "theme-configuration"),
+    "getting-started": ("installation", "tailwind-setup", "theme-config"),
     "components": (
         "card",
         "alert",
@@ -235,10 +238,14 @@ def NavItem(title, i):
                     i,
                 ),
                 variant="link",
-                cls=f"w-full tracking-tight !justify-start mt-2 !p-0 !pl-6 h-fit !text-muted-foreground text-sm !items-start group-data-[active={i}]:border-r-2 group-data-[active={i}]:!border-primary group-data-[active={i}]:font-semibold group-data-[active={i}]:rounded-none group-data-[active={i}]:!text-muted-foreground",
+                data_link=i,
+                cls="w-full tracking-tight !justify-start mt-2 !p-0 !pl-6 h-fit !text-muted-foreground text-sm !items-start data-[state=active]:border-r-2 data-[state=active]:border-primary data-[state=active]:font-semibold data-[state=active]:rounded-none data-[state=active]:!text-accent-foreground",
             ),
             href=f"/{title}/{i}",
-            hx_boost='true',
+            hx_boost="true",
+            hx_select="#docs-layout",
+            target_id="docs-layout",
+            hx_swap="outerHTML show:window:top",
         ),
     )
 
@@ -247,32 +254,25 @@ def RenderNav():
     nav_items = []
     link_titles = link_groups.keys()
     for title in link_titles:
-        link_group = (
-            (
-                (
-                    (
-                        Li(
-                            H1(
-                                format_title(title),
-                                cls="font-semibold pl-5 tracking-tight",
-                            ),
-                            Ul(
-                                *[
-                                    Li(
-                                        NavItem(title, i),
-                                    )
-                                    for i in sorted(link_groups[title])
-                                ],
-                            ),
-                        )
-                    ),
-                ),
+        link_group = Li(
+            H1(
+                format_title(title),
+                cls="font-semibold pl-5 tracking-tight",
+            ),
+            Ul(
+                *[
+                    Li(
+                        NavItem(title, i),
+                    )
+                    for i in sorted(link_groups[title])
+                ],
             ),
         )
         nav_items += link_group
     return Ul(*nav_items, cls="space-y-2")
 
-def Sidebar(active=None):
+
+def Sidebar():
     return (
         Aside(
             Div(
@@ -299,14 +299,12 @@ def Sidebar(active=None):
             ),
             Separator(),
             Span(
-            source_button(),
-            ThemeToggle(cls="shrink-0"),
-            cls="w-full flex items-center gap-2 justify-center pr-2 pt-1",
+                source_button(),
+                ThemeToggle(cls="shrink-0"),
+                cls="w-full flex items-center gap-2 justify-center pr-2 pt-1",
             ),
-            cls="hidden group sm:flex fixed flex-col gap-2 items-center overflow-hidden h-screen top-0 inset-x-0 border-r w-[180px] pt-6 pb-2 m-0",
+            cls="hidden sm:flex fixed flex-col gap-2 items-center overflow-hidden h-screen top-0 inset-x-0 border-r w-[180px] pt-6 pb-2 m-0",
             id="sidebar",
-            data_active=active,
-            hx_preserve=True,
         ),
     )
 
@@ -327,7 +325,7 @@ def DocsLayout(*c, title: str):
                 cls="max-w-4xl container my-14",
             ),
             cls="flex flex-col sm:ml-[180px]",
-            id="docs-layout"
+            id="docs-layout",
         ),
     )
 
@@ -378,7 +376,7 @@ def get(title: str):
     return (
         Title(name),
         Body(
-            Sidebar(active=title),
+            Sidebar(),
             MobileHeader(),
             DocsLayout(
                 Div(
@@ -386,7 +384,7 @@ def get(title: str):
                 ),
                 title=title,
             ),
-        )
+        ),
     )
 
 
@@ -413,29 +411,32 @@ demo_comps = {
     "radio": radio_block,
 }
 
+
 @rt("/components/{title}")
 def get(title: str):
     name = format_title(title)
     comp = demo_comps[title]
     return (
-        Title(name),
-        Body(
-            Sidebar(active=title),
-            MobileHeader(),
-            DocsLayout(
-                Div(
-                    H2(
-                        "Demo",
-                        cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        (
+            Title(name),
+            Body(
+                Sidebar(),
+                MobileHeader(),
+                DocsLayout(
+                    Div(
+                        H2(
+                            "Demo",
+                            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+                        ),
+                        comp(),
+                        render_md(f"docs/md/{title}_template"),
+                        cls="flex flex-col gap-6",
                     ),
-                    comp(),
-                    render_md(f"docs/md/{title}_template"),
-                    cls="flex flex-col gap-6",
+                    title=title,
                 ),
-                title=title,
             ),
-        )
         ),
+    )
 
 
 @rt("/toast")
@@ -483,5 +484,6 @@ def get():
         )
 
     return ProgressBar(progress)
+
 
 serve()

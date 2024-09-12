@@ -72,9 +72,9 @@ def __ft__(self: Todo):
             Div(
                 "Priority level: ",
                 Badge(
-                    self.priority.title(),
+                    self.priority.title() if self.priority else "Low",
                     variant="outline",
-                    cls=f"{priority_cls[self.priority]} w-fit",
+                    cls=f"{priority_cls[self.priority] if self.priority else ''} w-fit",
                 ),
                 cls="flex items-center gap-1 text-muted-foreground text-sm pt-2",
             ),
@@ -99,7 +99,12 @@ def __ft__(self: Todo):
 def title_input(**kw):
     return Div(
         Label("Title", htmlFor="new-title"),
-        Input(id="new-title", name="title", placeholder="Enter a todo title"),
+        Input(
+            id="new-title",
+            name="title",
+            placeholder="Enter a todo title",
+            required=True,
+        ),
         cls="space-y-1",
         id="title-block",
         **kw,
@@ -114,6 +119,7 @@ def description_input(**kw):
             name="description",
             placeholder="Enter a todo description",
             cls="resize-none",
+            required=True,
         ),
         cls="space-y-1",
         id="description-block",
@@ -123,15 +129,18 @@ def description_input(**kw):
 
 def priority_input(**kw):
     return Div(
-        Label("Priority", htmlFor="priority-select"),
-        Select(
-            label="Priority",
-            placeholder="Select a level of urgency",
-            name="priority",
-            items=["Low", "Medium", "High"],
-            id="priority-select",
+        Label(
+            "Priority",
+            Select(
+                label="Priority",
+                placeholder="Select a level of urgency",
+                name="priority",
+                items=["Low", "Medium", "High"],
+                id="priority-select",
+                cls="mt-1",
+                default_value="high",
+            ),
         ),
-        cls="space-y-1",
         id="priority-block",
         **kw,
     )
@@ -224,7 +233,6 @@ def get(id: int):
 @rt("/")
 def put(todo: Todo):
     return todos.upsert(todo)
-
 
 serve()
 ```

@@ -204,7 +204,12 @@ def format_title(str: str):
 
 
 link_groups = {
-    "getting-started": ("installation", "tailwind-setup", "theme-config"),
+    "getting-started": (
+        "installation",
+        "tailwind-setup",
+        "theme-config",
+        "shad4fast-example",
+    ),
     "components": (
         "card",
         "alert",

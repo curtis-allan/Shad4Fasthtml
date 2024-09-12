@@ -1,28 +1,33 @@
 proc_htmx(".dialog", (dialog) => {
+
   var fragment = document.createDocumentFragment();
 
   fragment.appendChild(dialog);
 
   document.body.appendChild(fragment);
 
-  const overlay = dialog.querySelector(".dialog-overlay");
-  const closeIcon = dialog.querySelector(".dialog-close-btn");
-  const closeBtn = dialog.querySelector(".dialog-close-button");
-  const openBtn = document.querySelector(`button[data-dialog-id=${dialog.id}]`)
-
-  function openDialog() {
+  function openDialog(e) {
+    e.preventDefault();
     dialog.dataset.state = "open";
-    dialog.style.display = "flex";
+    dialog.classList.remove('hidden');
   }
 
-
-  function toggleClose() {
+  function toggleClose(e) {
+    e.stopPropagation();
     dialog.dataset.state = "closed";
-    setTimeout(() => (dialog.style.display = "none"), 110);
   }
 
-  if (overlay) overlay.addEventListener("mousedown", toggleClose);
-  if (closeBtn) closeBtn.addEventListener("mousedown", toggleClose);
-  if (closeIcon) closeIcon.addEventListener("mousedown", toggleClose);
-  if (openBtn) openBtn.addEventListener("click", openDialog);
+  const overlay = dialog.querySelector(".dialog-overlay");
+
+  if (overlay) overlay.addEventListener("mousedown",(e) => toggleClose(e));
+
+  dialog.addEventListener("animationend", () => {
+    if (dialog.dataset.state === "closed") dialog.classList.add('hidden');
 });
+
+document.addEventListener("click", (e) => {
+    if (e.target.closest(".dialog-close-button")) toggleClose(e); 
+    if (e.target.closest(`button[data-dialog-id=${dialog.id}]`)) openDialog(e);
+});
+})
+

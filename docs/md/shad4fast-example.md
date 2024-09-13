@@ -62,7 +62,7 @@ def __ft__(self: Todo):
     status_cls = "absolute top-1.5 right-1"
     checked = Badge(
         Lucide("check", stroke_width="3", cls="size-4"),
-        cls=f"!bg-green-600 text-accent-foreground {status_cls} {"invisible" if not self.done else ''}",
+        cls=f"!bg-green-600 text-accent-foreground {status_cls} {'invisible' if not self.done else ''}",
     )
 
     return Card(

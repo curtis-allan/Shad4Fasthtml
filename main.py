@@ -281,6 +281,14 @@ def Sidebar():
     return (
         Aside(
             Div(
+                Avatar(
+                    AvatarImage(
+                        src="https://placecats.com/300/200",
+                        alt="Profile Image",
+                        cls="bg-green-500",
+                    ),
+                    AvatarFallback("CA"),
+                ),
                 A(
                     H1(
                         "Shad4FastHtml",

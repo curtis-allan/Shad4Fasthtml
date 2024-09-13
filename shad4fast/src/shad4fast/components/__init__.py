@@ -18,4 +18,4 @@ from .switch import *
 from .textarea import *
 from .toast import *
 from .sheet import *
-
+from .avatar import *

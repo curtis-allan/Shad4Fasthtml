@@ -20,7 +20,12 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
   const nextButton = carousel.querySelector('[data-ref="nextButton"]');
   const items = carousel.querySelectorAll("[data-carousel-item]");
 
-  const { autoplay, orientation} = carousel.dataset;
+  if (!content || !items.length) {
+    console.error('Carousel is missing required elements');
+    return;
+  }
+
+  const { autoplay, orientation } = carousel.dataset;
   let autoplayInterval;
 
   const { height } = carousel.getBoundingClientRect();
@@ -30,10 +35,12 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
       items.forEach((item) => item.classList.add("pt-4"));
       content.classList.add("-mt-4", "flex-col");
       content.style.height = `${Math.floor(height + 16)}px`;
-      if (prevButton)
+      if (prevButton) {
         prevButton.classList.add("-top-12", "left-1/2", "-translate-x-1/2", "rotate-90");
-      if (nextButton)
+      }
+      if (nextButton) {
         nextButton.classList.add("-bottom-12", "left-1/2", "-translate-x-1/2", "rotate-90");
+      }
     } else {
       items.forEach((item) => item.classList.add("pl-4"));
       content.classList.add("-ml-4");
@@ -43,13 +50,14 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
   }
 
   function updateCarousel(direction) {
-      const index = (parseInt(carousel.dataset.index, 10)+direction+items.length) % items.length;
+    const currentIndex = parseInt(carousel.dataset.index, 10) || 0;
+    const newIndex = (currentIndex + direction + items.length) % items.length;
     if (orientation === "vertical") {
-      content.style.transform = `translate3d(0px, -${(height + 16) * index}px, 0px)`;
+      content.style.transform = `translate3d(0px, -${(height + 16) * newIndex}px, 0px)`;
     } else {
-      content.style.transform = `translate3d(-${index * 100}%, 0px, 0px)`;
+      content.style.transform = `translate3d(-${newIndex * 100}%, 0px, 0px)`;
     }
-    carousel.dataset.index = index;
+    carousel.dataset.index = newIndex;
   }
 
   function setupEventListeners() {
@@ -62,11 +70,11 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
       autoplayInterval = setInterval(() => updateCarousel(1), 5000);
     }
   }
-      setupOrientation();
-      setupEventListeners();
-      startAutoplay();
-      updateCarousel(parseInt(carousel.dataset.index, 10));
 
+  setupOrientation();
+  setupEventListeners();
+  startAutoplay();
+  updateCarousel(0);
 });
 
 // Setup Dialog Scripts
@@ -173,70 +181,88 @@ proc_htmx('[data-ref="radio-group"]', group => {
 
 // Setup Slider Scripts
 
+// ... existing code ...
+
+// Setup Slider Scripts
 proc_htmx('[data-ref="slider"]', slider => {
-  const track = slider.querySelector('[data-ref="track"]')
-  const range = slider.querySelector('[data-ref="range"]')
-  const thumb = slider.querySelector('[data-ref="thumb"]')
-  const hiddenInput = slider.querySelector('[data-ref="hidden-input"]')
+  const track = slider.querySelector('[data-ref="track"]');
+  const range = slider.querySelector('[data-ref="range"]');
+  const thumb = slider.querySelector('[data-ref="thumb"]');
+  const hiddenInput = slider.querySelector('[data-ref="hidden-input"]');
 
-  const {min, max, step, value} = slider.dataset
-  let currentValue = parseInt(value) || 0
+  if (!track || !range || !thumb || !hiddenInput) {
+    console.error('Slider is missing required elements');
+    return;
+  }
 
-  function updateSlider() {
-      const percentage = ((currentValue - min) / (max - min)) * 100
-      range.style.width = `${percentage}%`
-      thumb.style.left = `${percentage}%`
-      slider.setAttribute('aria-valuenow', currentValue)
-      hiddenInput.value = currentValue
+  const { min, max, step, value } = slider.dataset;
+  let currentValue = parseInt(value) || parseInt(min) || 0;
+
+  const config = {
+    min: parseInt(min) || 0,
+    max: parseInt(max) || 100,
+    step: parseInt(step) || 1
+  };
+
+  function updateSlider(percentage) {
+    currentValue = Math.round((percentage * (config.max - config.min) + config.min) / config.step) * config.step;
+    currentValue = Math.max(config.min, Math.min(config.max, currentValue));
+    
+    const displayPercentage = ((currentValue - config.min) / (config.max - config.min)) * 100;
+    range.style.width = `${displayPercentage}%`;
+    thumb.style.left = `${displayPercentage}%`;
+    slider.setAttribute('aria-valuenow', currentValue);
+    hiddenInput.value = currentValue;
+
+    slider.dispatchEvent(new CustomEvent('change', { detail: { value: currentValue } }));
   }
 
   function handleMove(clientX) {
-      const rect = track.getBoundingClientRect()
-      const percentage = (clientX - rect.left) / rect.width
-      currentValue = Math.round((percentage * (max - min) + parseInt(min)) / step) * step
-      currentValue = Math.max(min, Math.min(max, currentValue))
-      updateSlider()
-      slider.dispatchEvent(new CustomEvent('change', { detail: { value: currentValue } }))
+    const rect = track.getBoundingClientRect();
+    const percentage = (clientX - rect.left) / rect.width;
+    updateSlider(percentage);
   }
 
   function addDragListeners(startEvent) {
-      if (startEvent.button !== 0 && startEvent.type !== 'touchstart') return;
-      startEvent.preventDefault()
-      const moveHandler = moveEvent => handleMove(moveEvent.clientX || moveEvent.touches[0].clientX)
-      const upHandler = () => {
-          document.removeEventListener('mousemove', moveHandler)
-          document.removeEventListener('mouseup', upHandler)
-          document.removeEventListener('touchmove', moveHandler)
-          document.removeEventListener('touchend', upHandler)
-      }
-      document.addEventListener('mousemove', moveHandler)
-      document.addEventListener('mouseup', upHandler)
-      document.addEventListener('touchmove', moveHandler)
-      document.addEventListener('touchend', upHandler)
+    startEvent.preventDefault();
+    const moveHandler = moveEvent => handleMove(moveEvent.clientX || moveEvent.touches[0].clientX);
+    const upHandler = () => {
+      document.removeEventListener('mousemove', moveHandler);
+      document.removeEventListener('touchmove', moveHandler);
+      document.removeEventListener('mouseup', upHandler);
+      document.removeEventListener('touchend', upHandler);
+    };
+    document.addEventListener('mousemove', moveHandler);
+    document.addEventListener('touchmove', moveHandler, { passive: false });
+    document.addEventListener('mouseup', upHandler);
+    document.addEventListener('touchend', upHandler);
   }
 
   track.addEventListener('mousedown', e => {
-      if (e.button === 0) { 
-          handleMove(e.clientX)
-          addDragListeners(e)
-      }
-  })
+    if (e.button === 0) { // Only proceed for left mouse button
+      handleMove(e.clientX);
+      addDragListeners(e);
+    }
+  });
 
   track.addEventListener('touchstart', e => {
-      handleMove(e.touches[0].clientX)
-      addDragListeners(e)
-  })
+    handleMove(e.touches[0].clientX);
+    addDragListeners(e);
+  }, { passive: false });
 
   thumb.addEventListener('mousedown', e => {
-      if (e.button === 0) addDragListeners(e) 
-  })
+    if (e.button === 0) addDragListeners(e); // Only proceed for left mouse button
+  });
 
   thumb.addEventListener('touchstart', e => {
-      addDragListeners(e)
-  })
+    addDragListeners(e);
+  }, { passive: false });
 
-  updateSlider()
-})
+  // Initialize slider position
+  updateSlider((currentValue - config.min) / (config.max - config.min));
+});
+
+// ... existing code ...
 
 // Setup Tabs Scripts
 

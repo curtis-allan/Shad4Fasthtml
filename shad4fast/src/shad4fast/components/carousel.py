@@ -1,7 +1,6 @@
-from fasthtml.common import Div, Script
+from fasthtml.common import Div
 from .button import Button
 from lucide_fasthtml import Lucide
-import os
 
 __all__ = [
     "Carousel",
@@ -60,7 +59,7 @@ def Carousel(
 
 
 def CarouselContent(*c, cls=None, duration: str = "500", **kwargs):
-    new_cls = f"flex transition-transform ease-in-out"
+    new_cls = "flex transition-transform ease-in-out"
     if cls:
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
@@ -93,6 +92,7 @@ def CarouselPrevious(icon="arrow-left", cls=None, **kwargs):
         variant="outline",
         size="icon",
         data_ref="prevButton",
+        type="button",
         **kwargs,
     )
 
@@ -106,6 +106,7 @@ def CarouselNext(icon="arrow-right", cls=None, **kwargs):
         Lucide(icon=icon, cls="size-4"),
         variant="outline",
         size="icon",
+        type="button",
         data_ref="nextButton",
         **kwargs,
     )

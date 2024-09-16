@@ -21,6 +21,7 @@ from docs.comp_demos import (
     slider_block,
     tabs_block,
     radio_block,
+    avatar_block,
 )
 from fasthtml.common import *
 from fasthtml.components import Zero_md
@@ -54,9 +55,6 @@ app, rt = fast_app(
         ScriptX(fname="md_theme.js"),
     ),
     htmlkw={"lang": "en"},
-    bodykw={
-        "hx-on::load": "path = location.pathname.split('/')[2]; if (path) {this.querySelectorAll('button[data-state=active]').forEach((btn) => {if(btn.dataset.link !== path) btn.dataset.state='inactive'}); active=this.querySelectorAll(`[data-link=${path}]`).forEach((link) => link.dataset.state='active')}"
-    },
 )
 
 toast_setup(app)
@@ -64,12 +62,6 @@ toast_setup(app)
 
 def MobileHeader():
     return Div(
-        SheetTrigger(
-            Lucide(icon="menu"),
-            variant="outline",
-            size="icon",
-            sheet_id="mobile-nav",
-        ),
         MobileNav(),
         A(
             H1(
@@ -100,6 +92,23 @@ def source_button():
         ),
         cls="w-full flex justify-center items-center px-2",
     )
+
+
+def carousel_items():
+    carousel_items = ()
+    for i in range(4):
+        i += 1
+        carousel_items += (
+            Card(
+                Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                title=f"Card {i}",
+                description=f"Carousel demo card #{i}",
+                footer=Badge(
+                    "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                ),
+            ),
+        )
+    return carousel_items
 
 
 @rt("/")
@@ -160,6 +169,11 @@ def get():
 def MobileNav():
     return (
         Sheet(
+            SheetTrigger(
+                Lucide(icon="menu"),
+                variant="outline",
+                size="icon",
+            ),
             SheetContent(
                 SheetHeader(
                     SheetTitle(
@@ -212,6 +226,7 @@ link_groups = {
     ),
     "components": (
         "card",
+        "avatar",
         "alert",
         "switch",
         "badge",
@@ -244,7 +259,8 @@ def NavItem(title, i):
                 ),
                 variant="link",
                 data_link=i,
-                cls="w-full tracking-tight !justify-start mt-2 !p-0 !pl-6 h-fit !text-muted-foreground text-sm !items-start data-[state=active]:border-r-2 data-[state=active]:border-primary data-[state=active]:font-semibold data-[state=active]:rounded-none data-[state=active]:!text-accent-foreground",
+                data_ref_navlink=True,
+                cls="w-full sheet-close-button tracking-tight !justify-start mt-2 !p-0 !pl-6 h-fit !text-muted-foreground text-sm !items-start data-[state=active]:border-r-2 data-[state=active]:border-primary data-[state=active]:font-semibold data-[state=active]:rounded-none data-[state=active]:!text-accent-foreground",
             ),
             href=f"/{title}/{i}",
             hx_boost="true",
@@ -393,34 +409,9 @@ def get(title: str):
     )
 
 
-demo_comps = {
-    "card": card_block,
-    "select": select_block,
-    "alert": alert_block,
-    "toast": toast_block,
-    "separator": separator_block,
-    "badge": badge_block,
-    "button": button_block,
-    "progress": progress_block,
-    "dialog": dialog_block,
-    "input": input_block,
-    "label": label_block,
-    "table": table_block,
-    "checkbox": checkbox_block,
-    "switch": switch_block,
-    "textarea": textarea_block,
-    "sheet": sheet_block,
-    "carousel": carousel_block,
-    "slider": slider_block,
-    "tabs": tabs_block,
-    "radio": radio_block,
-}
-
-
 @rt("/components/{title}")
 def get(title: str):
     name = format_title(title)
-    comp = demo_comps[title]
     return (
         (
             Title(name),
@@ -433,7 +424,7 @@ def get(title: str):
                             "Demo",
                             cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
                         ),
-                        comp(),
+                        globals()[f"{title}_block"](),
                         render_md(f"docs/md/{title}_template"),
                         cls="flex flex-col gap-6",
                     ),

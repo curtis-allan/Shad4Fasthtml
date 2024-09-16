@@ -5,7 +5,7 @@ from shad4fast import *
 from lucide_fasthtml import Lucide
 
 __all__ = [
-    "card_block,carousel_block,tabs_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, textarea_block"
+    "avatar_block, card_block,carousel_block,tabs_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, textarea_block"
 ]
 
 
@@ -80,7 +80,7 @@ def BlockChange():
 
 
 def render_code(content):
-    css = ".markdown-body{height:100%; overflow:hidden; pre {code {height:100%; box-sizing:border-box}height:100%;width:100%;box-sizing:border-box;}} :host {height:100%; width:100%; position: relative; contain: content;} :host([hidden]) { display: none; }"
+    css = ".copy-button {position:absolute !important; right:1rem !important;} .markdown-body{height:100%; overflow:hidden; pre {code {height:100%; box-sizing:border-box}height:100%;width:100%;box-sizing:border-box;}} :host {height:100%; width:100%; position: relative; contain: content;} :host([hidden]) { display: none; }"
 
     css_template = Template(
         Link(
@@ -107,12 +107,13 @@ def render_code(content):
     )
 
     return Zero_md(
-            css_template,
-            Script(
-                f"```\n{content}\n```",
-                type="text/markdown",
-            ),
-        )
+        css_template,
+        Script(
+            f"```\n{content}\n```",
+            type="text/markdown",
+        ),
+    )
+
 
 def CodeContent(id: str = None):
     return Div(
@@ -186,7 +187,7 @@ def SelectAltBlock():
                         SelectItem("TypeScript", value="typescript"),
                         SelectItem("Ruby", value="ruby"),
                         SelectItem("Lua", value="lua"),
-                        SelectItem("PHP", value="php")
+                        SelectItem("PHP", value="php"),
                     ),
                     SelectSeparator(),
                     SelectGroup(
@@ -196,7 +197,7 @@ def SelectAltBlock():
                         SelectItem("Flutter", value="flutter"),
                         SelectItem("React Native", value="react-native"),
                         SelectItem("Xamarin", value="xamarin"),
-                        SelectItem("Ionic", value="ionic")
+                        SelectItem("Ionic", value="ionic"),
                     ),
                     SelectSeparator(),
                     SelectGroup(
@@ -206,17 +207,18 @@ def SelectAltBlock():
                         SelectItem("C#", value="csharp"),
                         SelectItem("Java", value="java"),
                         SelectItem("Scala", value="scala"),
-                        SelectItem("Haskell", value="haskell")
+                        SelectItem("Haskell", value="haskell"),
                     ),
-                    id='select-alt',
+                    id="select-alt",
                 ),
                 standard=True,
-                id='select-alt',
+                id="select-alt",
                 name="select-alt",
             ),
             id="select2",
         ),
     )
+
 
 def select_block():
     return (
@@ -231,7 +233,10 @@ def select_block():
             ),
             id="select",
         ),
-        H2("Scrolling & Seperators", cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4"),
+        H2(
+            "Scrolling & Seperators",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
         SelectAltBlock(),
     )
 
@@ -370,7 +375,9 @@ def alert_block():
 def toast_block():
     return (
         Block(
-            Button("Send email", hx_get="/toast", hx_target="body", hx_swap="beforeend"),
+            Button(
+                "Send email", hx_get="/toast", hx_target="body", hx_swap="beforeend"
+            ),
             id="toast",
         ),
     )
@@ -473,54 +480,29 @@ def progress_block():
         ),
     )
 
-def DialogAltBlock():
+
+def avatar_block():
     return Block(
         Div(
-            DialogTrigger("Toggle Dialog", dialog_id="demo-dialog"),
-            Dialog(
-                DialogContent(
-                    DialogHeader(
-                        DialogTitle("Edit Profile"),
-                        DialogDescription(
-                            "Make changes to your profile here. Click save when you're done."
-                        ),
-                    ),
-                    Div(
-                        Div(
-                            Label("Name", cls="text-right"),
-                            Input(
-                                value="John",
-                                cls="col-span-3",
-                            ),
-                            cls="grid grid-cols-4 items-center gap-4",
-                        ),
-                        Div(
-                            Label("Email", cls="text-right"),
-                            Input(
-                                type="email",
-                                value="johnsmith@email.com",
-                                cls="col-span-3",
-                            ),
-                            cls="grid grid-cols-4 items-center gap-4",
-                        ),
-                        cls="grid gap-4 py-4",
-                    ),
-                    DialogFooter(DialogCloseButton("Save changes")),
-                    cls="sm:max-w-[425px]",
-                ),
-                standard=True,
-                id="demo-dialog",
+            Avatar(
+                src="https://placecats.com/300/200", alt="Profile Image", fallback="CA"
             ),
         ),
-        id="dialog2",
+        id="avatar",
     )
 
 
-def dialog_block():
+def DialogAltBlock():
     return Block(
-        Div(
-            DialogTrigger("Toggle Dialog", dialog_id="demo-dialog"),
-            Dialog(
+        Dialog(
+            DialogTrigger("Toggle Dialog"),
+            DialogContent(
+                DialogHeader(
+                    DialogTitle("Edit Profile"),
+                    DialogDescription(
+                        "Make changes to your profile here. Click save when you're done."
+                    ),
+                ),
                 Div(
                     Div(
                         Label("Name", cls="text-right"),
@@ -541,12 +523,43 @@ def dialog_block():
                     ),
                     cls="grid gap-4 py-4",
                 ),
-                title="Edit Profile",
-                description="Make changes to your profile here. Click save when you're done.",
-                footer=Div(
-                    DialogCloseButton("Save changes"), cls="flex w-full justify-end"
+                DialogFooter(DialogCloseButton("Save changes")),
+                cls="sm:max-w-[425px]",
+            ),
+            standard=True,
+        ),
+        id="dialog2",
+    )
+
+
+def dialog_block():
+    return Block(
+        Dialog(
+            Div(
+                Div(
+                    Label("Name", cls="text-right"),
+                    Input(
+                        value="John",
+                        cls="col-span-3",
+                    ),
+                    cls="grid grid-cols-4 items-center gap-4",
                 ),
-                id="demo-dialog",
+                Div(
+                    Label("Email", cls="text-right"),
+                    Input(
+                        type="email",
+                        value="johnsmith@email.com",
+                        cls="col-span-3",
+                    ),
+                    cls="grid grid-cols-4 items-center gap-4",
+                ),
+                cls="grid gap-4 py-4",
+            ),
+            title="Edit Profile",
+            description="Make changes to your profile here. Click save when you're done.",
+            trigger="Toggle Dialog",
+            footer=Div(
+                DialogCloseButton("Save changes"), cls="flex w-full justify-end"
             ),
         ),
         id="dialog",
@@ -610,20 +623,16 @@ def switch_block():
                 ),
                 Switch(
                     id="switch-toggle",
+                    name="switch-toggle",
                 ),
                 cls="flex gap-1.5 items-center",
             ),
             id="switch",
         ),
-        H2(
-            "Within a form",
-            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
-        ),
-        SwitchFormBlock(),
     )
 
 
-def SwitchFormBlock():
+def SwitchAltBlock():
     return (
         Block(
             Form(
@@ -675,85 +684,173 @@ def table_block():
         ),
     )
 
-def carousel_block():
+
+def CarouselAltBlock():
     return Block(
         Carousel(
             CarouselContent(
                 CarouselItem(
                     Card(
-                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
                         title="Card #1",
                         description="Carousel demo card #1",
-                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
                     ),
                 ),
                 CarouselItem(
                     Card(
-                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
                         title="Card #2",
                         description="Carousel demo card #2",
-                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
                     ),
                 ),
                 CarouselItem(
                     Card(
-                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
                         title="Card #3",
                         description="Carousel demo card #3",
-                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
                     ),
                 ),
                 CarouselItem(
                     Card(
-                        Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
                         title="Card #4",
                         description="Carousel demo card #4",
-                        footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
                     ),
                 ),
+                duration="1000",
             ),
-            CarouselPrevious(),
-            CarouselNext(),
-            cls="max-w-[65%] mx-auto",
-            autoplay=False,
-            orientation="horizontal",
-            id="carousel-demo"
+            cls="max-w-xs",
+            autoplay=True,
+            orientation="vertical",
+            standard=True,
         ),
-        id="carousel",
+        id="carousel2",
     )
+
+
+def carousel_items():
+    items = ()
+    for i in range(4):
+        i += 1
+        items += (
+            Card(
+                Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                title=f"Card {i}",
+                description=f"Carousel demo card #{i}",
+                footer=Badge(
+                    "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                ),
+            ),
+        )
+    return items
+
+
+def carousel_block():
+    return (
+        Block(
+            Carousel(
+                items=carousel_items(),
+                cls="max-w-[65%] mx-auto",
+            ),
+            id="carousel",
+        ),
+        H2(
+            "Vertical + Autoplay w/o Buttons",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        CarouselAltBlock(),
+    )
+
 
 def slider_block():
     return Block(
-        Slider(max='100', value='50', step='1', cls='max-w-64', min='0', id="demo-slider", name="demo-slider"),id="slider")
-    
+        Slider(
+            max=100,
+            cls="max-w-64",
+            min=0,
+        ),
+        id="slider",
+    )
 
 
 def sheet_block():
-    return (
-        Block(
-            Div(
-                SheetTrigger("Toggle Sheet", sheet_id="demo-sheet"),
-            ),
-            id="sheet",
-        ),
+    return Block(
         Sheet(
             Div(
-                P("This is where you'd enter your sheet content", cls="text-pretty"),
-                cls="p-4",
+                P("This is where you'd enter your sheet content"),
+                cls="h-[85%]",
             ),
             title="Demo Sheet",
             description="This is a demo sheet.",
-            footer=Div(SheetCloseButton("Close")),
-            content_cls="flex flex-col justify-between",
-            id="demo-sheet",
+            footer=SheetCloseButton("Close", cls="w-full"),
+            trigger="Toggle Sheet",
         ),
+        id="sheet",
     )
+
+
+def SheetAltBlock():
+    return Block(
+        Sheet(
+            SheetTrigger("Toggle Sheet"),
+            SheetContent(
+                SheetHeader(
+                    SheetTitle("Demo Sheet"),
+                    SheetDescription("This is a demo sheet."),
+                ),
+                Div(
+                    Div(
+                        Label("Name", cls="text-right"),
+                        Input(
+                            value="John",
+                            cls="col-span-3",
+                        ),
+                        cls="grid grid-cols-4 items-center gap-4",
+                    ),
+                    Div(
+                        Label("Email", cls="text-right"),
+                        Input(
+                            type="email",
+                            value="johnsmith@email.com",
+                            cls="col-span-3",
+                        ),
+                        cls="grid grid-cols-4 items-center gap-4",
+                    ),
+                    cls="grid gap-4 py-4",
+                ),
+                SheetFooter(SheetCloseButton("Close")),
+            ),
+            standard=True,
+        ),
+        id="sheet",
+    )
+
 
 def checkbox_block():
     return (
         Block(
             Div(
-                Checkbox(id="terms1"),
+                Checkbox(id="terms1", name="terms1"),
                 Div(
                     Label(
                         "Agree to the terms",
@@ -771,51 +868,84 @@ def checkbox_block():
         ),
     )
 
+
 def tabs_block():
     return Block(
         Tabs(
-    TabsList(
-        TabsTrigger("Post", value="tab1"),
-        TabsTrigger("Settings", value="tab2"),
-        cls="grid w-full grid-cols-2"
-    ),
-    TabsContent(Card(Div(Label("Username", htmlFor="tab-title"),Input(type="text", placeholder="Title", id="tab-title"),),
-                title="Create a post",
-                description="Enter your post title below",
-                footer=Div(
-                    Button(
-                        "Cancel",
-                        variant="outline",
+            TabsList(
+                TabsTrigger("Post", value="tab1"),
+                TabsTrigger("Settings", value="tab2"),
+                cls="grid w-full grid-cols-2",
+            ),
+            TabsContent(
+                Card(
+                    Div(
+                        Label("Username", htmlFor="tab-title"),
+                        Input(type="text", placeholder="Title", id="tab-title"),
                     ),
-                    Button("Submit"),
-                    cls="flex w-full justify-end gap-2",
-                ),
-            ), value="tab1"),
-    TabsContent(Card(
-                Div(Label("Username", htmlFor="tab-settings"),Input(type="text", value="@JohnDoe", disabled='true', id="tab-settings"),),
-                title="Settings",
-                description="Change your settings here",
-                footer=Div(
-                    Button(
-                        "Cancel",
-                        variant="outline",
+                    title="Create a post",
+                    description="Enter your post title below",
+                    footer=Div(
+                        Button(
+                            "Cancel",
+                            variant="outline",
+                        ),
+                        Button("Submit"),
+                        cls="flex w-full justify-end gap-2",
                     ),
-                    Button("Submit"),
-                    cls="flex w-full justify-end gap-2",
                 ),
-            ), value="tab2"),
-            default_value="tab1",
-            cls="sm:max-w-[80%] w-full max-w-[70%] mx-auto"
+                value="tab1",
+            ),
+            TabsContent(
+                Card(
+                    Div(
+                        Label("Username", htmlFor="tab-settings"),
+                        Input(
+                            type="text",
+                            value="@JohnDoe",
+                            disabled="true",
+                            id="tab-settings",
+                        ),
+                    ),
+                    title="Settings",
+                    description="Change your settings here",
+                    footer=Div(
+                        Button(
+                            "Cancel",
+                            variant="outline",
+                        ),
+                        Button("Submit"),
+                        cls="flex w-full justify-end gap-2",
+                    ),
+                ),
+                value="tab2",
+            ),
+            cls="sm:max-w-[80%] w-full max-w-[70%] mx-auto",
         ),
-
         id="tabs",
     )
 
+
 def radio_block():
-    return Block(RadioGroup(
-        Div(RadioGroupItem(value="option1", id="option1"), Label("Claude 3.5 Sonnet", htmlFor="option1"), cls="flex items-center space-x-2"),
-        Div(RadioGroupItem(value="option2", id="option2"), Label("Gpt 4o", htmlFor="option2"), cls="flex items-center space-x-2"),
-        Div(RadioGroupItem(value="option3", id="option3"), Label("Gpt 4 Turbo", htmlFor="option3"), cls="flex items-center space-x-2"),
-        name="radio-demo",
-        defaultValue="option1",
-    ), id="radio")
+    return Block(
+        RadioGroup(
+            Div(
+                RadioGroupItem(value="option1", id="option1"),
+                Label("Claude 3.5 Sonnet", htmlFor="option1"),
+                cls="flex items-center space-x-2",
+            ),
+            Div(
+                RadioGroupItem(value="option2", id="option2"),
+                Label("Gpt 4o", htmlFor="option2"),
+                cls="flex items-center space-x-2",
+            ),
+            Div(
+                RadioGroupItem(value="option3", id="option3"),
+                Label("Gpt 4 Turbo", htmlFor="option3"),
+                cls="flex items-center space-x-2",
+            ),
+            name="radio-demo",
+            default_value="option1",
+        ),
+        id="radio",
+    )

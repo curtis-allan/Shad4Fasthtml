@@ -22,6 +22,7 @@ if (typeof window.Select === 'undefined') {
 
     setupEventListeners() {
         this.trigger.addEventListener('mousedown', this.toggleSelect.bind(this));
+        window.addEventListener('resize', this.close.bind(this))
         this.trigger.addEventListener('keydown', this.handleTriggerKeydown.bind(this));
         this.content.addEventListener('keydown', this.handleContentKeydown.bind(this));
         this.content.addEventListener('focusout', this.handleContentFocusout.bind(this));
@@ -38,7 +39,6 @@ if (typeof window.Select === 'undefined') {
     }
 
     initializePortal() {
-        document.body.appendChild(this.portal);
         if (this.content) this.content.dataset.selectId = this.select.id;
     }
 
@@ -70,7 +70,7 @@ if (typeof window.Select === 'undefined') {
         this.trigger.classList.remove('pointer-events-auto');
         this.select.setAttribute('aria-expanded', 'false');
         document.body.classList.remove('pointer-events-none');
-        this.portal.blur();
+        this.portal.blur()
     }
 
     handleItemClick(item) {
@@ -250,11 +250,12 @@ function handleSelectClose() {
         }
     });
 }
+
 if (!window.selectInitialized) {
     window.selectInitialized = true;
     proc_htmx('[data-ref="select"]', select => {
         select._selectInstance = new window.Select(select);
     })
-    window.onresize = (event) => {handleSelectClose()};
-    window.onpopstate = (event) => {handleSelectClose()};
+    htmx.on("htmx:beforeHistorySave", () => {handleSelectClose()})
+    htmx.on('htmx:historyRestore', () => {handleSelectClose()})
 }

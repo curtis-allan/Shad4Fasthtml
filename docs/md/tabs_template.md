@@ -1,77 +1,88 @@
->[!IMPORTANT]
-> This documentation is still under development. For a reference on how to use the component, please refer to the <a href="https://ui.shadcn.com/docs/components" target="_blank">Shadcn-ui documentation</a> and the source code below.
+## Setup
 
-## Installation
+Make sure the relevant packages are installed, and setup the imports as shown below.
 
-Starting with the carousel, I will be attempting to seperate component styling and logic into its own bundle. This will allow you to simply copy and paste the components you need into your project, without needing to add the entire library/ javascript file.
-
-## Source Code
+> [!NOTE]
+> If you wish to seperately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
 
 ```python
-def Tabs(*c, default_value=None, **kwargs):
+from fasthtml import *
+from shad4fast import *
 
-    surreal_script = Script("""
-    proc_htmx('[data-ref="tabs"]', tabs => {
-        const triggers = any('[data-tab-trigger]', tabs)
-        const contents = any('[data-tab-content]', tabs)
-        
-        function setActiveTab(value) {
-            triggers.run(trigger => {
-                if (trigger.dataset.value === value) {
-                    trigger.dataset.state = 'active'
-                    trigger.setAttribute('aria-selected', 'true')
-                } else {
-                    trigger.dataset.state = ''
-                    trigger.setAttribute('aria-selected', 'false')
-                }
-            })
-            
-            contents.run(content => {
-                if (content.dataset.value === value) {
-                    content.dataset.state = 'active'
-                    content.removeAttribute('hidden')
-                } else {
-                    content.dataset.state = ''
-                    content.setAttribute('hidden', '')
-                }
-            })
-        }
-        
-        triggers.on('click', (event) => {
-            const value = event.currentTarget.dataset.value
-            setActiveTab(value)
-        })
-        
-        // Set initial active tab
-        const defaultValue = tabs.dataset.defaultValue
-        if (defaultValue) {
-            setActiveTab(defaultValue)
-        } else if (triggers.length > 0) {
-            setActiveTab(triggers[0].dataset.value)
-        }
-    })
-    """)
-
-    return Div(*c,surreal_script, data_ref="tabs", data_default_value=default_value, **kwargs)
-
-def TabsList(*c, cls=None, **kwargs):
-    new_cls = "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Div(*c, role="tablist", **kwargs, tabindex=0)
-
-def TabsTrigger(*c, cls=None, value=None, **kwargs):
-    new_cls = "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return ft_hx('button', type='button',*c, role="tab", data_tab_trigger=True, data_value=value, **kwargs)
-
-def TabsContent(*c, cls=None, value=None, **kwargs):
-    new_cls = "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Div(*c, role="tabpanel", data_tab_content=True, data_value=value, hidden=True, **kwargs)
+app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
+
+---
+
+## Usage
+
+To use the tabs component, structure your code as with a normal FT method. The `Tabs` component takes a `default_value` attribute that sets the default tab on initial render.
+
+Each `TabsContent` component requires a `value` attribute that corresponds to the value of the `TabsTrigger` component. To use the component, structure your code as shown below:
+
+```python
+Tabs(
+    TabsList(
+        TabsTrigger("Post", value="tab1"),
+        TabsTrigger("Settings", value="tab2"),
+        cls="grid w-full grid-cols-2",
+    ),
+    TabsContent(
+        Card(
+            Div(
+                Label("Username", htmlFor="tab-title"),
+                Input(type="text", placeholder="Title", id="tab-title"),
+            ),
+            title="Create a post",
+            description="Enter your post title below",
+            footer=Div(
+                Button(
+                    "Cancel",
+                    variant="outline",
+                ),
+                Button("Submit"),
+                cls="flex w-full justify-end gap-2",
+            ),
+        ),
+        value="tab1",
+    ),
+    TabsContent(
+        Card(
+            Div(
+                Label("Username", htmlFor="tab-settings"),
+                Input(
+                    type="text",
+                    value="@JohnDoe",
+                    disabled="true",
+                    id="tab-settings",
+                ),
+            ),
+            title="Settings",
+            description="Change your settings here",
+            footer=Div(
+                Button(
+                    "Cancel",
+                    variant="outline",
+                ),
+                Button("Submit"),
+                cls="flex w-full justify-end gap-2",
+            ),
+        ),
+        value="tab2",
+    ),
+    default_value="tab1",
+    cls="sm:max-w-[80%] w-full max-w-[70%] mx-auto",
+)
+```
+
+> [!NOTE]
+> If the `default_value` attribute is not set, the first tab will be selected by default.
+
+---
+
+## Parameters
+
+| Parameter       | Type  | Description                                                                                                                              |
+| --------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `default_value` | `str` | Sets the default tab on initial render. Default to the first tab if not set.                                                             |
+| `value`         | `str` | Sets the value of the tab/ tab trigger to match which tab is opened. Must be unique. Applies to both the content and trigger components. |

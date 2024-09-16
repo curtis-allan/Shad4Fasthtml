@@ -1,26 +1,26 @@
 ## Setup
 
-All component imports are included when using the default setup. If you wish to seperately import components you can do so too. 
+Make sure the relevant packages are installed, and setup the imports as shown below.
+
+> [!NOTE]
+> If you wish to seperately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
 
 ```python
 from fasthtml import *
-from shadcn import ShadHead, Card
-```
+from shad4fast import *
 
-Just make sure to import and setup `ShadHead()` as well:
-
-```python
 app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
 
 ---
+
 ## Usage
 
 ### FT Method
 
 Using the FastHtml method, you can pass in the `title`, `description`, and `footer` attributes to the `Card` component. For a full attribute reference see the parameters table below.
 
-```python+html
+```python
 Card(
     Input(type="text", placeholder="Enter some text..."),
     title="Create a post",
@@ -61,9 +61,9 @@ Card(
 
 ## Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `title` | `str` | Sets the title of the card.
-| `description` | `str` | Sets the description of the card.
-| `footer` | `any` | Sets the footer of the card. Can be any valid FT component/components.
-| `standard` | `bool` | A boolean attribute to indicate if the component is rendered in the standard method. Defaults to `False`.
+| Parameter     | Type   | Description                                                                                               |
+| ------------- | ------ | --------------------------------------------------------------------------------------------------------- |
+| `title`       | `str`  | Sets the title of the card.                                                                               |
+| `description` | `str`  | Sets the description of the card.                                                                         |
+| `footer`      | `any`  | Sets the footer of the card. Can be any valid FT component/components.                                    |
+| `standard`    | `bool` | A boolean attribute to indicate if the component is rendered in the standard method. Defaults to `False`. |

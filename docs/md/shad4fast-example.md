@@ -28,12 +28,19 @@ def tid(id):
     return f"todo-{id}"
 
 
-def edit_dialog():
+def edit_dialog(todo_id: str):
+    edit = DialogTrigger(
+        "Edit",
+        hx_get=f"/edit/{todo_id}",
+        target_id=f"edit-form-{todo_id}",
+        hx_swap="outerHTML",
+        variant="outline",
+    )
     return Dialog(
-        Div("Loading...", id="edit-form"),
+        Div("Loading...", id=f"edit-form-{todo_id}"),
+        trigger=edit,
         title="Edit Todo",
         description="Edit the todo item. Click the 'Save' button to save it.",
-        id="edit-dialog",
     )
 
 
@@ -51,18 +58,10 @@ def __ft__(self: Todo):
         hx_swap="outerHTML",
         variant="destructive",
     )
-    edit = DialogTrigger(
-        "Edit",
-        hx_get=f"/edit/{self.id}",
-        target_id="edit-form",
-        hx_swap="outerHTML",
-        variant="outline",
-        dialog_id="edit-dialog",
-    )
     status_cls = "absolute top-1.5 right-1"
     checked = Badge(
-        Lucide("check", stroke_width="3", cls="size-4"),
-        cls=f"!bg-green-600 text-accent-foreground {status_cls} {'invisible' if not self.done else ''}",
+        Lucide("check", stroke_width="3", cls="size-4 text-primary"),
+        cls=f"!bg-green-600 text-primary {status_cls} {'invisible' if not self.done else ''}",
     )
 
     return Card(
@@ -86,7 +85,7 @@ def __ft__(self: Todo):
         CardFooter(
             Div(
                 delete,
-                edit,
+                edit_dialog(todo_id=self.id),
                 cls="flex items-center p-2 w-full justify-between self-end",
             ),
         ),
@@ -96,11 +95,11 @@ def __ft__(self: Todo):
     )
 
 
-def title_input(**kw):
+def title_input(id=None, **kw):
     return Div(
-        Label("Title", htmlFor="new-title"),
+        Label("Title", htmlFor=id),
         Input(
-            id="new-title",
+            id=id,
             name="title",
             placeholder="Enter a todo title",
             required=True,
@@ -111,11 +110,11 @@ def title_input(**kw):
     )
 
 
-def description_input(**kw):
+def description_input(id=None, **kw):
     return Div(
-        Label("Description", htmlFor="new-description"),
+        Label("Description", htmlFor=id),
         Textarea(
-            id="new-description",
+            id=id,
             name="description",
             placeholder="Enter a todo description",
             cls="resize-none",
@@ -150,8 +149,8 @@ def priority_input(**kw):
 def get():
     add = Card(
         Form(
-            title_input(),
-            description_input(),
+            title_input(id="new-title"),
+            description_input(id="new-description"),
             priority_input(),
             Button(
                 "Add",
@@ -179,7 +178,6 @@ def get():
         ),
         Section(
             add,
-            edit_dialog(),
             H1("Your Todos:", cls="text-3xl tracking-tight font-bold"),
             Separator(),
             content,
@@ -198,8 +196,8 @@ def delete(id: int):
 def post(todo: Todo):
     return (
         todos.insert(todo),
-        title_input(hx_swap_oob="true"),
-        description_input(hx_swap_oob="true"),
+        title_input(id="new-title", hx_swap_oob="true"),
+        description_input(id="new-description", hx_swap_oob="true"),
         priority_input(hx_swap_oob="true"),
     )
 
@@ -208,23 +206,26 @@ def post(todo: Todo):
 def get(id: int):
     todo = todos.get(id)
     res = Form(
-        Div(title_input(), description_input(), cls="flex flex-col gap-2"),
+        Div(
+            title_input(id="edit-title"),
+            description_input(id="edit-description"),
+            cls="flex flex-col gap-2",
+        ),
         Hidden(id="id"),
         Div(
-            Label("Complete", htmlFor="done"),
             Hidden(name="done", value="", skip=True),
-            Checkbox(id="done", name="done", checked=todo.done),
+            Label("Complete", htmlFor="done"),
+            Checkbox(label_id="done", name="done"),
             cls="flex items-center gap-1.5",
         ),
         DialogCloseButton(
             "Save",
             cls="w-full !mt-6",
-            type="submit",
         ),
         hx_put="/",
         target_id=tid(id),
         hx_swap="outerHTML",
-        id="edit-form",
+        id=f"edit-form-{id}",
         cls="p-2 space-y-6",
     )
     return fill_form(res, todo)
@@ -233,6 +234,7 @@ def get(id: int):
 @rt("/")
 def put(todo: Todo):
     return todos.upsert(todo)
+
 
 serve()
 ```

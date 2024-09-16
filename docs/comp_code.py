@@ -44,6 +44,13 @@ dummy_data = [
 ]
 
 code_dict = {
+    "avatar": """
+Avatar(
+    src="https://placecats.com/300/200",
+    alt="Profile Image", 
+    fallback="CA"
+)
+""",
     "card1": """
 Card(
     Input(
@@ -61,7 +68,7 @@ Card(
             cls="flex w-full justify-end gap-2",
             ),
             cls="w-[80%]",
-        )""",
+    )""",
     "alert2": """
 Alert(
     Lucide(icon="circle-alert", cls="size-4"),
@@ -196,15 +203,15 @@ def get():
     cls="grid place-items-center w-[80%]",
 )""",
     "toast": """
-// Import statements + app setup
+// Setup the toast handler function under the app setup
 
     toast_setup(app)
 
-// Route setup
+// Use a button to trigger the toast route
 
-    Button("Send email", hx_get="/toast", hx_swap="none"),
+    Button("Send email", hx_get="/toast", hx_swap="none")
 
-// Rest of code
+// Add a toast function to the route return statement
     
     @rt("/toast")
     def get(sess):
@@ -280,7 +287,12 @@ Div(
     )
 """,
     "input": """
-Input(placeholder="Enter something", type="text", id="title", cls="max-w-[80%]")
+Input(
+    placeholder="Enter something",
+    type="text", 
+    id="title", 
+    cls="max-w-[80%]"
+)
 """,
     "switch": """
 Div(
@@ -290,6 +302,7 @@ Div(
     ),
     Switch(
         id="switch-toggle",
+        name="switch-toggle",
     ),
     cls="flex gap-1.5 items-center",
 ),""",
@@ -401,7 +414,7 @@ Div(
     )""",
     "checkbox": """
 Div(
-    Checkbox(id="terms1"),
+    Checkbox(id="terms1", name="terms1"),
     Div(
         Label(
             "Agree to the terms",
@@ -444,19 +457,48 @@ Div(
     cls="flex flex-col sm:flex-row gap-1.5 sm:items-center w-full max-w-sm container justify-center items-start",
 )""",
     "sheet": """
-Div(
-    SheetTrigger("Toggle Sheet", sheet_id="demo-sheet"),
-),
 Sheet(
     Div(
-        P("This is where you'd enter your sheet content", cls="text-pretty"),
-        cls="p-4",
+        P("This is where you'd enter your sheet content"),
+        cls="h-[85%]",
     ),
     title="Demo Sheet",
     description="This is a demo sheet.",
-    footer=Div(SheetCloseButton("Close")),
-    content_cls="flex flex-col justify-between",
+    footer=SheetCloseButton("Close", cls="w-full"),
+    trigger="Toggle Sheet",
     id="demo-sheet",
+)""",
+    "sheet2": """
+Sheet(
+    SheetTrigger("Toggle Sheet"),
+    SheetContent(
+        SheetHeader(
+            SheetTitle("Demo Sheet"),
+            SheetDescription("This is a demo sheet."),
+        ),
+        Div(
+            Div(
+                Label("Name", cls="text-right"),
+                Input(
+                    value="John",
+                    cls="col-span-3",
+                ),
+                cls="grid grid-cols-4 items-center gap-4",
+            ),
+            Div(
+                Label("Email", cls="text-right"),
+                Input(
+                    type="email",
+                    value="johnsmith@email.com",
+                    cls="col-span-3",
+                ),
+                cls="grid grid-cols-4 items-center gap-4",
+            ),
+            cls="grid gap-4 py-4",
+        ),
+        SheetFooter(SheetCloseButton("Close")),
+    ),
+    standard=True,
 )""",
     "button2": """
 Div(
@@ -505,7 +547,8 @@ Div(
         cls="flex items-center justify-between",
     ),
     cls="grid gap-3 w-[215px]",
-)""","select2": """Select(
+)""",
+    "select2": """Select(
     SelectTrigger(
         SelectValue(placeholder="Pick a fruit"),
         cls="w-[180px]",
@@ -521,52 +564,92 @@ Div(
         SelectItem("Guava", value="guava"),
         SelectItem("Watermelon", value="watermelon"),
     ),
-)""", "carousel": """
+)""",
+    "carousel": """
+def carousel_items():
+items = ()
+for i in range(4):
+    i += 1
+    items += (
+        Card(
+            Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+            title=f"Card {i}",
+            description=f"Carousel demo card #{i}",
+            footer=Badge(
+                "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+            ),
+        ),
+    )
+return items
+
+Carousel(
+    items=carousel_items(),
+    cls="max-w-[65%] mx-auto",
+)
+""",
+    "carousel2": """
 Carousel(
     CarouselContent(
         CarouselItem(
             Card(
-                Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                Div(
+                    cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                ),
                 title="Card #1",
                 description="Carousel demo card #1",
-                footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                footer=Badge(
+                    "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                ),
             ),
         ),
         CarouselItem(
             Card(
-                Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                Div(
+                    cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                ),
                 title="Card #2",
                 description="Carousel demo card #2",
-                footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                footer=Badge(
+                    "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                ),
             ),
         ),
         CarouselItem(
             Card(
-                Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                Div(
+                    cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                ),
                 title="Card #3",
                 description="Carousel demo card #3",
-                footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                footer=Badge(
+                    "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                ),
             ),
         ),
         CarouselItem(
             Card(
-                Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                Div(
+                    cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                ),
                 title="Card #4",
                 description="Carousel demo card #4",
-                footer=Badge("@Shad4FastHtml", variant='default', cls="tracking-tighter"),
+                footer=Badge(
+                    "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                ),
             ),
         ),
+        duration="1000",
     ),
-    CarouselPrevious(),
-    CarouselNext(),
-    cls="w-[65%] sm:w-1/2 mx-auto",
-    autoplay=False,
-    orientation="horizontal",
-    id="carousel-demo"
+    cls="max-w-xs",
+    autoplay=True,
+    orientation="vertical",
+    standard=True,
 )
-""", "slider": """
-Slider(max='100', value='50', step='1', cls='w-64', min='0', id="demo-slider", name="demo-slider")
-""", "tabs": """Tabs(
+""",
+    "slider": """
+Slider(min=0, max=100, cls="max-w-64")
+""",
+    "tabs": """Tabs(
     TabsList(
         TabsTrigger("Post", value="tab1"),
         TabsTrigger("Settings", value="tab2"),

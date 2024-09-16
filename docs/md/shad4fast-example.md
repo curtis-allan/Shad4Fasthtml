@@ -215,7 +215,7 @@ def get(id: int):
         Div(
             Hidden(name="done", value="", skip=True),
             Label("Complete", htmlFor="done"),
-            Checkbox(label_id="done", name="done"),
+            Checkbox(id="done", name="done"),
             cls="flex items-center gap-1.5",
         ),
         DialogCloseButton(

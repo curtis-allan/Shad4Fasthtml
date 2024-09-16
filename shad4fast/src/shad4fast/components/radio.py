@@ -1,15 +1,10 @@
-from fasthtml.common import Div, Input, Span, Script, ft_hx
+from fasthtml.common import Div, Hidden, Span, ft_hx
 from lucide_fasthtml import Lucide
-import os
 
 __all__ = ["RadioGroup", "RadioGroupItem"]
 
-with open(os.path.join(os.path.dirname(__file__), '../js/radio.js')) as radio:
-    radio_scr = radio.read()
 
-script = Script(radio_scr, _async=True, defer=True)
-
-def RadioGroup(*c, cls=None, name=None, defaultValue=None, **kwargs):
+def RadioGroup(*c, cls=None, name=None, default_value=None, **kwargs):
     new_cls = "grid gap-2"
 
     if cls:
@@ -17,16 +12,16 @@ def RadioGroup(*c, cls=None, name=None, defaultValue=None, **kwargs):
     kwargs["cls"] = new_cls
 
     return Div(
-        script,
         *c,
-        Input(type="hidden", data_ref="hidden-input", name=name, value=defaultValue),
+        Hidden(data_ref="hidden-input", name=name, value=default_value),
         data_ref="radio-group",
         role="radiogroup",
         aria_required="false",
         style="outline:none;",
-        data_value=defaultValue,
-        **kwargs
+        data_value=default_value,
+        **kwargs,
     )
+
 
 def RadioGroupItem(cls=None, value=None, **kwargs):
     new_cls = "group cursor-pointer aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -37,7 +32,8 @@ def RadioGroupItem(cls=None, value=None, **kwargs):
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
 
-    return ft_hx('button',
+    return ft_hx(
+        "button",
         Span(
             Lucide(icon="circle", cls=circle_cls),
             cls=indicator_cls,
@@ -46,8 +42,8 @@ def RadioGroupItem(cls=None, value=None, **kwargs):
         data_ref="radio-item",
         value=value,
         role="radio",
-        type='button',
+        type="button",
         aria_checked="false",
         tabindex="0",
-        **kwargs
+        **kwargs,
     )

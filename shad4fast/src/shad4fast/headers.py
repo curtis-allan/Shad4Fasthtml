@@ -3,8 +3,8 @@ import os
 
 __all__ = ["ShadHead"]
 
-def ShadHead(tw_cdn=False, theme_handle=False):
 
+def ShadHead(tw_cdn=False, theme_handle=False):
     tw_config = Script("""
     function filterDefault(values) {
 	return Object.fromEntries(
@@ -253,7 +253,8 @@ def ShadHead(tw_cdn=False, theme_handle=False):
   ],
 }""")
 
-    tw_styles = Style("""
+    tw_styles = Style(
+        """
     @tailwind base;
     @tailwind components;
     @tailwind utilities;
@@ -381,17 +382,19 @@ def ShadHead(tw_cdn=False, theme_handle=False):
     .toast {
         animation-name: slideInFromBottom;
     }
-}""", type="text/tailwindcss")
-    
-    with open(os.path.join(os.path.dirname(__file__), 'js/main_scripts.js')) as main:
-      main_scr = main.read()
+}""",
+        type="text/tailwindcss",
+    )
+
+    with open(os.path.join(os.path.dirname(__file__), "js/main_scripts.js")) as main:
+        main_scr = main.read()
 
     tw_output_link = Link(href="/output.css", rel="stylesheet")
 
     script = Script(main_scr)
 
     headers = [
-      script,
+        script,
     ]
     if tw_cdn:
         headers.append(Script(src="https://cdn.tailwindcss.com"))
@@ -399,76 +402,11 @@ def ShadHead(tw_cdn=False, theme_handle=False):
         headers.append(tw_styles)
 
     else:
-       headers.append(tw_output_link)
+        headers.append(tw_output_link)
 
     if theme_handle:
-        with open(os.path.join(os.path.dirname(__file__), 'js/theme.js')) as theme:
-          theme_scr = theme.read()
+        with open(os.path.join(os.path.dirname(__file__), "js/theme.js")) as theme:
+            theme_scr = theme.read()
         headers.append(Script(theme_scr))
 
-
     return (*headers,)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

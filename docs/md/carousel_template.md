@@ -1,112 +1,134 @@
->[!IMPORTANT]
-> This documentation is still under development. For a reference on how to use the component, please refer to the <a href="https://ui.shadcn.com/docs/components" target="_blank">Shadcn-ui documentation</a> and the source code below.
+## Setup
 
-## Installation
+Make sure the relevant packages are installed, and setup the imports as shown below.
 
-Starting with the carousel, I will be attempting to seperate component styling and logic into its own bundle. This will allow you to simply copy and paste the components you need into your project, without needing to add the entire library/ javascript file.
-
-## Source Code
+> [!NOTE]
+> If you wish to seperately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
 
 ```python
-def Carousel(*c, cls=None, orientation:str='horizontal', autoplay:bool=False, duration:str='500', **kwargs):
-    new_cls = "relative w-full"
+from fasthtml import *
+from shad4fast import *
 
-    surreal_script = Script("""
-    proc_htmx('[data-ref="carousel"]', carousel => {
-    const items = any('[data-carousel-item]', carousel)
-    const content = me('[data-ref="content"]', carousel)
-    const prevButton = me('[data-ref="prevButton"]', carousel)
-    const nextButton = me('[data-ref="nextButton"]', carousel)
-
-    const {autoplay, orientation, duration} = carousel.dataset
-
-    let currentIndex = 0;
-
-            if (orientation === 'vertical') {
-                items.run(item => {
-                    item.classAdd('pt-4');
-                });
-                content.classAdd('-mt-4', 'flex-col')
-                prevButton.classList.add('-top-12', 'left-1/2', '-translate-x-1/2', 'rotate-90');
-                nextButton.classList.add('-bottom-12', 'left-1/2', '-translate-x-1/2', 'rotate-90');
-
-            } else {
-                items.run(item => {
-                    item.classAdd('pl-4');
-                });
-                content.classAdd('-ml-4');
-                prevButton.classList.add('-left-12', 'top-1/2', '-translate-y-1/2');
-                nextButton.classList.add('-right-12', 'top-1/2', '-translate-y-1/2');
-            }
-
-            function updateCarousel() {
-                content.style.transform = `translateX(-${currentIndex * 100}%)`;
-            }
-
-            prevButton.on('click', () => {
-                currentIndex = (currentIndex - 1 + items.length) % items.length;
-                updateCarousel();
-            });
-
-    nextButton.on('click', () => {
-        currentIndex = (currentIndex + 1) % items.length;
-        updateCarousel();
-    });
-
-
-    if (autoplay === 'true') {
-        setInterval(() => {
-            currentIndex = (currentIndex + 1) % items.length;
-            updateCarousel();
-        }, 5000);
-        }
-    })""")
-
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] =new_cls
-
-    return Div(
-            surreal_script,
-            *c,
-            data_autoplay='true' if autoplay else 'false',
-            data_orientation=orientation,
-            data_duration=duration,
-            data_ref="carousel",
-            role="region",
-            aria_roledescription="carousel",
-            **kwargs
-        )
-
-def CarouselContent(*c, cls=None, **kwargs):
-    new_cls = "flex transition-transform ease-in-out duration-500"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Div(Div(*c, data_ref="content", **kwargs), cls="overflow-hidden")
-
-def CarouselItem(*c, cls=None, **kwargs):
-    new_cls = "min-w-0 shrink-0 grow-0 basis-full",
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Div(*c, data_carousel_item=True, **kwargs)
-
-def CarouselPrevious(icon='arrow-left', cls=None, **kwargs):
-    new_cls = "absolute h-8 w-8 !rounded-full"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Button(Lucide(icon=icon, cls='size-4'),
-                variant="outline",
-                size="icon", data_ref="prevButton", **kwargs)
-
-def CarouselNext(icon='arrow-right', cls=None, **kwargs):
-    new_cls = "absolute h-8 w-8 !rounded-full"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Button(Lucide(icon=icon, cls='size-4'),
-                variant="outline",
-                size="icon", data_ref="nextButton", **kwargs)
+app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
+
+---
+
+## Usage
+
+### FT Method
+
+Using the FastHtml method, you can pass in the `items`, `orientation`, `autoplay`, and `duration` attributes to the `Carousel` component.
+
+1. items: Takes a list of FT components to be rendered as carousel items.
+2. orientation: Sets the orientation of the carousel.
+3. autoplay: Sets the autoplay state of the carousel.
+4. duration: Sets the duration of the carousel transition in ms.
+
+> For a full attribute reference see the parameters table below.
+
+To get started using the FT method, simply structure your code using the example below for reference. For ease of this example, I've included a `carousel_items()` function that returns a list of `Card` components:
+
+```python
+def carousel_items():
+    items = ()
+    for i in range(4):
+        i += 1
+        items += (
+            Card(
+                Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                title=f"Card {i}",
+                description=f"Carousel demo card #{i}",
+                footer=Badge(
+                    "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                ),
+            ),
+        )
+    return items
+
+Carousel(
+    items=carousel_items(),
+    orientation="horizontal",
+    autoplay=False,
+    duration="500",
+)
+```
+
+> [!NOTE]
+> By default, the carousel will be rendered with the `horizontal` orientation, autoplay disabled and will have a duration of 500ms. If the attributes are omitted, the default values will be used.
+
+### Standard Method
+
+The standard method is similar to the FastHtml method, but follows the original Shadcn-ui method of passing in the `CarouselContent`, `CarouselItem`, `CarouselPrevious`, and `CarouselNext` components. To ensure the component is rendered correctly, you must pass in the `standard` attribute as `True`.
+
+```python
+        Carousel(
+            CarouselContent(
+                CarouselItem(
+                    Card(
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
+                        title="Card #1",
+                        description="Carousel demo card #1",
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
+                        title="Card #2",
+                        description="Carousel demo card #2",
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
+                        title="Card #3",
+                        description="Carousel demo card #3",
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
+                        title="Card #4",
+                        description="Carousel demo card #4",
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
+                    ),
+                ),
+            ),
+            CarouselPrevious(),
+            CarouselNext(),
+            autoplay=False,
+            duration="500",
+            orientation="horizontal",
+            standard=True,
+        )
+```
+
+---
+
+## Parameters
+
+| Parameter     | Type   | Description                                                                                              |
+| ------------- | ------ | -------------------------------------------------------------------------------------------------------- |
+| `items`       | `list` | A list of FT components to be rendered as carousel items.                                                |
+| `orientation` | `str`  | Sets the orientation of the carousel. Options are `horizontal` and `vertical`. Defaults to `horizontal`. |
+| `autoplay`    | `bool` | Sets the autoplay state of the carousel. Defaults to `False`.                                            |
+| `duration`    | `str`  | Sets the duration of the carousel transition in ms. Defaults to `500`.                                   |

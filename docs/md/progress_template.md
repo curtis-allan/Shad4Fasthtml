@@ -1,15 +1,14 @@
 ## Setup
 
-All component imports are included when using the default setup. If you wish to seperately import components you can do so too. 
+Make sure the relevant packages are installed, and setup the imports as shown below.
+
+> [!NOTE]
+> If you wish to seperately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
 
 ```python
 from fasthtml import *
-from shadcn import ShadHead, Progress
-```
+from shad4fast import *
 
-Just make sure to import and setup `ShadHead()` as well:
-
-```python
 app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
 
@@ -32,8 +31,8 @@ The example above uses `HTMX` swapping and polling mechanisms to update the stat
 
 Refer to the htmx <a href="https://htmx.org/reference/#events" target="_blank">documentation</a> for more information on how to handle progress updates with htmx. For further informatino, refer to these resources:
 
-*   <a href="https://gallery.fastht.ml/widgets/progress_bar/display" target="_blank">FastHtml Gallery Progress Bar</a>
-*   <a href="https://htmx.org/examples/progress-bar/" target="_blank">Official HTMX Example</a>
+- <a href="https://gallery.fastht.ml/widgets/progress_bar/display" target="_blank">FastHtml Gallery Progress Bar</a>
+- <a href="https://htmx.org/examples/progress-bar/" target="_blank">Official HTMX Example</a>
 
 ```python+html
 # Button and Container to handle initial progress bar swap and subsequent updates.
@@ -74,7 +73,7 @@ def post():
 @rt("/progress")
 def get():
     global progress
-    # Simulate progress increments. In a real-world scenario, 
+    # Simulate progress increments. In a real-world scenario,
     # this would be based on actual task completion.
     progress += random.randint(1, 25)
     if progress >= 100:
@@ -93,17 +92,17 @@ def get():
     return ProgressBar(progress)
 ```
 
->[!IMPORTANT] 
->To ensure a smooth transition, the progress bar requires an `id` attribute. The id is passed on automatically to the inner bar element as `id='{id}-inner'`. For example, `Progress(id='progress-bar')` would set the inner Div id to `'progress-bar-inner`.
+> [!IMPORTANT]
+> To ensure a smooth transition, the progress bar requires an `id` attribute. The id is passed on automatically to the inner bar element as `id='{id}-inner'`. For example, `Progress(id='progress-bar')` would set the inner Div id to `'progress-bar-inner`.
 
 ---
 
 ### Alternative Approach
 
 While the HTMX approach is recommended, there are still cases where it might not be the best fit.
-Instead, we can use a combination of JavaScript and Slarlette's `StreamingResponse` class to update the progress bar. Using this streaming response and an async generator, we can continuously stream the progress updates to the client. 
+Instead, we can use a combination of JavaScript and Slarlette's `StreamingResponse` class to update the progress bar. Using this streaming response and an async generator, we can continuously stream the progress updates to the client.
 
-To handle these responses, we can instantiate a new `EventSource` object, which behaves a bit like a WebSocket connection, only its unilateral (Server -> Client). Using this object, we can listen for events that are sent from the server and update the client accordingly. 
+To handle these responses, we can instantiate a new `EventSource` object, which behaves a bit like a WebSocket connection, only its unilateral (Server -> Client). Using this object, we can listen for events that are sent from the server and update the client accordingly.
 
 Firstly, we can setup a form component which sends a standard hx-post request. The example above utilises tailwind animations to showcase a real-world implementation of responsive form handling on the client.
 
@@ -137,47 +136,49 @@ Next, we can define a script to handle the progress bar updates and attach it to
 
 ```javascript
 function startProgress(elt) {
-    const inner = elt.querySelector('#progress-bar-js-inner');
-    const progress = elt.querySelector('#progress-bar-js');
-    const button = elt.querySelector('#progress-button');
-    const button_text = button.querySelector('span')
-    const icon = elt.querySelector('#progress-loader');
+  const inner = elt.querySelector("#progress-bar-js-inner");
+  const progress = elt.querySelector("#progress-bar-js");
+  const button = elt.querySelector("#progress-button");
+  const button_text = button.querySelector("span");
+  const icon = elt.querySelector("#progress-loader");
 
-    const eventSource = new EventSource('/progress-stream');
+  const eventSource = new EventSource("/progress-stream");
 
-    progress.dataset.state = 'visible';
+  progress.dataset.state = "visible";
 
-    icon.classList.remove('hidden');
+  icon.classList.remove("hidden");
 
-    button_text.innerHTML = 'Posting';
+  button_text.innerHTML = "Posting";
 
-    button.disabled = true;
+  button.disabled = true;
 
-    eventSource.onmessage = function(event) {
-        const data = JSON.parse(event.data);
+  eventSource.onmessage = function (event) {
+    const data = JSON.parse(event.data);
 
-        inner.style.transform = `translateX(-${100 - (data.progress / data.total * 100)}%)`;
+    inner.style.transform = `translateX(-${
+      100 - (data.progress / data.total) * 100
+    }%)`;
 
-        if (data.progress === data.total) {
-            icon.classList.add('hidden');
-            button.disabled = false;
-            button_text.innerHTML = 'Restart';
-            eventSource.close();
-        }
-    };
-    eventSource.onerror = function(error) {
-        console.error('EventSource failed:', error);
-        eventSource.close();
-    };
+    if (data.progress === data.total) {
+      icon.classList.add("hidden");
+      button.disabled = false;
+      button_text.innerHTML = "Restart";
+      eventSource.close();
+    }
+  };
+  eventSource.onerror = function (error) {
+    console.error("EventSource failed:", error);
+    eventSource.close();
+  };
 }
 ```
 
-Once the form is submitted, the `startProgress()` function will create a new connection to our route `/progress-stream` and listen for any events sent from the server (in the form of `onmessage` events). This is useful in our case, as we can use it to dynamically update the progress bar's inner element `#progress-bar-js-inner` directly. 
+Once the form is submitted, the `startProgress()` function will create a new connection to our route `/progress-stream` and listen for any events sent from the server (in the form of `onmessage` events). This is useful in our case, as we can use it to dynamically update the progress bar's inner element `#progress-bar-js-inner` directly.
 
 Since the inner element of the progress bar has a style set to `translateX(-100%)` initially, we can return the progress state and total amount from our server route and use them to calculate the percentage loaded for each update. Once the progress reaches 100% of the total being served, we can update our components to reflect this, as shown above.
 
->[!CAUTION]
->The `eventSource.close()` function is used to close the connection. It should be utilised when the connection is no longer needed *AND* within error handling functions, to ensure the connection is closed.
+> [!CAUTION]
+> The `eventSource.close()` function is used to close the connection. It should be utilised when the connection is no longer needed _AND_ within error handling functions, to ensure the connection is closed.
 
 Finally, we can define our routes. In the case of this example, dummy methods and global variables are defined to simulate a real-world scenario.
 
@@ -212,12 +213,12 @@ async def post():
     return Response(status_code=204)
 ```
 
-Our form component sends a request to the `/job` route, and invoked the `startProgress()` function to create a new connection to the `/progress-stream` route. The job route simulates a long-running process by incrementing the `loaded` variable by a set amount and sleeping for a short period of time. 
+Our form component sends a request to the `/job` route, and invoked the `startProgress()` function to create a new connection to the `/progress-stream` route. The job route simulates a long-running process by incrementing the `loaded` variable by a set amount and sleeping for a short period of time.
 
 Since both the total and loaded variables are global, they can be accessed by both the progress-stream and job routes. This allows us to create an asyncronous generator, in the form of a loop, that can send the relevant data to the client.
 
->[!NOTE]
->Both `loaded` and `total` globals can be set to anything. In this example, we have set them to dummy values of 8000 and 0 respectively. In a real-world scenario, these values would be replaced with the relevant total and loaded values from the server.
+> [!NOTE]
+> Both `loaded` and `total` globals can be set to anything. In this example, we have set them to dummy values of 8000 and 0 respectively. In a real-world scenario, these values would be replaced with the relevant total and loaded values from the server.
 
 By using a a `sleep()` function, we can throttle the requests that the stream sends to the client, in this case it retrieves the new `loaded` value every 0.05 seconds. This ensures that the stream is not overwhelmed with requests, and the client can receive the updates in a timely manner, but can be altered as needed.
 
@@ -230,13 +231,13 @@ The flow is as follows:
 5. Our JS script reads the data from the stream and updates both the progress bar and form components.
 6. On completion, the `eventSource.close()` function is called to close the connection and the form state is updated.
 
-*This documentation is still a work in progress, and will be updated as I continue to work on this project. Feel free to play around with the methods outlined and hopefully they can be useful to you in some way.*
+_This documentation is still a work in progress, and will be updated as I continue to work on this project. Feel free to play around with the methods outlined and hopefully they can be useful to you in some way._
 
 ---
 
 ## Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `value` | `int` *or* `float` | Sets the value of the progress bar. Defaults to `0`. Used in styling the inner bar element. Can be set to any value between `0` and `100`.
-| `id` | `str` | Sets the id of the progress bar and the inner bar element. Automatically generates an `id` attribute for the inner bar element in the form of `id='{Progress bar's id}-inner'`.
+| Parameter | Type               | Description                                                                                                                                                                     |
+| --------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `value`   | `int` _or_ `float` | Sets the value of the progress bar. Defaults to `0`. Used in styling the inner bar element. Can be set to any value between `0` and `100`.                                      |
+| `id`      | `str`              | Sets the id of the progress bar and the inner bar element. Automatically generates an `id` attribute for the inner bar element in the form of `id='{Progress bar's id}-inner'`. |

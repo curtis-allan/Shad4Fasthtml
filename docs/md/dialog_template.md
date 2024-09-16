@@ -1,15 +1,14 @@
 ## Setup
 
-All component imports are included when using the default setup. If you wish to seperately import components you can do so too. 
+Make sure the relevant packages are installed, and setup the imports as shown below.
+
+> [!NOTE]
+> If you wish to seperately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
 
 ```python
 from fasthtml import *
-from shadcn import ShadHead, Dialog
-```
+from shad4fast import *
 
-Just make sure to import and setup `ShadHead()` as well:
-
-```python
 app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
 
@@ -17,71 +16,40 @@ app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 
 ## Usage
 
-### Dialog Structure
+The dialog component has two methods of implementation. The first method is the FastHtml method for a simpler implementation, and the second method is the standard method for a more Shadcn-ui like implementation.
 
-The `Dialog` component in this implementation differs slightly from the original Shadcn-ui approach:
-
-1. **DialogTrigger**: Requires a unique `dialog_id` to connect with its corresponding `Dialog` component.
-
-2. **Dialog**: Needs a unique `id` that matches the `dialog_id` of its trigger and must **not** contain the `DialogTrigger` component.
-
-### Behavior
-
-- Similar to the `Sheet` component, `Dialog` is client-side rendered, preserving state across toggles and ensuring responsiveness.
-- **Placement**: 
-  - `DialogTrigger` can be placed where you want the trigger to appear.
-  - `Dialog` can be positioned anywhere within the body of your HTML but must **not** be a parent of `DialogTrigger`. Post-rendering, `Dialog` components are moved to the end of the `<body>` via a script to ensure correct overlay behavior.
-
->[!WARNING]
->The `DialogTrigger` must *not* be a child of the `Dialog`. This will cause the trigger to be hidden and untargetable.
-
+If you wish to use a button to close the dialog from within, you can use the `DialogCloseButton` component, or simply apply the `dialog-close-button` class to a component.
 
 ### FT Method
 
-Using the FastHtml method, you can pass in the `title`, `description`, and `footer` attributes to the `Dialog` component. Along with these, you can pass a `state` attribute to indicate whether the dialog is rendered open or closed on initial load.
+Using the FastHtml method, you can pass in a `trigger`, `title`, `description` and `footer` attribute to the `Dialog` component. Along with these, you can pass a `state` attribute to indicate whether the dialog is rendered open or closed on initial load.
 
-```python+html
-DialogTrigger("Toggle Dialog", dialog_id="demo-dialog"),
+The `trigger` attribute can take either a string (sets the text of the trigger button) or a component. If supplying a component, make sure to set the `data-ref` attribute to `dialog-trigger` so the dialog can be opened via Javascript.
+
+```python
 Dialog(
-    Div(
-        Div(
-            Label("Name", cls="text-right"),
-            Input(
-                value="John",
-                cls="col-span-3",
-            ),
-            cls="grid grid-cols-4 items-center gap-4",
-        ),
-        Div(
-            Label("Email", cls="text-right"),
-            Input(
-                type="email",
-                value="johnsmith@email.com",
-                cls="col-span-3",
-            ),
-            cls="grid grid-cols-4 items-center gap-4",
-        ),
-        cls="grid gap-4 py-4",
-    ),
-    title="Edit Profile",
-    description="Make changes to your profile here. Click save when you're done.",
-    footer=Div(
-        DialogCloseButton("Save changes"), cls="flex w-full justify-end"
-    ),
-    id="demo-dialog",
-)
+        Div("Dialog Content"),
+        trigger="Edit Todo",
+        title="Edit Todo",
+        description="Edit the todo item. Click the 'Save' button to save it.",
+        footer=Div(DialogCloseButton("Save changes")),
+        state="closed",
+    )
 ```
 
->[!NOTE] 
->The `state` attribute is optional and defaults to `closed`.
+> [!NOTE]
+> The dialog `state` attribute is not required, and will default to `closed` if not specified.
 
 ### Standard Method
 
-The standard method is similar to the FastHtml method, but follows the original Shadcn-ui method of passing in the `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, and `DialogFooter` components. To ensure the component is rendered correctly, you must pass in the `standard` attribute as `True`.
+The standard method is similar to the FastHtml method, but follows the original Shadcn-ui method of passing in the `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, and `DialogFooter` components.
 
-```python+html
-DialogTrigger("Toggle Dialog", dialog_id="demo-dialog"),
+> [!IMPORTANT]
+> To ensure the component is rendered correctly, you must pass in the `standard` attribute as `True`. To change the default `open` state, pass the `state` attribute as `open` or `closed` to the _DialogContent()_ method.
+
+```python
 Dialog(
+    DialogTrigger("Toggle Dialog"),
     DialogContent(
         DialogHeader(
             DialogTitle("Edit Profile"),
@@ -92,13 +60,18 @@ Dialog(
         Div(
             Div(
                 Label("Name", cls="text-right"),
-                Input(value="John", cls="col-span-3"),
+                Input(
+                    value="John",
+                    cls="col-span-3",
+                ),
                 cls="grid grid-cols-4 items-center gap-4",
             ),
             Div(
                 Label("Email", cls="text-right"),
                 Input(
-                    type="email", value="johnsmith@email.com", cls="col-span-3"
+                    type="email",
+                    value="johnsmith@email.com",
+                    cls="col-span-3",
                 ),
                 cls="grid grid-cols-4 items-center gap-4",
             ),
@@ -106,24 +79,24 @@ Dialog(
         ),
         DialogFooter(DialogCloseButton("Save changes")),
         cls="sm:max-w-[425px]",
+        state="closed",
     ),
     standard=True,
-    id="demo-dialog",
-)
+    )
 ```
 
-> [!TIP] 
->Make sure the `DialogContent` component wraps around the `DialogHeader`, `DialogTitle`, `DialogDescription`, and `DialogFooter` components for proper rendering.
+> [!IMPORTANT]
+> The `DialogTrigger` component must be a direct child of the `Dialog` component. This is done by default in the FT method. If using the standard method, make sure the `DialogTrigger` is: a child of the `Dialog` component _and_ not inside the `DialogContent` component.
 
 ---
 
 ## Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `id` | `str` | **Required**. Unique identifier, must match `dialog_id` from `DialogTrigger`.
-| `title` | `str` | Sets the title of the card.
-| `description` | `str` | Sets the description of the card.
-| `footer` | `any` | Sets the footer of the card. Can be any valid FT component/components.
-| `state` | `str` | Sets the state of the dialog. Can be either `open` or `closed`. Defaults to `closed`.
-| `standard` | `bool` | A boolean attribute to indicate if the component is rendered in the standard method. Defaults to `False`.
+| Parameter     | Type                      | Description                                                                                                                                                           |
+| ------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `trigger`     | `str` _or_ `FT Component` | Sets the text of the dialog trigger component. Only needed in the FT method.                                                                                          |
+| `title`       | `str`                     | Sets the title of the card. Only needed in the FT method.                                                                                                             |
+| `description` | `str`                     | Sets the description of the card. Only needed in the FT method.                                                                                                       |
+| `footer`      | `any`                     | Sets the footer of the card. Can be any valid FT component/components. Only needed in the FT method.                                                                  |
+| `state`       | `str`                     | Sets the state of the dialog. Can be either `open` or `closed`. Defaults to `closed`. Set as attribute in the `DialogContent` component if using the standard method. |
+| `standard`    | `bool`                    | A boolean attribute to indicate if the component is rendered in the standard method. Defaults to `False`. Only needed if using the standard method.                   |

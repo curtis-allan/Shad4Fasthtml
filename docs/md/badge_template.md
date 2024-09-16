@@ -1,15 +1,14 @@
 ## Setup
 
-All component imports are included when using the default setup. If you wish to seperately import components you can do so too. 
+Make sure the relevant packages are installed, and setup the imports as shown below.
+
+> [!NOTE]
+> If you wish to seperately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
 
 ```python
 from fasthtml import *
-from shadcn import ShadHead, Badge
-```
+from shad4fast import *
 
-Just make sure to import and setup `ShadHead()` as well:
-
-```python
 app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 ```
 
@@ -24,12 +23,12 @@ Badge("v2.0", variant="default")
 ```
 
 > [!NOTE]
->If the `variant` attribute is not provided, the badge will be rendered with the `default` variant.
+> If the `variant` attribute is not provided, the badge will be rendered with the `default` variant.
 
 ---
 
 ## Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `variant` | `str` | Sets the variant of the badge. Options are `default`, `secondary`, `outline`, and `destructive`. Defaults to `default`.
+| Parameter | Type  | Description                                                                                                             |
+| --------- | ----- | ----------------------------------------------------------------------------------------------------------------------- |
+| `variant` | `str` | Sets the variant of the badge. Options are `default`, `secondary`, `outline`, and `destructive`. Defaults to `default`. |

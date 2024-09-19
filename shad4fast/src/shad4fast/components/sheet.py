@@ -59,9 +59,12 @@ def Sheet(
         header = SheetHeader(
             *header_content,
         )
+    else:
+        header = None
     if footer:
         footer = SheetFooter(footer)
-
+    else:
+        footer = None
     if trigger and isinstance(trigger, str):
         sheet_trigger = SheetTrigger(trigger)
     elif trigger:

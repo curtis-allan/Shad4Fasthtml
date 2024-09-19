@@ -257,7 +257,7 @@ def ScrollAreaAltBlock():
     return Block(
         ScrollArea(
             Div(*fake_data_horizontal(), cls="flex w-max space-x-4 p-4"),
-            cls="w-96 whitespace-nowrap rounded-md border",
+            cls="w-[80%] whitespace-nowrap rounded-md border",
             orientation="horizontal",
         ),
         id="scroll-area2",

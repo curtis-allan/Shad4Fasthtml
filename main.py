@@ -22,11 +22,48 @@ from docs.comp_demos import (
     tabs_block,
     radio_block,
     avatar_block,
+    aspect_ratio_block,
+    scroll_area_block,
 )
 from fasthtml.common import *
 from fasthtml.components import Zero_md
 from shad4fast import *
 from lucide_fasthtml import Lucide
+
+
+link_groups = {
+    "getting-started": (
+        "installation",
+        "tailwind-setup",
+        "theme-config",
+        "shad4fast-example",
+    ),
+    "components": (
+        "card",
+        "aspect-ratio",
+        "avatar",
+        "alert",
+        "switch",
+        "badge",
+        "separator",
+        "progress",
+        "toast",
+        "dialog",
+        "button",
+        "input",
+        "textarea",
+        "label",
+        "table",
+        "checkbox",
+        "select",
+        "sheet",
+        "scroll-area",
+        "carousel",
+        "slider",
+        "tabs",
+        "radio",
+    ),
+}
 
 zeromd_headers = Script(
     type="module", src="https://cdn.jsdelivr.net/npm/zero-md@3?register"
@@ -37,7 +74,7 @@ social_headers = Socials(
     title="Shad4FastHtml",
     description="Open source Shadcn-ui components, made for FastHtml",
     url="www.shad4fasthtml.com",
-    image="/public/social.png",
+    image="/public/social.webp",
     card="summary_large_image",
 )
 
@@ -208,46 +245,13 @@ def MobileNav():
 
 
 def format_title(str: str):
-    if "-" in str:
-        words = str.split("-")
+    if "-" or "_" in str:
+        words = str.split("-") or str.split("_")
         cw = [word.capitalize() for word in words]
         formatted = " ".join(cw)
         return formatted
     res = str.capitalize()
     return res
-
-
-link_groups = {
-    "getting-started": (
-        "installation",
-        "tailwind-setup",
-        "theme-config",
-        "shad4fast-example",
-    ),
-    "components": (
-        "card",
-        "avatar",
-        "alert",
-        "switch",
-        "badge",
-        "separator",
-        "progress",
-        "toast",
-        "dialog",
-        "button",
-        "input",
-        "textarea",
-        "label",
-        "table",
-        "checkbox",
-        "select",
-        "sheet",
-        "carousel",
-        "slider",
-        "tabs",
-        "radio",
-    ),
-}
 
 
 def NavItem(title, i):
@@ -352,6 +356,8 @@ def DocsLayout(*c, title: str):
 
 
 def render_md(link):
+    if "-" in link:
+        link = link.replace("-", "_")
     css = ".markdown-body{pre {position:relative; .copy-button{position:absolute;}} background-color:transparent} :host { display: block; position: relative; contain: content; } :host([hidden]) { display: none; }"
     css_template = Template(
         Link(
@@ -424,7 +430,7 @@ def get(title: str):
                             "Demo",
                             cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
                         ),
-                        globals()[f"{title}_block"](),
+                        globals()[f"{title.replace('-', '_')}_block"](),
                         render_md(f"docs/md/{title}_template"),
                         cls="flex flex-col gap-6",
                     ),

@@ -51,6 +51,91 @@ Avatar(
     fallback="CA"
 )
 """,
+    "aspect_ratio": """
+Div(
+    AspectRatio(
+        Img(
+            src="/public/aspect.webp",
+            cls="w-full h-full rounded-md object-cover",
+            loading="lazy",
+        ),
+        ratio={16 / 9},
+    ),
+    cls="w-[80%]",
+)
+""",
+    "scroll_area": """
+def fake_data():
+    results = []
+    for i in range(50):
+        results.append(Div(f"Item Entry #{i}", cls="text-sm"))
+    return results
+
+ScrollArea(
+    Div(
+        H4("Entries", cls="mb-4 text-sm font-medium leading-none"),
+        *fake_data(),
+        cls="p-4",
+    ),
+    cls="h-72 w-48 rounded-md border",
+)
+""",
+    "scroll_area2": """
+def fake_data_horizontal():
+    results = ()
+    data = [
+        {
+            "artist": "Ornella Binni",
+            "art": "https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?auto=format&fit=crop&w=300&q=80",
+        },
+        {
+            "artist": "Tom Byrom",
+            "art": "https://images.unsplash.com/photo-1548516173-3cabfa4607e9?auto=format&fit=crop&w=300&q=80",
+        },
+        {
+            "artist": "Vladimir Malyavko",
+            "art": "https://images.unsplash.com/photo-1494337480532-3725c85fd2ab?auto=format&fit=crop&w=300&q=80",
+        },
+    ]
+    for i in data:
+        results += (
+            Figure(
+                Div(
+                    Img(
+                        src=i["art"],
+                        alt=f"Photo by {i['artist']}",
+                        cls="aspect-[3/4] h-fit w-fit object-cover",
+                    ),
+                ),
+                Figcaption(
+                    "Photo by ",
+                    Span(i["artist"], cls="font-semibold text-foreground"),
+                    cls="pt-2 text-xs text-muted-foreground",
+                ),
+                cls="shrink-0",
+            ),
+        )
+    return results
+
+ScrollArea(
+    Div(*fake_data_horizontal(), cls="flex w-max space-x-4 p-4"),
+    cls="w-96 whitespace-nowrap rounded-md border",
+    orientation="horizontal",
+)
+""",
+    "aspect_ratio2": """
+ Div(
+    AspectRatio(
+        Img(
+            src="/public/aspect2.webp",
+            cls="w-full h-full rounded-md object-cover",
+            loading="lazy",
+        ),
+        ratio={9 / 16},
+    ),
+    cls="min-w-[200px] py-3",
+)
+""",
     "card1": """
 Card(
     Input(

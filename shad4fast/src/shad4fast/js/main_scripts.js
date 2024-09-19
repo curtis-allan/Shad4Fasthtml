@@ -21,7 +21,7 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
   const items = carousel.querySelectorAll("[data-carousel-item]");
 
   if (!content || !items.length) {
-    console.error('Carousel is missing required elements');
+    console.error("Carousel is missing required elements");
     return;
   }
 
@@ -36,16 +36,28 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
       content.classList.add("-mt-4", "flex-col");
       content.style.height = `${Math.floor(height + 16)}px`;
       if (prevButton) {
-        prevButton.classList.add("-top-12", "left-1/2", "-translate-x-1/2", "rotate-90");
+        prevButton.classList.add(
+          "-top-12",
+          "left-1/2",
+          "-translate-x-1/2",
+          "rotate-90"
+        );
       }
       if (nextButton) {
-        nextButton.classList.add("-bottom-12", "left-1/2", "-translate-x-1/2", "rotate-90");
+        nextButton.classList.add(
+          "-bottom-12",
+          "left-1/2",
+          "-translate-x-1/2",
+          "rotate-90"
+        );
       }
     } else {
       items.forEach((item) => item.classList.add("pl-4"));
       content.classList.add("-ml-4");
-      if (prevButton) prevButton.classList.add("-left-12", "top-1/2", "-translate-y-1/2");
-      if (nextButton) nextButton.classList.add("-right-12", "top-1/2", "-translate-y-1/2");
+      if (prevButton)
+        prevButton.classList.add("-left-12", "top-1/2", "-translate-y-1/2");
+      if (nextButton)
+        nextButton.classList.add("-right-12", "top-1/2", "-translate-y-1/2");
     }
   }
 
@@ -53,7 +65,9 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
     const currentIndex = parseInt(carousel.dataset.index, 10) || 0;
     const newIndex = (currentIndex + direction + items.length) % items.length;
     if (orientation === "vertical") {
-      content.style.transform = `translate3d(0px, -${(height + 16) * newIndex}px, 0px)`;
+      content.style.transform = `translate3d(0px, -${
+        (height + 16) * newIndex
+      }px, 0px)`;
     } else {
       content.style.transform = `translate3d(-${newIndex * 100}%, 0px, 0px)`;
     }
@@ -61,8 +75,10 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
   }
 
   function setupEventListeners() {
-    if (prevButton) prevButton.addEventListener("click", () => updateCarousel(-1));
-    if (nextButton) nextButton.addEventListener("click", () => updateCarousel(1));
+    if (prevButton)
+      prevButton.addEventListener("click", () => updateCarousel(-1));
+    if (nextButton)
+      nextButton.addEventListener("click", () => updateCarousel(1));
   }
 
   function startAutoplay() {
@@ -151,47 +167,45 @@ proc_htmx("[data-ref=sheet]", (sheet) => {
 
 // Setup Radio Scripts
 
-proc_htmx('[data-ref="radio-group"]', group => {
-  const items = any('[data-ref="radio-item"]', group)
-  const hiddenInput = me('[data-ref="hidden-input"]', group)
+proc_htmx('[data-ref="radio-group"]', (group) => {
+  const items = any('[data-ref="radio-item"]', group);
+  const hiddenInput = me('[data-ref="hidden-input"]', group);
 
   function updateRadioGroup(selectedValue) {
-      items.run(item => {
-          if (item.value === selectedValue) {
-              item.setAttribute('aria-checked', 'true')
-              item.dataset.state = 'checked'
-          } else {
-              item.setAttribute('aria-checked', 'false')
-              item.dataset.state = 'unchecked'
-          }
-      })
-      hiddenInput.value = selectedValue
-      group.dispatchEvent(new CustomEvent('change', { detail: { value: selectedValue } }))
+    items.run((item) => {
+      if (item.value === selectedValue) {
+        item.setAttribute("aria-checked", "true");
+        item.dataset.state = "checked";
+      } else {
+        item.setAttribute("aria-checked", "false");
+        item.dataset.state = "unchecked";
+      }
+    });
+    hiddenInput.value = selectedValue;
+    group.dispatchEvent(
+      new CustomEvent("change", { detail: { value: selectedValue } })
+    );
   }
 
-  items.on('click', (event) => {
-      const selectedValue = event.currentTarget.value
-      updateRadioGroup(selectedValue)
-  })
+  items.on("click", (event) => {
+    const selectedValue = event.currentTarget.value;
+    updateRadioGroup(selectedValue);
+  });
 
   if (group.dataset.value) {
-      updateRadioGroup(group.dataset.value)
+    updateRadioGroup(group.dataset.value);
   }
-})
+});
 
 // Setup Slider Scripts
-
-// ... existing code ...
-
-// Setup Slider Scripts
-proc_htmx('[data-ref="slider"]', slider => {
+proc_htmx('[data-ref="slider"]', (slider) => {
   const track = slider.querySelector('[data-ref="track"]');
   const range = slider.querySelector('[data-ref="range"]');
   const thumb = slider.querySelector('[data-ref="thumb"]');
   const hiddenInput = slider.querySelector('[data-ref="hidden-input"]');
 
   if (!track || !range || !thumb || !hiddenInput) {
-    console.error('Slider is missing required elements');
+    console.error("Slider is missing required elements");
     return;
   }
 
@@ -201,20 +215,26 @@ proc_htmx('[data-ref="slider"]', slider => {
   const config = {
     min: parseInt(min) || 0,
     max: parseInt(max) || 100,
-    step: parseInt(step) || 1
+    step: parseInt(step) || 1,
   };
 
   function updateSlider(percentage) {
-    currentValue = Math.round((percentage * (config.max - config.min) + config.min) / config.step) * config.step;
+    currentValue =
+      Math.round(
+        (percentage * (config.max - config.min) + config.min) / config.step
+      ) * config.step;
     currentValue = Math.max(config.min, Math.min(config.max, currentValue));
-    
-    const displayPercentage = ((currentValue - config.min) / (config.max - config.min)) * 100;
+
+    const displayPercentage =
+      ((currentValue - config.min) / (config.max - config.min)) * 100;
     range.style.width = `${displayPercentage}%`;
     thumb.style.left = `${displayPercentage}%`;
-    slider.setAttribute('aria-valuenow', currentValue);
+    slider.setAttribute("aria-valuenow", currentValue);
     hiddenInput.value = currentValue;
 
-    slider.dispatchEvent(new CustomEvent('change', { detail: { value: currentValue } }));
+    slider.dispatchEvent(
+      new CustomEvent("change", { detail: { value: currentValue } })
+    );
   }
 
   function handleMove(clientX) {
@@ -225,87 +245,92 @@ proc_htmx('[data-ref="slider"]', slider => {
 
   function addDragListeners(startEvent) {
     startEvent.preventDefault();
-    const moveHandler = moveEvent => handleMove(moveEvent.clientX || moveEvent.touches[0].clientX);
+    const moveHandler = (moveEvent) =>
+      handleMove(moveEvent.clientX || moveEvent.touches[0].clientX);
     const upHandler = () => {
-      document.removeEventListener('mousemove', moveHandler);
-      document.removeEventListener('touchmove', moveHandler);
-      document.removeEventListener('mouseup', upHandler);
-      document.removeEventListener('touchend', upHandler);
+      document.removeEventListener("mousemove", moveHandler);
+      document.removeEventListener("touchmove", moveHandler);
+      document.removeEventListener("mouseup", upHandler);
+      document.removeEventListener("touchend", upHandler);
     };
-    document.addEventListener('mousemove', moveHandler);
-    document.addEventListener('touchmove', moveHandler, { passive: false });
-    document.addEventListener('mouseup', upHandler);
-    document.addEventListener('touchend', upHandler);
+    document.addEventListener("mousemove", moveHandler);
+    document.addEventListener("touchmove", moveHandler, { passive: false });
+    document.addEventListener("mouseup", upHandler);
+    document.addEventListener("touchend", upHandler);
   }
 
-  track.addEventListener('mousedown', e => {
-    if (e.button === 0) { // Only proceed for left mouse button
+  track.addEventListener("mousedown", (e) => {
+    if (e.button === 0) {
       handleMove(e.clientX);
       addDragListeners(e);
     }
   });
 
-  track.addEventListener('touchstart', e => {
-    handleMove(e.touches[0].clientX);
-    addDragListeners(e);
-  }, { passive: false });
+  track.addEventListener(
+    "touchstart",
+    (e) => {
+      handleMove(e.touches[0].clientX);
+      addDragListeners(e);
+    },
+    { passive: false }
+  );
 
-  thumb.addEventListener('mousedown', e => {
-    if (e.button === 0) addDragListeners(e); // Only proceed for left mouse button
+  thumb.addEventListener("mousedown", (e) => {
+    if (e.button === 0) addDragListeners(e);
   });
 
-  thumb.addEventListener('touchstart', e => {
-    addDragListeners(e);
-  }, { passive: false });
+  thumb.addEventListener(
+    "touchstart",
+    (e) => {
+      addDragListeners(e);
+    },
+    { passive: false }
+  );
 
-  // Initialize slider position
   updateSlider((currentValue - config.min) / (config.max - config.min));
 });
 
-// ... existing code ...
-
 // Setup Tabs Scripts
 
-proc_htmx('[data-ref=tabs]', tabs => {
-  const triggers = tabs.querySelectorAll('[data-tab-trigger]')
-  const contents = tabs.querySelectorAll('[data-tab-content]')
-  
-  function setActiveTab(value) {
-      triggers.forEach(trigger => {
-          if (trigger.dataset.value === value) {
-            trigger.setAttribute('aria-selected', 'true');
-            trigger.dataset.state = 'active';
+proc_htmx("[data-ref=tabs]", (tabs) => {
+  const triggers = tabs.querySelectorAll("[data-tab-trigger]");
+  const contents = tabs.querySelectorAll("[data-tab-content]");
 
-          } else {
-              trigger.setAttribute('aria-selected', 'false');
-              trigger.dataset.state = '';
-          }
-      })
-      
-      contents.forEach(content => {
-          if (content.dataset.value === value) {
-              content.dataset.state = 'active'
-              content.removeAttribute('hidden')
-          } else {
-              content.dataset.state = ''
-              content.setAttribute('hidden', '')
-          }
-      })
+  function setActiveTab(value) {
+    triggers.forEach((trigger) => {
+      if (trigger.dataset.value === value) {
+        trigger.setAttribute("aria-selected", "true");
+        trigger.dataset.state = "active";
+      } else {
+        trigger.setAttribute("aria-selected", "false");
+        trigger.dataset.state = "";
+      }
+    });
+
+    contents.forEach((content) => {
+      if (content.dataset.value === value) {
+        content.dataset.state = "active";
+        content.removeAttribute("hidden");
+      } else {
+        content.dataset.state = "";
+        content.setAttribute("hidden", "");
+      }
+    });
   }
-  
+
   triggers.forEach((trigger) => {
-    trigger.addEventListener('click', (event) => {
-      const value = event.currentTarget.dataset.value
-      setActiveTab(value)
-  })
-})
+    trigger.addEventListener("click", (event) => {
+      const value = event.currentTarget.dataset.value;
+      setActiveTab(value);
+    });
+  });
 
   if (tabs.dataset.defaultValue) {
-    setActiveTab(tabs.dataset.defaultValue)
+    setActiveTab(tabs.dataset.defaultValue);
   } else if (triggers.length > 0) {
-      setActiveTab(triggers[0].dataset.value)
+    setActiveTab(triggers[0].dataset.value);
   }
-})
+});
 
 // Setup Toast Scripts
 
@@ -325,14 +350,13 @@ proc_htmx("#toast-container", function (toast) {
     dismissTimeout = setTimeout(dismissToast, duration);
   }
 
-  // Mouse drag functionality
   let isDragging = false;
   let startX;
   let originalTransform;
   const threshold = 100;
 
   toast.addEventListener("mousedown", (e) => {
-    e.preventDefault(); // Prevent text selection
+    e.preventDefault();
     toast.style.transition = "none";
     isDragging = true;
     startX = e.clientX;
@@ -367,7 +391,167 @@ proc_htmx("#toast-container", function (toast) {
   resetTimer();
 });
 
+// Scroll Area Scripts
+proc_htmx("[data-ref-scrollarea]", scrollArea => {
+  const viewport = scrollArea.querySelector('[data-ref="viewport"]');
+  const scrollbar = scrollArea.querySelector('[data-ref="scrollbar"]');
+  const thumb = scrollbar.querySelector('[data-ref="thumb"]');
+  const isVertical = scrollArea.dataset.orientation !== 'horizontal';
+  
+  let isMouseOver = false, isScrolling = false, isDragging = false, hideTimeout;
+  let scrollTimeout, state = { thumbSize: 0, thumbClickOffset: 0 };
+  
+  const debounce = (func, wait) => (...args) => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => func(...args), wait);
+  };
+  
+  const showThumb = () => {
+    clearTimeout(hideTimeout);
+    thumb.classList.remove('hidden');
+  };
 
+  const onWheel = (e) => {
+    e.preventDefault();
+    const delta = isVertical ? e.deltaY : e.deltaX;
+    const scrollAmount = delta * 1;
 
+    if (isVertical) {
+      viewport.scrollTop += scrollAmount;
+    } else {
+      viewport.scrollLeft += scrollAmount;
+    }
 
+    updateScrollbar();
+  };
+  
+  const hideThumb = () => {
+    if (!isMouseOver && !isScrolling && !isDragging) {
+      hideTimeout = setTimeout(() => thumb.classList.add('hidden'), 700);
+    }
+  };
+  
+  const debouncedScrollEnd = debounce(() => {
+    isScrolling = false;
+    hideThumb();
+  }, 150);
+  
+  const updateScrollbar = () => {
+    const { clientHeight, clientWidth, scrollHeight, scrollWidth, scrollTop, scrollLeft } = viewport;
+    const viewportSize = isVertical ? clientHeight : clientWidth;
+    const scrollSize = isVertical ? scrollHeight : scrollWidth;
+    const scrollPos = isVertical ? scrollTop : scrollLeft;
+    const isOverflow = scrollSize > viewportSize;
+    
+    if (isOverflow) {
+      state.thumbSize = Math.max((viewportSize / scrollSize) * viewportSize, 20);
+      const trackSize = viewportSize;
+      const thumbTrack = trackSize - state.thumbSize;
+      const scrollRange = scrollSize - viewportSize;
+      const thumbPos = (scrollPos / scrollRange) * thumbTrack;
+      
+      thumb.style[isVertical ? 'height' : 'width'] = `${state.thumbSize-2}px`;
+      thumb.style.transform = isVertical ? `translate3d(0, ${thumbPos}px, 0)` : `translate3d(${thumbPos}px, 0, 0)`;
+      
+      if (isMouseOver || isScrolling || isDragging) showThumb();
+    } else {
+      hideThumb();
+    }
+    
+    scrollbar.style.display = isOverflow ? 'flex' : 'none';
+  };
+  
+  const onScroll = () => {
+    isScrolling = true;
+    updateScrollbar();
+    debouncedScrollEnd();
+  };
+  
+  const setScrollPosition = (clientPos) => {
+    const trackRect = scrollbar.getBoundingClientRect();
+    const trackStart = isVertical ? trackRect.top : trackRect.left;
+    const trackLength = isVertical ? trackRect.height : trackRect.width;
+    const pointerOffset = clientPos - trackStart - state.thumbClickOffset;
+    const thumbTrack = trackLength - state.thumbSize;
+    const scrollRange = isVertical ? viewport.scrollHeight - viewport.clientHeight : viewport.scrollWidth - viewport.clientWidth;
+    let scrollPos = (pointerOffset / thumbTrack) * scrollRange;
+    scrollPos = Math.max(0, Math.min(scrollPos, scrollRange));
+    
+    if (isVertical) {
+      viewport.scrollTop = scrollPos;
+    } else {
+      viewport.scrollLeft = scrollPos;
+    }
+    
+    updateScrollbar();
+  };
+  
+  const onPointerDown = e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    isDragging = true;
+    showThumb();
+    const clientPos = isVertical ? e.clientY : e.clientX;
+    const thumbRect = thumb.getBoundingClientRect();
+    state.thumbClickOffset = isVertical ? clientPos - thumbRect.top : clientPos - thumbRect.left;
+    
+    setScrollPosition(clientPos);
+    
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerup', onPointerUp);
+  };
+  
+  const onPointerMove = e => {
+    if (!isDragging) return;
+    const clientPos = isVertical ? e.clientY : e.clientX;
+    setScrollPosition(clientPos);
+  };
+  
+  const onTrackPointerDown = e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    isDragging = true;
+    showThumb();
+    const clientPos = isVertical ? e.clientY : e.clientX;
 
+    state.thumbClickOffset = state.thumbSize / 2;
+    
+    setScrollPosition(clientPos);
+    
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerup', onPointerUp);
+  };
+  
+  const onPointerUp = () => {
+    isDragging = false;
+    hideThumb();
+    document.removeEventListener('pointermove', onPointerMove);
+    document.removeEventListener('pointerup', onPointerUp);
+  };
+  
+  viewport.addEventListener('scroll', onScroll);
+  thumb.addEventListener('pointerdown', onPointerDown);
+  scrollbar.addEventListener('pointerdown', onTrackPointerDown);
+  scrollArea.addEventListener('pointerenter', () => { isMouseOver = true; updateScrollbar(); });
+  scrollArea.addEventListener('pointerleave', () => { isMouseOver = false; hideThumb(); });
+  scrollbar.addEventListener('wheel', onWheel, { passive: false });
+  
+  const resizeObserver = new ResizeObserver(debounce(updateScrollbar, 100));
+  resizeObserver.observe(viewport);
+  resizeObserver.observe(viewport.firstElementChild);
+  
+  updateScrollbar();
+  thumb.classList.add('hidden');
+  
+  return () => {
+    viewport.removeEventListener('scroll', onScroll);
+    thumb.removeEventListener('pointerdown', onPointerDown);
+    scrollbar.removeEventListener('pointerdown', onTrackPointerDown);
+    scrollArea.removeEventListener('pointerenter', () => {});
+    scrollArea.removeEventListener('pointerleave', () => {});
+    resizeObserver.disconnect();
+    document.removeEventListener('pointermove', onPointerMove);
+    document.removeEventListener('pointerup', onPointerUp);
+    scrollbar.removeEventListener('wheel', onWheel);
+  };
+});

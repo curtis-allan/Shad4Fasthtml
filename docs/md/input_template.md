@@ -26,4 +26,4 @@ Input(placeholder="Enter something", type="text", id="title")
 
 ## Parameters
 
-For a full reference for attribute options, check out the Mozilla docs for the input tag<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input" target="_blank">here.</a>
+For a full reference for attribute options, check out the Mozilla docs for the input tag <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input" target="_blank">here.</a>

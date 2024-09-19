@@ -5,7 +5,7 @@ from shad4fast import *
 from lucide_fasthtml import Lucide
 
 __all__ = [
-    "avatar_block, card_block,carousel_block,tabs_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, textarea_block"
+    "aspect_ratio_block, avatar_block, card_block,carousel_block,tabs_block,scroll_area_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, textarea_block"
 ]
 
 
@@ -50,7 +50,7 @@ def Block(*c, id="default", name=None, **kwargs):
             themeToggle,
             Div(
                 *c,
-                cls="block-content flex flex-col items-center h-[350px] justify-center",
+                cls="block-content flex flex-col items-center min-h-[350px] justify-center",
             ),
             CodeContent(id=id),
             BlockChange(),
@@ -116,9 +116,52 @@ def render_code(content):
 
 
 def CodeContent(id: str = None):
+    if "-" in id:
+        id = id.replace("-", "_")
     return Div(
         render_code(code_dict[id]),
         cls="code-content items-center justify-center h-[350px] hidden",
+    )
+
+
+def aspect_ratio_block():
+    return (
+        Block(
+            Div(
+                AspectRatio(
+                    Img(
+                        src="/public/aspect.webp",
+                        cls="w-full h-full rounded-md object-cover",
+                        loading="lazy",
+                    ),
+                    ratio={16 / 9},
+                ),
+                cls="w-[80%]",
+            ),
+            id="aspect-ratio",
+        ),
+        H2(
+            "Aspect Ratio: 9/16",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        AspectRatioAltBlock(),
+    )
+
+
+def AspectRatioAltBlock():
+    return Block(
+        Div(
+            AspectRatio(
+                Img(
+                    src="/public/aspect2.webp",
+                    cls="w-full h-full rounded-md object-cover",
+                    loading="lazy",
+                ),
+                ratio={9 / 16},
+            ),
+            cls="min-w-[200px] py-3",
+        ),
+        id="aspect-ratio2",
     )
 
 
@@ -141,6 +184,83 @@ def card_block():
             ),
             id="card1",
         ),
+    )
+
+
+def fake_data():
+    results = ()
+    for i in range(50):
+        results += (Div(f"Item Entry #{i}", cls="text-sm"), Separator(cls="my-2"))
+    return results
+
+
+def scroll_area_block():
+    return (
+        Block(
+            ScrollArea(
+                Div(
+                    H4("Entries", cls="mb-4 text-sm font-medium leading-none"),
+                    *fake_data(),
+                    cls="p-4",
+                ),
+                cls="h-72 w-48 rounded-md border",
+            ),
+            id="scroll-area",
+        ),
+        H2(
+            "Horizontal Scroll",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        ScrollAreaAltBlock(),
+    )
+
+
+def fake_data_horizontal():
+    results = ()
+    data = [
+        {
+            "artist": "Ornella Binni",
+            "art": "https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?auto=format&fit=crop&w=300&q=80",
+        },
+        {
+            "artist": "Tom Byrom",
+            "art": "https://images.unsplash.com/photo-1548516173-3cabfa4607e9?auto=format&fit=crop&w=300&q=80",
+        },
+        {
+            "artist": "Vladimir Malyavko",
+            "art": "https://images.unsplash.com/photo-1494337480532-3725c85fd2ab?auto=format&fit=crop&w=300&q=80",
+        },
+    ]
+    for i in data:
+        results += (
+            Figure(
+                Div(
+                    Img(
+                        src=i["art"],
+                        alt=f"Photo by {i['artist']}",
+                        cls="aspect-[3/4] h-[200px] w-[300px] object-cover",
+                        loading="lazy",
+                    ),
+                ),
+                Figcaption(
+                    "Photo by ",
+                    Span(i["artist"], cls="font-semibold text-foreground"),
+                    cls="pt-2 text-xs text-muted-foreground",
+                ),
+                cls="shrink-0",
+            ),
+        )
+    return results
+
+
+def ScrollAreaAltBlock():
+    return Block(
+        ScrollArea(
+            Div(*fake_data_horizontal(), cls="flex w-max space-x-4 p-4"),
+            cls="w-96 whitespace-nowrap rounded-md border",
+            orientation="horizontal",
+        ),
+        id="scroll-area2",
     )
 
 

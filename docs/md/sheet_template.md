@@ -52,14 +52,12 @@ The standard method is similar to the FastHtml method, but follows the original 
 > To ensure the component is rendered correctly, you must pass in the `standard` attribute as `True`. To change the default `open` state, pass the `state` attribute as `open` or `closed` to the _DialogContent()_ method.
 
 ```python
-Dialog(
-    DialogTrigger("Toggle Dialog"),
-    DialogContent(
-        DialogHeader(
-            DialogTitle("Edit Profile"),
-            DialogDescription(
-                "Make changes to your profile here. Click save when you're done."
-            ),
+Sheet(
+    SheetTrigger("Toggle Sheet"),
+    SheetContent(
+        SheetHeader(
+            SheetTitle("Demo Sheet"),
+            SheetDescription("This is a demo sheet."),
         ),
         Div(
             Div(
@@ -81,12 +79,10 @@ Dialog(
             ),
             cls="grid gap-4 py-4",
         ),
-        DialogFooter(DialogCloseButton("Save changes")),
-        cls="sm:max-w-[425px]",
-        state="closed",
+        SheetFooter(SheetCloseButton("Close")),
     ),
     standard=True,
-    )
+)
 ```
 
 > [!IMPORTANT]

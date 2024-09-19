@@ -218,7 +218,7 @@ def MobileNav():
                         cls="tracking-tight select-none",
                     ),
                     Badge(
-                        "v1.1",
+                        "v1.2",
                         variant="outline",
                     ),
                     cls="flex flex-col items-start w-full",
@@ -310,7 +310,7 @@ def Sidebar():
                     hx_boost="true",
                 ),
                 Span(
-                    Badge("Version 1.1", variant="outline"),
+                    Badge("Version 1.2", variant="outline"),
                 ),
                 cls="flex flex-col justify-center gap-1 items-center",
             ),

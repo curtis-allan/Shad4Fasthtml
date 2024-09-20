@@ -37,6 +37,7 @@ link_groups = {
         "tailwind-setup",
         "theme-config",
         "shad4fast-example",
+        "ai-assistance",
     ),
     "components": (
         "card",

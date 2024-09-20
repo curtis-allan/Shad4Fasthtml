@@ -4,7 +4,7 @@ from .button import Button
 
 __all__ = [
     "Sheet",
-    "SheetCloseButton",
+    "SheetClose",
     "SheetContent",
     "SheetHeader",
     "SheetTitle",
@@ -81,7 +81,7 @@ def Sheet(
     )
 
 
-def SheetCloseButton(*c, cls=None, **kwargs):
+def SheetClose(*c, cls=None, **kwargs):
     new_cls = "sheet-close-button"
     if cls:
         new_cls += f" {cls}"

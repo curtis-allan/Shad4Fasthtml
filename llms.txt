@@ -19,6 +19,8 @@ Things to remember when using Shad4FastHtml components:
 ## API
 
 - [Component List](https://shad4fasthtml.com/component_list.txt): A succint list of all current Shad4FastHtml components, with links to their documentation.
+- [Tailwind config](https://shad4fasthtml.com/docs/tailwind_setup.md): A detailed explanation of the tailwindcss setup and how to use it.
+- [Theme config](https://shad4fasthtml.com/docs/theme_config.md): A detailed explanation of the theme configuration and how to use it.
 
 ## Examples
 

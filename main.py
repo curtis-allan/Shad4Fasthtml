@@ -94,6 +94,10 @@ app, rt = fast_app(
     htmlkw={"lang": "en"},
 )
 
+app.static_route(".md", prefix="/docs",static_path="docs/md")
+
+app.static_route(".py", prefix="/docs/demos", static_path="docs")
+
 toast_setup(app)
 
 

@@ -18,7 +18,7 @@ app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 
 The dialog component has two methods of implementation. The first method is the FastHtml method for a simpler implementation, and the second method is the standard method for a more Shadcn-ui like implementation.
 
-If you wish to use a button to close the dialog from within, you can use the `DialogCloseButton` component, or simply apply the `dialog-close-button` class to a component.
+If you wish to use a button to close the dialog from within, you can use the `DialogClose` component, or simply apply the `dialog-close-button` class to a component.
 
 ### FT Method
 
@@ -32,7 +32,7 @@ Dialog(
         trigger="Edit Todo",
         title="Edit Todo",
         description="Edit the todo item. Click the 'Save' button to save it.",
-        footer=Div(DialogCloseButton("Save changes")),
+        footer=Div(DialogClose("Save changes")),
         state="closed",
     )
 ```
@@ -77,7 +77,7 @@ Dialog(
             ),
             cls="grid gap-4 py-4",
         ),
-        DialogFooter(DialogCloseButton("Save changes")),
+        DialogFooter(DialogClose("Save changes")),
         cls="sm:max-w-[425px]",
         state="closed",
     ),

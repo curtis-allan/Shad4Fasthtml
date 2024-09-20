@@ -7,7 +7,7 @@ __all__ = [
     "DialogHeader",
     "DialogFooter",
     "DialogTitle",
-    "DialogCloseButton",
+    "DialogClose",
     "DialogDescription",
     "DialogContent",
     "DialogTrigger",
@@ -46,7 +46,7 @@ def DialogTitle(*c, cls=None, **kwargs):
     return H1(*c, **kwargs)
 
 
-def DialogCloseButton(*c, cls=None, **kwargs):
+def DialogClose(*c, cls=None, **kwargs):
     new_cls = "dialog-close-button"
     if cls:
         new_cls += f" {cls}"

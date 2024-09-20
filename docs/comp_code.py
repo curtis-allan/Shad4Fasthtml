@@ -329,7 +329,7 @@ Div(
         title="Edit Profile",
         description="Make changes to your profile here. Click save when you're done.",
         footer=Div(
-            DialogCloseButton("Save changes"), cls="flex w-full justify-end"
+            DialogClose("Save changes"), cls="flex w-full justify-end"
         ),
         id="demo-dialog",
     )""",
@@ -364,7 +364,7 @@ Div(
                 ),
                 cls="grid gap-4 py-4",
             ),
-            DialogFooter(DialogCloseButton("Save changes")),
+            DialogFooter(DialogClose("Save changes")),
             cls="sm:max-w-[425px]",
         ),
         standard=True,
@@ -549,7 +549,7 @@ Sheet(
     ),
     title="Demo Sheet",
     description="This is a demo sheet.",
-    footer=SheetCloseButton("Close", cls="w-full"),
+    footer=SheetClose("Close", cls="w-full"),
     trigger="Toggle Sheet",
     id="demo-sheet",
 )""",
@@ -581,7 +581,7 @@ Sheet(
             ),
             cls="grid gap-4 py-4",
         ),
-        SheetFooter(SheetCloseButton("Close")),
+        SheetFooter(SheetClose("Close")),
     ),
     standard=True,
 )""",

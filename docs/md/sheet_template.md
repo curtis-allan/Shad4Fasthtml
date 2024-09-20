@@ -18,7 +18,7 @@ app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
 
 The sheet component has two methods of implementation. The first method is the FastHtml method for a simpler implementation, and the second method is the standard method for a more Shadcn-ui like implementation.
 
-If you wish to use a button to close the dialog from within, you can use the `SheetCloseButton` component, or simply apply the `sheet-close-button` class to a component.
+If you wish to use a button to close the dialog from within, you can use the `SheetClose` component, or simply apply the `sheet-close-button` class to a component.
 
 ### FT Method
 
@@ -36,7 +36,7 @@ Sheet(
     ),
     title="Demo Sheet",
     description="This is a demo sheet.",
-    footer=SheetCloseButton("Close", cls="w-full"),
+    footer=SheetClose("Close", cls="w-full"),
     trigger="Toggle Sheet",
 )
 ```
@@ -79,7 +79,7 @@ Sheet(
             ),
             cls="grid gap-4 py-4",
         ),
-        SheetFooter(SheetCloseButton("Close")),
+        SheetFooter(SheetClose("Close")),
     ),
     standard=True,
 )

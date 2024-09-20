@@ -643,7 +643,7 @@ def DialogAltBlock():
                     ),
                     cls="grid gap-4 py-4",
                 ),
-                DialogFooter(DialogCloseButton("Save changes")),
+                DialogFooter(DialogClose("Save changes")),
                 cls="sm:max-w-[425px]",
             ),
             standard=True,
@@ -679,7 +679,7 @@ def dialog_block():
             description="Make changes to your profile here. Click save when you're done.",
             trigger="Toggle Dialog",
             footer=Div(
-                DialogCloseButton("Save changes"), cls="flex w-full justify-end"
+                DialogClose("Save changes"), cls="flex w-full justify-end"
             ),
         ),
         id="dialog",
@@ -922,7 +922,7 @@ def sheet_block():
             ),
             title="Demo Sheet",
             description="This is a demo sheet.",
-            footer=SheetCloseButton("Close", cls="w-full"),
+            footer=SheetClose("Close", cls="w-full"),
             trigger="Toggle Sheet",
         ),
         id="sheet",
@@ -958,7 +958,7 @@ def SheetAltBlock():
                     ),
                     cls="grid gap-4 py-4",
                 ),
-                SheetFooter(SheetCloseButton("Close")),
+                SheetFooter(SheetClose("Close")),
             ),
             standard=True,
         ),

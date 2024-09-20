@@ -1,0 +1,1539 @@
+<project title="Shad4FastHtml" summary="Shad4FastHtml is a python package that integrates Shadcn/UI components with FastHtml. It provides the same styling as the Shadcn/UI library, but doesn't require using React/ Radix UI primitives."> This is done by using vanilla javascript to add functionality to the components. This library aims to be functionally equivalent to Shadcn/UI, but some caveats apply.
+
+Things to remember when using Shad4FastHtml components:
+
+- Before using a Shad4FastHtml component, make sure the `ShadHead()` function is added to the app headers.
+- Ensure that the `pico` parameter is set to `False` when creating the app (i.e. `app, rt = fast_app(pico=False, hdrs=(ShadHead(),))`).
+- TailwindCSS styles must be included in the app headers. There are scripts available in the package to assist with local setup if needed. Otherwise, the tailwind cdn is available.
+- Component implementation differs from one to another, so refer to the documentation for each component to see how it should be used.
+- When using a component in the standard Shadcn/UI layout, make sure the top component has the attribute `standard` set to `True` so it renders correctly.<docs><doc title="Shad4FastHtml getting started" desc="A brief overview of installing and setting up Shad4FastHtml">_This documentation is a work in progress. I appreciate your patience and feedback as I continue to build upon the repo. All credits go to <a href="https://x.com/shadcn" target="_blank">@Shadcn</a> for the component styles and <a href="https://x.com/jeremyphoward" target="_blank">@JeremyPHoward</a> for the fastHtml framework._
+
+
+## Quick Start Guide
+
+### Setup & Installation
+
+Getting started with Shad4FastHtml is quick and easy. Once you have a Python environment ready (I recommend using a `venv` environment of some sort), follow these steps to set up your project:
+
+1. Install the `Shad4Fast` pip package. This can be used to initialize a new project too, all dependencies (including FastHtml) will be installed:
+
+```zsh
+pip install shad4fast
+```
+
+2. If you haven't already, create a new file that will act as the root of your FastHtml application (such as `main.py`). If you are not familiar with FastHtml, I recommend reading the <a href="https://docs.fastht.ml/" target="_blank">FastHtml Documentation</a> to get a better understanding of how FastHtml works.
+
+3. Add the following import statements to the top of the file:
+
+```python
+from fasthtml.common import *
+from shad4fast import * # Or individual components: Button, Input etc.
+```
+
+> [!NOTE]
+> If importing components individually, make sure to also import the `ShadHead()` function.
+
+3. Include `ShadHead()` in your FastHTML headers and disable the default Pico.css header, as shown below:
+
+```python
+app, rt = fast_app(
+    pico=False,
+    hdrs=(ShadHead(),),
+)
+```
+
+4. That's it! You're now ready to start using the UI components in your app. Heres how a basic FastHtml app using Shad4Fast might look:
+
+```python
+from fasthtml.common import *
+from shad4fast import *
+
+app, rt = fast_app(pico=False, hdrs=(ShadHead(tw_cdn=True),))
+
+@rt("/")
+def get():
+    return Titled("Hello World!", Alert(title="Shad4Fast", description="You're all set up!"))
+
+serve()
+```
+
+## Configuration
+
+### Tailwind Configuration
+
+As with Shadcn-ui components, Shad4Fast uses the `TailwindCSS` library for styling by default. This can be setup in two ways: via a cdn script or the tailwind <a href="https://tailwindcss.com/blog/standalone-cli" target="_blank">standalone package</a>.
+
+Shad4Fast provides in-built functionality for both of these use cases. For a detailed documentation, refer to the <a target="_blank" href="https://shad4fasthtml.com/getting-started/tailwind-setup">Tailwind Setup</a> guide.
+
+The easiest way to get started is to simply set the `tw_cdn` option within the ShadHead function to `True`:
+
+```python
+app, rt = fast_app(
+    pico=False,
+    hdrs=(ShadHead(tw_cdn=True),),
+)
+```
+
+### Theme Handling
+
+Included in the Shad4Fast package is a script to streamline the use of light/dark themes within your FastHtml application. This can be used by setting the `theme_handle` attribute to `True` as shown below:
+
+```python
+app, rt = fast_app(
+    pico=False,
+    hdrs=(ShadHead(tw_cdn=True, theme_handle=True),),
+)
+```
+
+Setting this to `True` includes a script in the headers that allows for toggling of the current theme based on standard light/ dark mode determination. For a full guide on how this works and setting up a theme toggle button, see the <a href="https://shad4fasthtml.com/getting-started/theme-configuration" target="_blank">Theme Configuration</a> guide.
+
+> [!IMPORTANT]
+> This project is still in its youth. If you encounter any bugs or issues, please open an issue on the GitHub repository.
+
+## Using Components
+
+To implement Shadcn UI components in your codebase, refer to the relevant component documentation. Each component has its own set of properties and usage guidelines.
+
+## Lucide Icons
+
+Shad4FastHtml relies on <a href="https://lucide.dev/icons/" target="_blank">Lucide Icons</a> as a dependency. This was optional in the previous versions, however certain components require Lucide icons to accurately portray their Shadcn counterpart.
+
+To improve the usage of these icons within FastHtml, I create a pip package called `lucide-fasthtml` to improve the rendering and configuration of the icons. This is set as a dependency for `Shad4Fast` and will be automatically installed and setup upon installing Shad4Fast, however the package can be used purely with FastHtml alone.
+
+As a general overview, the `lucide-fasthtml` package provides a `Lucide` component that takes a valid lucide icon name and renders the icon. A set of background functions handle the fetching of the svg data and save it to an `icons.py` file generated at the root of your project.
+
+For a full reference on the package and its usage, refer to the github repo <a href="https://github.com/curtis-allan/lucide-fasthtml" target="_blank">here.</a>
+
+## Roadmap
+
+- **IN PROGRESS**: Documentation fixing and cleaning up.
+
+- Implement all existing Shadcn-ui components.
+
+- Add type assertions for all component attributes, with proper error handling and documentation.
+
+- Complete aria attributes for all components. Enhance and optimize the JS implementation.
+
+- Future plan:
+  - Streamline the use of V0 with the framework to allow for fully-generative UI frameworks for FastHtml.
+
+## Need Help?
+
+If you encounter any issues or have questions, please reach out either through the <a href="https://github.com/curtis-allan/shadcn-fasthtml-framework" target="_blank">Github</a> repo or send me a dm on <a href="https://x.com/CurtisJAllan" target="_blank">X aka twitter</a> and either myself or a member of the community will try to help out.</doc><doc title="FastHTML quick start" desc="A brief overview of many FastHTML features"># Web Devs Quickstart
+
+## Setup
+
+Make sure the relevant packages are installed, and setup the imports as shown below.
+
+> [!NOTE]
+> If you wish to seperately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
+
+```python
+from fasthtml import *
+from shad4fast import *
+
+app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
+```
+
+## Components
+
+- [Alert](https://shad4fasthtml.com/docs/alert_template.md): Displays a short, important message in a way that attracts the user's attention.
+
+- [Button](https://shad4fasthtml.com/docs/button_template.md): A button that can be used to trigger actions in your app.
+
+- [Card](https://shad4fasthtml.com/docs/card_template.md): A flexible container that can be used to display content in a variety of ways.
+
+- [Dialog](https://shad4fasthtml.com/docs/dialog_template.md): A dialog is a type of modal that appears in front of an app's content to provide critical information or ask for a decision.
+
+- [Input](https://shad4fasthtml.com/docs/input_template.md): An input is a component that allows users to enter text into a form.
+
+- [Label](https://shad4fasthtml.com/docs/label_template.md): A label is a component that provides a name or title for an input.
+
+- [Select](https://shad4fasthtml.com/docs/select_template.md): A select is a component that allows users to select an option from a list of options.
+
+- [Sheet](https://shad4fasthtml.com/docs/sheet_template.md): A sheet is a component that appears from the bottom of the screen and can be used to display content in a variety of ways.
+
+- [AspectRatio](https://shad4fasthtml.com/docs/aspect_ratio_template.md): An aspect ratio is a component that ensures a container maintains a specific aspect ratio.
+
+- [Textarea](https://shad4fasthtml.com/docs/textarea_template.md): A textarea is a component that allows users to enter text into a form.
+
+- [Separator](https://shad4fasthtml.com/docs/separator_template.md): A separator is a component that separates content in a variety of ways.
+
+- [Switch](https://shad4fasthtml.com/docs/switch_template.md): A switch is a component that allows users to toggle a boolean value.
+
+- [Slider](https://shad4fasthtml.com/docs/slider_template.md): A slider is a component that allows users to select a value from a range of values.
+
+- [Table](https://shad4fasthtml.com/docs/table_template.md): A table is a component that allows users to display and interact with tabular data.
+
+- [Tabs](https://shad4fasthtml.com/docs/tabs_template.md): A tab is a component that allows users to switch between different views or content.
+
+- [Toast](https://shad4fasthtml.com/docs/toast_template.md): A toast is a component that displays a short message to the user.
+
+- [Carousel](https://shad4fasthtml.com/docs/carousel_template.md): A carousel is a component that allows users to scroll through a list of items.
+
+- [Checkbox](https://shad4fasthtml.com/docs/checkbox_template.md): A checkbox is a component that allows users to select one or more options from a list.
+
+- [Avatar](https://shad4fasthtml.com/docs/avatar_template.md): An avatar is a component that displays a user's profile picture.
+
+- [Radio](https://shad4fasthtml.com/docs/radio_template.md): A radio is a component that allows users to select one option from a list of options.
+
+- [Progress](https://shad4fasthtml.com/docs/progress_template.md): A progress is a component that displays the progress of a task.
+
+- [ScrollArea](https://shad4fasthtml.com/docs/scroll_area_template.md): A scroll area is a component that allows users to scroll through content.
+
+- [Badge](https://shad4fasthtml.com/docs/badge_template.md): A badge is a component that displays a small amount of information.</doc><doc title="Tailwind config" desc="A detailed explanation of the tailwindcss setup and how to use it.">## Setup Instructions
+
+Shad4Fast provides two methods of integrating tailwind into your application out of the box:
+
+1. **CDN Link**
+
+2. **Standalone Package**
+
+Both methods are viable depending on your use case:
+
+- For development and quick iteration, the CDN is a good option. It's the easiest to implement and automatically applies styling, without any watch or build process.
+
+- For production, its recommended to install the standalone package. This will reduce the bundle size considerably, as only the styles used within your project will be included.
+
+### Using the CDN
+
+The easiest way to get started with using Shad4Fast is via the TailwindCDN. The `Link` tag for this is pre-configured within the ShadHead() function, and can be used as shown:
+
+```python
+app, rt = fast_app(
+    pico=False,
+    hdrs=(ShadHead(tw_cdn=True),),
+)
+```
+
+### Using the Standalone Package
+
+This option has more of a setup/ usage overhead than the cdn, but the benefits are entirely worth it. To help streamline this, Shad4Fast includes 3 handy scripts out of the box:
+
+| Script            | Output                                                | Function                                                                                                                                                                                                                                                                                      |
+| ----------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shad4fast setup` | `...`                                                 | Very handy setup function. Downloads the appropriate `tailwind` package for your machine, pre-configured `globals.css` and `tailwind.config.js` files from the repo and creates a blank `output.css` file. This script acts as a boilerplate instantiator for any project using this package. |
+| `shad4fast watch` | `./tailwindcss -i globals.css -o output.css --watch`  | Simplifies the watch script for the tailwind package. Watches all files passed through the `tailwind.config.js` content section.                                                                                                                                                              |
+| `shad4fast build` | `./tailwindcss -i globals.css -o output.css --minify` | Simplifies the minify script for the tailwind package. Minifies the current `output.css` file to reduce bundle size in production.                                                                                                                                                            |
+
+> [!IMPORTANT]
+> If you find the `watch` and `build` commands are not working correctly, adjust the `content` section within the tailwind.config.js file to point to your installation of shad4fast. You can also asjust this to point to other directories you have that include tailwind classes.
+
+---
+
+## Plugins
+
+Default Tailwind plugins are included in the standalone package out of the box. If you want to use any within your project, you can simply import them in your `tailwind.config.js` file as shown below:
+
+```javascript
+plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/container-queries'),
+],
+```
+
+> [!NOTE]
+> Support for third-party plugins is currently unavailable. Since Shadcn's component library uses `tailwindcss-animate` for animations, the functionality is included directly in the `tailwind.config.js` file from the repo.</doc><doc title="Theme config" desc="A detailed explanation of the theme configuration and how to use it.">## Changing the theme
+
+Shad4FastHtml follows a similar structure to the original Shadcn theme configuration. Changing your theme is as easy as it is within the original package. If using the Tailwindcss standalone setup, simply open the `globals.css` file and replace these values:
+
+```css
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+```
+
+You can adjust the colours/styles however you wish. For ease of use, you can simply go <a href="https://ui.shadcn.com/themes" target="_blank">here</a>, choose a theme configuration you like and copy/paste the config over the matching section.
+
+> [!NOTE]
+> If using tailwind via cdn, you can still change the default theme configuration. To do this, locate the `headers.py` file within the shad4fast installation and locate the matching styles. Then you can simply replace them as shown above.
+
+## Setting up light/dark mode
+
+Theme handling can be a useful addition to any web application and is becoming more prevalent in modern sites. To simplify the usage of a light/dark mode system, Shad4Fast includes an optional script that can be toggled in the header as shown here:
+
+```python
+app, rt = fast_app(
+    pico=False,
+    hdrs=(ShadHead(theme_handle=True),),
+)
+```
+
+Both of the in-built Tailwind setup methods include the default Shadcn theme for both light and dark mode by default. Setting the `theme_handle` attribute in the header will include a script within the `head` tag of your website that provides the bare essentials:
+
+- System theme detection, using the `@media` css query.
+- Caching of prefered theme in local browser storage.
+- `Dark` class toggling of the html tag.
+
+By simply setting the theme_handle to true, users with a preferred system theme of `dark` will have the dark colourscheme applied and vice versa.
+
+## Theme Toggle
+
+The `theme_handle` headers also include javascript that allows for the manual swapping of the pages theme. This can be done by adding the class `theme-toggle` to a button (or component). When this is clicked, both the `dark` class of the html tag and the `theme` setting saved in local browser storage will be toggled. This allows for users to change the theme manually, and maintain that current theme across page navigations (including refreshes and browser exiting).
+
+Below is the theme toggle component used in this site. Using pure tailwindcss to toggle the visible icon and the `theme-toggle` class, this allows for a simple yet fully functioning and reactive theme toggle button:
+
+```python
+from shad4fast import Button
+from lucide_fasthtml import Lucide
+
+def ThemeToggle(variant="outline", cls=None, **kwargs):
+    return Button(
+        Lucide("sun", cls="dark:flex hidden"),
+        Lucide("moon", cls="dark:hidden"),
+        variant=variant,
+        size="icon",
+        cls=f"theme-toggle {cls}",
+        **kwargs,
+    )
+```
+
+</doc></api><examples><doc title="Shad4FastHtml Todo list application" desc="Detailed walk-thru of a complete CRUD app in FastHTML showing idiomatic use of FastHTML and HTMX patterns.">## Todo List, using Shad4Fast
+
+To assist with understanding how to use Shad4Fast within a FastHTML app, I've enhanced a simple `Todo List` application created by the founder of FastHTML.
+
+Instead of the default Picocss style & components that ship with FastHtml by default, the app now uses the Shad4FastHtml framework.
+
+You can copy/paste the implementation into a new file or access it within the github repo <a href="https://github.com/curtis-allan/shadcn-fasthtml-framework/tree/main/docs/md/shad4fast-example.md" target="_blank">here</a>. Assuming you have followed the basic setup guide, run `python main.py` in the root of your project to see it in action:
+
+```python
+from fasthtml.common import *
+from shad4fast import *
+from lucide_fasthtml import Lucide
+
+app, rt, todos, Todo = fast_app(
+    "data/todos.db",
+    id=int,
+    title=str,
+    description=str,
+    done=bool,
+    priority=str,
+    pk="id",
+    pico=False,
+    hdrs=(ShadHead(theme_handle=True),),
+)
+
+
+def tid(id):
+    return f"todo-{id}"
+
+
+def edit_dialog(todo_id: str):
+    edit = DialogTrigger(
+        "Edit",
+        hx_get=f"/edit/{todo_id}",
+        target_id=f"edit-form-{todo_id}",
+        hx_swap="outerHTML",
+        variant="outline",
+    )
+    return Dialog(
+        Div("Loading...", id=f"edit-form-{todo_id}"),
+        trigger=edit,
+        title="Edit Todo",
+        description="Edit the todo item. Click the 'Save' button to save it.",
+    )
+
+
+@patch
+def __ft__(self: Todo):
+    priority_cls = {
+        "low": "",
+        "medium": "bg-yellow-500/80",
+        "high": "bg-red-500/80",
+    }
+    delete = Button(
+        "Delete",
+        hx_delete=f"/todos/{self.id}",
+        target_id=tid(self.id),
+        hx_swap="outerHTML",
+        variant="destructive",
+    )
+    status_cls = "absolute top-1.5 right-1"
+    checked = Badge(
+        Lucide("check", stroke_width="3", cls="size-4 text-primary"),
+        cls=f"!bg-green-600 text-primary {status_cls} {'invisible' if not self.done else ''}",
+    )
+
+    return Card(
+        CardHeader(
+            checked,
+            CardTitle(self.title),
+            Div(
+                "Priority level: ",
+                Badge(
+                    self.priority.title() if self.priority else "Low",
+                    variant="outline",
+                    cls=f"{priority_cls[self.priority] if self.priority else ''} w-fit",
+                ),
+                cls="flex items-center gap-1 text-muted-foreground text-sm pt-2",
+            ),
+        ),
+        CardContent(
+            P(self.description, cls="tracking-tight text-sm text-pretty line-clamp-3"),
+            cls="grow",
+        ),
+        CardFooter(
+            Div(
+                delete,
+                edit_dialog(todo_id=self.id),
+                cls="flex items-center p-2 w-full justify-between self-end",
+            ),
+        ),
+        cls="relative flex flex-col",
+        standard=True,
+        id=tid(self.id),
+    )
+
+
+def title_input(id=None, **kw):
+    return Div(
+        Label("Title", htmlFor=id),
+        Input(
+            id=id,
+            name="title",
+            placeholder="Enter a todo title",
+            required=True,
+        ),
+        cls="space-y-1",
+        id="title-block",
+        **kw,
+    )
+
+
+def description_input(id=None, **kw):
+    return Div(
+        Label("Description", htmlFor=id),
+        Textarea(
+            id=id,
+            name="description",
+            placeholder="Enter a todo description",
+            cls="resize-none",
+            required=True,
+        ),
+        cls="space-y-1",
+        id="description-block",
+        **kw,
+    )
+
+
+def priority_input(**kw):
+    return Div(
+        Label(
+            "Priority",
+            Select(
+                label="Priority",
+                placeholder="Select a level of urgency",
+                name="priority",
+                items=["Low", "Medium", "High"],
+                id="priority-select",
+                cls="mt-1",
+                default_value="high",
+            ),
+        ),
+        id="priority-block",
+        **kw,
+    )
+
+
+@rt("/")
+def get():
+    add = Card(
+        Form(
+            title_input(id="new-title"),
+            description_input(id="new-description"),
+            priority_input(),
+            Button(
+                "Add",
+                cls="w-full !mt-6",
+            ),
+            hx_post="/",
+            target_id="todo-list",
+            hx_swap="afterbegin",
+            cls="px-4 space-y-3",
+            id="todo-form",
+        ),
+        title="Create a Todo",
+        description="Add a new todo item to your list. Click the 'Add' button to save it.",
+        cls="w-full",
+    )
+    content = Div(
+        *todos(order_by="id desc"),
+        id="todo-list",
+        cls="grid sm:grid-cols-2 auto-rows-fr gap-3 w-full",
+    )
+    return Title("Todo list"), Body(
+        H1(
+            "Todo List - Shad4Fast",
+            cls="text-4xl tracking-tighter font-semibold mt-10 text-center",
+        ),
+        Section(
+            add,
+            H1("Your Todos:", cls="text-3xl tracking-tight font-bold"),
+            Separator(),
+            content,
+            cls="container max-w-4xl flex flex-col gap-4 items-center",
+        ),
+        cls="flex flex-col min-h-screen items-center gap-10 p-4",
+    )
+
+
+@rt("/todos/{id}")
+def delete(id: int):
+    todos.delete(id)
+
+
+@rt("/")
+def post(todo: Todo):
+    return (
+        todos.insert(todo),
+        title_input(id="new-title", hx_swap_oob="true"),
+        description_input(id="new-description", hx_swap_oob="true"),
+        priority_input(hx_swap_oob="true"),
+    )
+
+
+@rt("/edit/{id}")
+def get(id: int):
+    todo = todos.get(id)
+    res = Form(
+        Div(
+            title_input(id="edit-title"),
+            description_input(id="edit-description"),
+            cls="flex flex-col gap-2",
+        ),
+        Hidden(id="id"),
+        Div(
+            Hidden(name="done", value="", skip=True),
+            Label("Complete", htmlFor="done"),
+            Checkbox(id="done", name="done"),
+            cls="flex items-center gap-1.5",
+        ),
+        DialogCloseButton(
+            "Save",
+            cls="w-full !mt-6",
+        ),
+        hx_put="/",
+        target_id=tid(id),
+        hx_swap="outerHTML",
+        id=f"edit-form-{id}",
+        cls="p-2 space-y-6",
+    )
+    return fill_form(res, todo)
+
+
+@rt("/")
+def put(todo: Todo):
+    return todos.upsert(todo)
+
+
+serve()
+```
+
+</doc>
+
+<doc title="Component demos" desc="A series of demos for each component, with code snippets. Provides an `alt` snippet for certain components that have multiple implementation methods.">
+
+```python
+def aspect_ratio_block():
+    return (
+        Block(
+            Div(
+                AspectRatio(
+                    Img(
+                        src="/public/aspect.webp",
+                        cls="w-full h-full rounded-md object-cover",
+                        loading="lazy",
+                    ),
+                    ratio={16 / 9},
+                ),
+                cls="w-[80%]",
+            ),
+            id="aspect-ratio",
+        ),
+        H2(
+            "Aspect Ratio: 9/16",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        AspectRatioAltBlock(),
+    )
+
+
+def AspectRatioAltBlock():
+    return Block(
+        Div(
+            AspectRatio(
+                Img(
+                    src="/public/aspect2.webp",
+                    cls="w-full h-full rounded-md object-cover",
+                    loading="lazy",
+                ),
+                ratio={9 / 16},
+            ),
+            cls="min-w-[200px] py-3",
+        ),
+        id="aspect-ratio2",
+    )
+
+
+def card_block():
+    return (
+        Block(
+            Card(
+                Input(type="text", placeholder="Title", id="card1-input"),
+                title="Create a post",
+                description="Enter your post title below",
+                footer=Div(
+                    Button(
+                        "Cancel",
+                        variant="outline",
+                    ),
+                    Button("Submit"),
+                    cls="flex w-full justify-end gap-2",
+                ),
+                cls="w-[80%]",
+            ),
+            id="card1",
+        ),
+    )
+
+
+def fake_data():
+    results = ()
+    for i in range(50):
+        results += (Div(f"Item Entry #{i}", cls="text-sm"), Separator(cls="my-2"))
+    return results
+
+
+def scroll_area_block():
+    return (
+        Block(
+            ScrollArea(
+                Div(
+                    H4("Entries", cls="mb-4 text-sm font-medium leading-none"),
+                    *fake_data(),
+                    cls="p-4",
+                ),
+                cls="h-72 w-48 rounded-md border",
+            ),
+            id="scroll-area",
+        ),
+        H2(
+            "Horizontal Scroll",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        ScrollAreaAltBlock(),
+    )
+
+
+def fake_data_horizontal():
+    results = ()
+    data = [
+        {
+            "artist": "Ornella Binni",
+            "art": "https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?auto=format&fit=crop&w=300&q=80",
+        },
+        {
+            "artist": "Tom Byrom",
+            "art": "https://images.unsplash.com/photo-1548516173-3cabfa4607e9?auto=format&fit=crop&w=300&q=80",
+        },
+        {
+            "artist": "Vladimir Malyavko",
+            "art": "https://images.unsplash.com/photo-1494337480532-3725c85fd2ab?auto=format&fit=crop&w=300&q=80",
+        },
+    ]
+    for i in data:
+        results += (
+            Figure(
+                Div(
+                    Img(
+                        src=i["art"],
+                        alt=f"Photo by {i['artist']}",
+                        cls="aspect-[3/4] h-[200px] w-[300px] object-cover",
+                        loading="lazy",
+                    ),
+                ),
+                Figcaption(
+                    "Photo by ",
+                    Span(i["artist"], cls="font-semibold text-foreground"),
+                    cls="pt-2 text-xs text-muted-foreground",
+                ),
+                cls="shrink-0",
+            ),
+        )
+    return results
+
+
+def ScrollAreaAltBlock():
+    return Block(
+        ScrollArea(
+            Div(*fake_data_horizontal(), cls="flex w-max space-x-4 p-4"),
+            cls="w-[80%] whitespace-nowrap rounded-md border",
+            orientation="horizontal",
+        ),
+        id="scroll-area2",
+    )
+
+
+def CardAltBlock():
+    return (
+        Block(
+            Card(
+                CardHeader(
+                    CardTitle("New Card :)"),
+                    CardDescription("This is a new card :0"),
+                ),
+                CardContent(
+                    P(
+                        "Lots of awesome content aka oanwdo woadn owndiaonwi. wodn wodin donwd onida ondwoai",
+                        cls="text-balance",
+                    ),
+                ),
+                CardFooter(
+                    P(
+                        "This is the footer :D",
+                        cls="text-muted-foreground text-center text-sm",
+                    ),
+                ),
+                cls="w-[90%]",
+                standard=True,
+            ),
+            id="card2",
+        ),
+    )
+
+
+def SelectAltBlock():
+    return (
+        Block(
+            Select(
+                SelectTrigger(
+                    SelectValue(placeholder="Choose a coding language"),
+                    cls="!w-[250px]",
+                ),
+                SelectContent(
+                    SelectGroup(
+                        SelectLabel("Scripting Languages"),
+                        SelectItem("JavaScript", value="javascript"),
+                        SelectItem("TypeScript", value="typescript"),
+                        SelectItem("Ruby", value="ruby"),
+                        SelectItem("Lua", value="lua"),
+                        SelectItem("PHP", value="php"),
+                    ),
+                    SelectSeparator(),
+                    SelectGroup(
+                        SelectLabel("Mobile Development"),
+                        SelectItem("Swift", value="swift"),
+                        SelectItem("Kotlin", value="kotlin"),
+                        SelectItem("Flutter", value="flutter"),
+                        SelectItem("React Native", value="react-native"),
+                        SelectItem("Xamarin", value="xamarin"),
+                        SelectItem("Ionic", value="ionic"),
+                    ),
+                    SelectSeparator(),
+                    SelectGroup(
+                        SelectLabel("Other Languages"),
+                        SelectItem("Go", value="go"),
+                        SelectItem("Rust", value="rust"),
+                        SelectItem("C#", value="csharp"),
+                        SelectItem("Java", value="java"),
+                        SelectItem("Scala", value="scala"),
+                        SelectItem("Haskell", value="haskell"),
+                    ),
+                    id="select-alt",
+                ),
+                standard=True,
+                id="select-alt",
+                name="select-alt",
+            ),
+            id="select2",
+        ),
+    )
+
+
+def select_block():
+    return (
+        Block(
+            Select(
+                placeholder="Pick a fruit",
+                label="Fruits",
+                items=["Apple", "Banana", "Blueberry", "Orange"],
+                id="select-demo",
+                name="select-demo",
+                cls="[&>button]:w-[180px]",
+            ),
+            id="select",
+        ),
+        H2(
+            "Scrolling & Seperators",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        SelectAltBlock(),
+    )
+
+
+def AlertAltBlock():
+    return (
+        Block(
+            Alert(
+                Lucide(icon="circle-alert", cls="size-4"),
+                AlertTitle("Error"),
+                AlertDescription("An error occurred while processing your request."),
+                standard=True,
+                variant="destructive",
+                cls="max-w-[80%]",
+            ),
+            id="alert2",
+        ),
+    )
+
+
+def button_block():
+    return (
+        Block(
+            Button("Button"),
+            id="button",
+        ),
+        H2(
+            "Variants",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        ButtonAltBlockVariants(),
+        H2(
+            "Sizes",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        ButtonAltBlockSizes(),
+        H2(
+            "States",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        ButtonAltBlockStates(),
+    )
+
+
+def ButtonAltBlockVariants():
+    return (
+        Block(
+            Div(
+                Button("Default", variant="default"),
+                Button("Secondary", variant="secondary"),
+                Button("Outline", variant="outline"),
+                Button(
+                    "Destructive",
+                    variant="destructive",
+                ),
+                Button("Link", variant="link"),
+                Button("Ghost", variant="ghost"),
+                cls="grid grid-cols-2 sm:grid-cols-3 sm:grid-rows-2 gap-4 max-w-[90%]",
+            ),
+            id="button2",
+        ),
+    )
+
+
+def ButtonAltBlockSizes():
+    return (
+        Block(
+            Div(
+                Button("Default", size="default"),
+                Button("Small", size="sm"),
+                Button("Large", size="lg"),
+                Button(
+                    Lucide(icon="settings"),
+                    size="icon",
+                ),
+                cls="grid grid-flow-row gap-4 place-items-center auto-rows-auto max-w-[90%]",
+            ),
+            id="button3",
+        ),
+    )
+
+
+def ButtonAltBlockStates():
+    return (
+        Block(
+            Div(
+                Span(
+                    Label(
+                        "Disabled:",
+                        htmlFor="button-disabled",
+                        cls="text-[15px] font-semibold",
+                    ),
+                    Button("Submit", id="button-secondary", disabled=True),
+                    cls="flex items-center justify-between",
+                ),
+                Separator(),
+                Span(
+                    Label(
+                        "Loading:",
+                        htmlFor="button-loading",
+                        cls="text-[15px] font-semibold",
+                    ),
+                    Button(
+                        Lucide(icon="loader-circle", cls="size-4 mr-1.5 animate-spin"),
+                        "Loading",
+                        id="button-loading",
+                        disabled=True,
+                    ),
+                    cls="flex items-center justify-between",
+                ),
+                cls="grid gap-3 w-[215px]",
+            ),
+            id="button4",
+        ),
+    )
+
+
+def alert_block():
+    return (
+        Block(
+            Alert(
+                title="New message!",
+                description="Open your messages to view more details.",
+                cls="max-w-[80%]",
+            ),
+            id="alert1",
+        ),
+        H2(
+            "Variants",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        AlertAltBlock(),
+    )
+
+
+def toast_block():
+    return (
+        Block(
+            Button(
+                "Send email", hx_get="/toast", hx_target="body", hx_swap="beforeend"
+            ),
+            id="toast",
+        ),
+    )
+
+
+def separator_block():
+    return (
+        Block(
+            Div(
+                H1(
+                    "Welcome back",
+                    cls="text-2xl sm:text-3xl font-bold tracking-tight",
+                ),
+                Separator(cls="my-2"),
+                Div(
+                    Button("Profile", variant="outline"),
+                    Separator(orientation="vertical"),
+                    Button("Settings", variant="outline"),
+                    cls="flex gap-3 p-3",
+                ),
+                cls="container flex flex-col max-w-[80%] justify-center items-center",
+            ),
+            id="separator",
+        ),
+    )
+
+
+def badge_block():
+    return (
+        Block(
+            Div(
+                H1(
+                    "Shad4FastHtml",
+                    cls="text-2xl font-semibold tracking-tight",
+                ),
+                Badge("v2.0"),
+                cls="flex gap-1.5 items-center justify-center",
+            ),
+            id="badge",
+        ),
+        H2(
+            "Variants",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        BadgeAltBlock(),
+    )
+
+
+def BadgeAltBlock():
+    return (
+        Block(
+            Div(
+                Span(
+                    Label("Default:", htmlFor="badge-default", cls="font-semibold"),
+                    Badge("New Feature", variant="default", id="badge-default"),
+                    cls="flex items-center justify-between",
+                ),
+                Separator(),
+                Span(
+                    Label("Secondary:", htmlFor="badge-secondary", cls="font-semibold"),
+                    Badge("Updated", variant="secondary", id="badge-secondary"),
+                    cls="flex items-center justify-between",
+                ),
+                Separator(),
+                Span(
+                    Label("Outline:", htmlFor="badge-outline", cls="font-semibold"),
+                    Badge("Terms v1.03", variant="outline", id="badge-outline"),
+                    cls="flex items-center justify-between",
+                ),
+                Separator(),
+                Span(
+                    Label(
+                        "Destructive:", htmlFor="badge-destructive", cls="font-semibold"
+                    ),
+                    Badge("Invalid", variant="destructive", id="badge-destructive"),
+                    cls="flex items-center justify-between",
+                ),
+                cls="flex flex-col gap-3 justify-center w-[180px]",
+            ),
+            id="badge2",
+        ),
+    )
+
+
+def progress_block():
+    return (
+        Block(
+            Div(
+                Button(
+                    "Start",
+                    hx_post="/start",
+                    cls="max-w-fit",
+                    hx_swap="innerHTML",
+                    hx_target="#progress-container",
+                ),
+                id="progress-container",
+                cls="grid place-items-center w-[80%]",
+            ),
+            id="progress",
+        ),
+    )
+
+
+def avatar_block():
+    return Block(
+        Div(
+            Avatar(
+                src="https://placecats.com/300/200", alt="Profile Image", fallback="CA"
+            ),
+        ),
+        id="avatar",
+    )
+
+
+def DialogAltBlock():
+    return Block(
+        Dialog(
+            DialogTrigger("Toggle Dialog"),
+            DialogContent(
+                DialogHeader(
+                    DialogTitle("Edit Profile"),
+                    DialogDescription(
+                        "Make changes to your profile here. Click save when you're done."
+                    ),
+                ),
+                Div(
+                    Div(
+                        Label("Name", cls="text-right"),
+                        Input(
+                            value="John",
+                            cls="col-span-3",
+                        ),
+                        cls="grid grid-cols-4 items-center gap-4",
+                    ),
+                    Div(
+                        Label("Email", cls="text-right"),
+                        Input(
+                            type="email",
+                            value="johnsmith@email.com",
+                            cls="col-span-3",
+                        ),
+                        cls="grid grid-cols-4 items-center gap-4",
+                    ),
+                    cls="grid gap-4 py-4",
+                ),
+                DialogFooter(DialogClose("Save changes")),
+                cls="sm:max-w-[425px]",
+            ),
+            standard=True,
+        ),
+        id="dialog2",
+    )
+
+
+def dialog_block():
+    return Block(
+        Dialog(
+            Div(
+                Div(
+                    Label("Name", cls="text-right"),
+                    Input(
+                        value="John",
+                        cls="col-span-3",
+                    ),
+                    cls="grid grid-cols-4 items-center gap-4",
+                ),
+                Div(
+                    Label("Email", cls="text-right"),
+                    Input(
+                        type="email",
+                        value="johnsmith@email.com",
+                        cls="col-span-3",
+                    ),
+                    cls="grid grid-cols-4 items-center gap-4",
+                ),
+                cls="grid gap-4 py-4",
+            ),
+            title="Edit Profile",
+            description="Make changes to your profile here. Click save when you're done.",
+            trigger="Toggle Dialog",
+            footer=Div(
+                DialogClose("Save changes"), cls="flex w-full justify-end"
+            ),
+        ),
+        id="dialog",
+    )
+
+
+def label_block():
+    return Block(
+        Div(
+            Label("Email", htmlFor="email"),
+            Input(
+                placeholder="Enter your email",
+                type="email",
+                id="email",
+            ),
+            cls="flex flex-col sm:flex-row gap-1.5 sm:items-center w-full max-w-sm container justify-center items-start",
+        ),
+        id="label",
+    )
+
+
+def input_block():
+    return (
+        Block(
+            Input(
+                placeholder="Enter something",
+                type="text",
+                id="title",
+                cls="max-w-[80%]",
+            ),
+            id="input",
+        ),
+    )
+
+
+def textarea_block():
+    return Block(
+        Div(
+            Label(
+                "Content",
+                htmlFor="content",
+            ),
+            Textarea(
+                placeholder="Enter some content.",
+                cls="col-span-3",
+                id="content",
+            ),
+            cls="space-y-5 max-w-[80%] w-full",
+        ),
+        id="textarea",
+    )
+
+
+def switch_block():
+    return (
+        Block(
+            Div(
+                Label(
+                    "Agree to terms",
+                    htmlFor="switch-toggle",
+                ),
+                Switch(
+                    id="switch-toggle",
+                    name="switch-toggle",
+                ),
+                cls="flex gap-1.5 items-center",
+            ),
+            id="switch",
+        ),
+    )
+
+
+def SwitchAltBlock():
+    return (
+        Block(
+            Form(
+                Div(
+                    Label(
+                        "Agree to terms",
+                        htmlFor="switch-toggle2",
+                    ),
+                    Switch(
+                        id="switch-toggle2",
+                        name="switch-toggle2",
+                        value="agree",
+                    ),
+                    cls="flex gap-1.5 items-center",
+                ),
+                Button("Submit", type="button"),
+                cls="flex flex-col gap-4",
+            ),
+            id="switch2",
+        ),
+    )
+
+
+def table_block():
+    return (
+        Block(
+            Div(
+                Table(
+                    TableCaption("View your recent spending history."),
+                    TableHeader(
+                        TableRow(
+                            TableHead("Payment", cls="w-[100px]"),
+                            TableHead("Status"),
+                            TableHead("Method"),
+                            TableHead("Amount", cls="text-right"),
+                        )
+                    ),
+                    TableBody(*table_rows()),
+                    TableFooter(
+                        TableRow(
+                            TableCell("Total", colSpan="3"),
+                            TableCell("$2,500.00", cls="text-right"),
+                        )
+                    ),
+                ),
+                cls="h-full container max-w-[80%] mt-4 overflow-auto",
+            ),
+            id="table",
+        ),
+    )
+
+
+def CarouselAltBlock():
+    return Block(
+        Carousel(
+            CarouselContent(
+                CarouselItem(
+                    Card(
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
+                        title="Card #1",
+                        description="Carousel demo card #1",
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
+                        title="Card #2",
+                        description="Carousel demo card #2",
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
+                        title="Card #3",
+                        description="Carousel demo card #3",
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
+                    ),
+                ),
+                CarouselItem(
+                    Card(
+                        Div(
+                            cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"
+                        ),
+                        title="Card #4",
+                        description="Carousel demo card #4",
+                        footer=Badge(
+                            "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                        ),
+                    ),
+                ),
+                duration="1000",
+            ),
+            cls="max-w-xs",
+            autoplay=True,
+            orientation="vertical",
+            standard=True,
+        ),
+        id="carousel2",
+    )
+
+
+def carousel_items():
+    items = ()
+    for i in range(4):
+        i += 1
+        items += (
+            Card(
+                Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
+                title=f"Card {i}",
+                description=f"Carousel demo card #{i}",
+                footer=Badge(
+                    "@Shad4FastHtml", variant="default", cls="tracking-tighter"
+                ),
+            ),
+        )
+    return items
+
+
+def carousel_block():
+    return (
+        Block(
+            Carousel(
+                items=carousel_items(),
+                cls="max-w-[65%] mx-auto",
+            ),
+            id="carousel",
+        ),
+        H2(
+            "Vertical + Autoplay w/o Buttons",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        CarouselAltBlock(),
+    )
+
+
+def slider_block():
+    return Block(
+        Slider(
+            max=100,
+            cls="max-w-64",
+            min=0,
+        ),
+        id="slider",
+    )
+
+
+def sheet_block():
+    return Block(
+        Sheet(
+            Div(
+                P("This is where you'd enter your sheet content"),
+                cls="h-[85%]",
+            ),
+            title="Demo Sheet",
+            description="This is a demo sheet.",
+            footer=SheetClose("Close", cls="w-full"),
+            trigger="Toggle Sheet",
+        ),
+        id="sheet",
+    )
+
+
+def SheetAltBlock():
+    return Block(
+        Sheet(
+            SheetTrigger("Toggle Sheet"),
+            SheetContent(
+                SheetHeader(
+                    SheetTitle("Demo Sheet"),
+                    SheetDescription("This is a demo sheet."),
+                ),
+                Div(
+                    Div(
+                        Label("Name", cls="text-right"),
+                        Input(
+                            value="John",
+                            cls="col-span-3",
+                        ),
+                        cls="grid grid-cols-4 items-center gap-4",
+                    ),
+                    Div(
+                        Label("Email", cls="text-right"),
+                        Input(
+                            type="email",
+                            value="johnsmith@email.com",
+                            cls="col-span-3",
+                        ),
+                        cls="grid grid-cols-4 items-center gap-4",
+                    ),
+                    cls="grid gap-4 py-4",
+                ),
+                SheetFooter(SheetClose("Close")),
+            ),
+            standard=True,
+        ),
+        id="sheet",
+    )
+
+
+def checkbox_block():
+    return (
+        Block(
+            Div(
+                Checkbox(id="terms1", name="terms1"),
+                Div(
+                    Label(
+                        "Agree to the terms",
+                        htmlFor="terms1",
+                    ),
+                    P(
+                        "You agree to our Terms of Service and Privacy Policy.",
+                        cls="text-sm text-muted-foreground",
+                    ),
+                    cls="grid gap-1.5 max-w-[300px]",
+                ),
+                cls="items-top justify-center flex space-x-2 container",
+            ),
+            id="checkbox",
+        ),
+    )
+
+
+def tabs_block():
+    return Block(
+        Tabs(
+            TabsList(
+                TabsTrigger("Post", value="tab1"),
+                TabsTrigger("Settings", value="tab2"),
+                cls="grid w-full grid-cols-2",
+            ),
+            TabsContent(
+                Card(
+                    Div(
+                        Label("Username", htmlFor="tab-title"),
+                        Input(type="text", placeholder="Title", id="tab-title"),
+                    ),
+                    title="Create a post",
+                    description="Enter your post title below",
+                    footer=Div(
+                        Button(
+                            "Cancel",
+                            variant="outline",
+                        ),
+                        Button("Submit"),
+                        cls="flex w-full justify-end gap-2",
+                    ),
+                ),
+                value="tab1",
+            ),
+            TabsContent(
+                Card(
+                    Div(
+                        Label("Username", htmlFor="tab-settings"),
+                        Input(
+                            type="text",
+                            value="@JohnDoe",
+                            disabled="true",
+                            id="tab-settings",
+                        ),
+                    ),
+                    title="Settings",
+                    description="Change your settings here",
+                    footer=Div(
+                        Button(
+                            "Cancel",
+                            variant="outline",
+                        ),
+                        Button("Submit"),
+                        cls="flex w-full justify-end gap-2",
+                    ),
+                ),
+                value="tab2",
+            ),
+            cls="sm:max-w-[80%] w-full max-w-[70%] mx-auto",
+        ),
+        id="tabs",
+    )
+
+
+def radio_block():
+    return Block(
+        RadioGroup(
+            Div(
+                RadioGroupItem(value="option1", id="option1"),
+                Label("Claude 3.5 Sonnet", htmlFor="option1"),
+                cls="flex items-center space-x-2",
+            ),
+            Div(
+                RadioGroupItem(value="option2", id="option2"),
+                Label("Gpt 4o", htmlFor="option2"),
+                cls="flex items-center space-x-2",
+            ),
+            Div(
+                RadioGroupItem(value="option3", id="option3"),
+                Label("Gpt 4 Turbo", htmlFor="option3"),
+                cls="flex items-center space-x-2",
+            ),
+            name="radio-demo",
+            default_value="option1",
+        ),
+        id="radio",
+    )
+```
+
+</doc></examples></project>

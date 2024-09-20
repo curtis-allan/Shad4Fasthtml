@@ -13,16 +13,16 @@ Things to remember when using Shad4FastHtml components:
 
 ## Docs
 
-- [Shad4FastHtml getting started](https://shad4fasthtml.com/docs/getting_started.md): A brief overview of installing and setting up Shad4FastHtml
+- [Shad4FastHtml getting started](https://www.shad4fasthtml.com/docs/getting_started.md): A brief overview of installing and setting up Shad4FastHtml
 - [FastHTML quick start](https://docs.fastht.ml/tutorials/quickstart_for_web_devs.html.md): A brief overview of many FastHTML features
 
 ## API
 
-- [Component List](https://shad4fasthtml.com/component_list.txt): A succint list of all current Shad4FastHtml components, with links to their documentation.
-- [Tailwind config](https://shad4fasthtml.com/docs/tailwind_setup.md): A detailed explanation of the tailwindcss setup and how to use it.
-- [Theme config](https://shad4fasthtml.com/docs/theme_config.md): A detailed explanation of the theme configuration and how to use it.
+- [Component List](https://www.shad4fasthtml.com/component_list.txt): A succint list of all current Shad4FastHtml components, with links to their documentation.
+- [Tailwind config](https://www.shad4fasthtml.com/docs/tailwind_setup.md): A detailed explanation of the tailwindcss setup and how to use it.
+- [Theme config](https://www.shad4fasthtml.com/docs/theme_config.md): A detailed explanation of the theme configuration and how to use it.
 
 ## Examples
 
-- [Shad4FastHtml Todo list application](https://shad4fasthtml.com/docs/shad4fast_example.md): Detailed walk-thru of a complete CRUD app in FastHTML showing idiomatic use of FastHTML and HTMX patterns.
-- [Component demos](https://shad4fasthtml.com/docs/demos/comp_demos.py): A series of demos for each component, with code snippets. Provides an `alt` snippet for certain components that have multiple implementation methods.
+- [Shad4FastHtml Todo list application](https://www.shad4fasthtml.com/docs/shad4fast_example.md): Detailed walk-thru of a complete CRUD app in FastHTML showing idiomatic use of FastHTML and HTMX patterns.
+- [Component demos](https://www.shad4fasthtml.com/docs/demos/comp_demos.py): A series of demos for each component, with code snippets. Provides an `alt` snippet for certain components that have multiple implementation methods.

@@ -1,0 +1,28 @@
+# Shad4FastHtml
+
+> Shad4FastHtml is a python package that integrates Shadcn/UI components with FastHtml. It provides the same styling as the Shadcn/UI library, but doesn't require using React/ Radix UI primitives.
+ This is done by using vanilla javascript to add functionality to the components. This library aims to be functionally equivalent to Shadcn/UI, but some caveats apply.
+
+Things to remember when using Shad4FastHtml components:
+
+- Before using a Shad4FastHtml component, make sure the `ShadHead()` function is added to the app headers.
+- Ensure that the `pico` parameter is set to `False` when creating the app (i.e. `app, rt = fast_app(pico=False, hdrs=(ShadHead(),))`).
+- TailwindCSS styles must be included in the app headers. There are scripts available in the package to assist with local setup if needed. Otherwise, the tailwind cdn is available.
+- Component implementation differs from one to another, so refer to the documentation for each component to see how it should be used.
+- When using a component in the standard Shadcn/UI layout, make sure the top component has the attribute `standard` set to `True` so it renders correctly.
+
+## Docs
+
+- [Shad4FastHtml getting started](https://shad4fasthtml.com/docs/getting_started.md): A brief overview of installing and setting up Shad4FastHtml
+- [FastHTML quick start](https://docs.fastht.ml/tutorials/quickstart_for_web_devs.html.md): A brief overview of many FastHTML features
+
+## API
+
+- [Component List](https://shad4fasthtml.com/component_list.txt): A succint list of all current Shad4FastHtml components, with links to their documentation.
+- [Tailwind config](https://shad4fasthtml.com/docs/tailwind_setup.md): A detailed explanation of the tailwindcss setup and how to use it.
+- [Theme config](https://shad4fasthtml.com/docs/theme_config.md): A detailed explanation of the theme configuration and how to use it.
+
+## Examples
+
+- [Shad4FastHtml Todo list application](https://shad4fasthtml.com/docs/shad4fast_example.md): Detailed walk-thru of a complete CRUD app in FastHTML showing idiomatic use of FastHTML and HTMX patterns.
+- [Component demos](https://shad4fasthtml.com/docs/demos/comp_demos.py): A series of demos for each component, with code snippets. Provides an `alt` snippet for certain components that have multiple implementation methods.

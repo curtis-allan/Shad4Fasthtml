@@ -1,0 +1,63 @@
+# Shad4FastHtml Component Documentation
+
+## Setup
+
+Make sure the relevant packages are installed, and setup the imports as shown below.
+
+> [!NOTE]
+> If you wish to seperately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
+
+```python
+from fasthtml import *
+from shad4fast import *
+
+app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
+```
+
+## Components
+
+- [Alert](https://shad4fasthtml.com/docs/alert_template.md): Displays a short, important message in a way that attracts the user's attention.
+
+- [Button](https://shad4fasthtml.com/docs/button_template.md): A button that can be used to trigger actions in your app.
+
+- [Card](https://shad4fasthtml.com/docs/card_template.md): A flexible container that can be used to display content in a variety of ways.
+
+- [Dialog](https://shad4fasthtml.com/docs/dialog_template.md): A dialog is a type of modal that appears in front of an app's content to provide critical information or ask for a decision.
+
+- [Input](https://shad4fasthtml.com/docs/input_template.md): An input is a component that allows users to enter text into a form.
+
+- [Label](https://shad4fasthtml.com/docs/label_template.md): A label is a component that provides a name or title for an input.
+
+- [Select](https://shad4fasthtml.com/docs/select_template.md): A select is a component that allows users to select an option from a list of options.
+
+- [Sheet](https://shad4fasthtml.com/docs/sheet_template.md): A sheet is a component that appears from the bottom of the screen and can be used to display content in a variety of ways.
+
+- [AspectRatio](https://shad4fasthtml.com/docs/aspect_ratio_template.md): An aspect ratio is a component that ensures a container maintains a specific aspect ratio.
+
+- [Textarea](https://shad4fasthtml.com/docs/textarea_template.md): A textarea is a component that allows users to enter text into a form.
+
+- [Separator](https://shad4fasthtml.com/docs/separator_template.md): A separator is a component that separates content in a variety of ways.
+
+- [Switch](https://shad4fasthtml.com/docs/switch_template.md): A switch is a component that allows users to toggle a boolean value.
+
+- [Slider](https://shad4fasthtml.com/docs/slider_template.md): A slider is a component that allows users to select a value from a range of values.
+
+- [Table](https://shad4fasthtml.com/docs/table_template.md): A table is a component that allows users to display and interact with tabular data.
+
+- [Tabs](https://shad4fasthtml.com/docs/tabs_template.md): A tab is a component that allows users to switch between different views or content.
+
+- [Toast](https://shad4fasthtml.com/docs/toast_template.md): A toast is a component that displays a short message to the user.
+
+- [Carousel](https://shad4fasthtml.com/docs/carousel_template.md): A carousel is a component that allows users to scroll through a list of items.
+
+- [Checkbox](https://shad4fasthtml.com/docs/checkbox_template.md): A checkbox is a component that allows users to select one or more options from a list.
+
+- [Avatar](https://shad4fasthtml.com/docs/avatar_template.md): An avatar is a component that displays a user's profile picture.
+
+- [Radio](https://shad4fasthtml.com/docs/radio_template.md): A radio is a component that allows users to select one option from a list of options.
+
+- [Progress](https://shad4fasthtml.com/docs/progress_template.md): A progress is a component that displays the progress of a task.
+
+- [ScrollArea](https://shad4fasthtml.com/docs/scroll_area_template.md): A scroll area is a component that allows users to scroll through content.
+
+- [Badge](https://shad4fasthtml.com/docs/badge_template.md): A badge is a component that displays a small amount of information.

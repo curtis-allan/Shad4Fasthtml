@@ -218,7 +218,7 @@ def get(id: int):
             Checkbox(id="done", name="done"),
             cls="flex items-center gap-1.5",
         ),
-        DialogCloseButton(
+        DialogClose(
             "Save",
             cls="w-full !mt-6",
         ),

@@ -4,7 +4,7 @@ To assist with understanding how to use Shad4Fast within a FastHTML app, I've en
 
 Instead of the default Picocss style & components that ship with FastHtml by default, the app now uses the Shad4FastHtml framework.
 
-To try it out, a live version of the app can be found <a href="https://www.shad4fasthtml.com/example" target="_blank">here</a>.
+To try it out, a live version of the app can be found <a href="https://example.shad4fasthtml.com" target="_blank">here</a>.
 
 ```python
 from fasthtml.common import *

@@ -635,12 +635,12 @@ proc_htmx('[data-ref=select]', select => {
       onShow: () => {
           select.dataset.state = 'open';
           initializeFocus();
+          updateScrollButtonVisibility();
       },
   };
 
   Dropdown.prototype.show = function() {
     this._targetEl.classList.remove('hidden');
-    updateScrollButtonVisibility();
     this._targetEl.classList.add('flex');
     updateOffsetSkidding();
     this._targetEl.removeAttribute('aria-hidden');

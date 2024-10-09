@@ -51,7 +51,7 @@ def SelectScrollUpButton(cls=None, **kwargs):
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     ico = Lucide(icon="chevron-up", cls="h-4 w-4 hidden sm:flex")
-    return Div(ico, aria_hidden="true", data_ref="select-scroll-up", **kwargs)
+    return Div(ico, aria_hidden="true", data_ref="select-scroll-up", style="display:none;", **kwargs)
 
 
 def SelectScrollDownButton(cls=None, **kwargs):
@@ -60,7 +60,7 @@ def SelectScrollDownButton(cls=None, **kwargs):
         new_cls += f" {cls}"
     kwargs["cls"] = new_cls
     ico = Lucide(icon="chevron-down", cls="h-4 w-4 hidden sm:flex")
-    return Div(ico, aria_hidden="true", data_ref="select-scroll-down", **kwargs)
+    return Div(ico, aria_hidden="true", data_ref="select-scroll-down",style="display:none;", **kwargs)
 
 
 def SelectContent(*c, cls=None, **kwargs):

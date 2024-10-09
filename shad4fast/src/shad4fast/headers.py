@@ -391,10 +391,13 @@ def ShadHead(tw_cdn=False, theme_handle=False):
 
     tw_output_link = Link(href="/output.css", rel="stylesheet")
 
+    fb_js = Script(src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js", type="module")
+    
     script = Script(main_scr)
 
     headers = [
         script,
+        fb_js
     ]
     if tw_cdn:
         headers.append(Script(src="https://cdn.tailwindcss.com"))

@@ -346,9 +346,7 @@ def select_block():
             Select(
                 placeholder="Pick a fruit",
                 label="Fruits",
-                items=["Apple", "Banana", "Blueberry", "Orange"],
-                id="select-demo",
-                name="select-demo",
+                items=["Apple", "Banana", "Blueberry", "Orange", "Mango"],
                 cls="[&>button]:w-[180px]",
             ),
             id="select",

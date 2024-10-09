@@ -83,8 +83,11 @@ favicon_headers = Favicon(
     light_icon="/public/light_favicon.ico", dark_icon="/public/dark_favicon.ico"
 )
 
+def _not_found(req, exc): return Title('Oh no!'), Div(H2('We could not find that page, sorry!', cls="text-2xl font-semibold tracking-tight"),A(Button(Span(Lucide("arrow-left", cls="size-4 mr-2"), cls="flex items-center"), "Back to home"), href="/"), cls="flex flex-col gap-4 items-center justify-center h-screen")
+
 app, rt = fast_app(
     pico=False,
+    exception_handlers={404: _not_found},
     hdrs=(
         ShadHead(theme_handle=True),
         zeromd_headers,
@@ -128,30 +131,12 @@ def source_button():
                 variant="outline",
                 cls="w-full",
             ),
-            href="https://github.com/curtis-allan/shadcn-fasthtml-framework",
+            href="https://github.com/curtis-allan/Shad4Fasthtml",
             target="_blank",
             cls="w-full",
         ),
         cls="w-full flex justify-center items-center px-2",
     )
-
-
-def carousel_items():
-    carousel_items = ()
-    for i in range(4):
-        i += 1
-        carousel_items += (
-            Card(
-                Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
-                title=f"Card {i}",
-                description=f"Carousel demo card #{i}",
-                footer=Badge(
-                    "@Shad4FastHtml", variant="default", cls="tracking-tighter"
-                ),
-            ),
-        )
-    return carousel_items
-
 
 @rt("/")
 def get():
@@ -232,7 +217,7 @@ def MobileNav():
                 Div(
                     Div(
                         RenderNav(),
-                        cls="overflow-auto block min-h-max no-scrollbar",
+                        cls="overflow-auto flex min-h-max no-scrollbar",
                     ),
                     cls="overflow-hidden w-full grid grow max-h-[calc(100vh-8rem)]",
                 ),
@@ -485,12 +470,10 @@ def get():
                 hx_swap="innerHTML",
                 hx_target="#progress-container",
             ),
-            H2("Complete", cls="text-lg font-semibold tracking-tight"),
             cls="flex flex-col items-center justify-center gap-4",
             id="progress-bar",
         )
 
     return ProgressBar(progress)
-
 
 serve()

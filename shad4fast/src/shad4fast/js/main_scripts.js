@@ -1,10 +1,10 @@
-function proc_htmx(sel, func) {
-  htmx.onLoad((elt) => {
-    const elements = any(sel, elt, false);
-    if (elt.matches && elt.matches(sel)) elements.unshift(elt);
-    elements.forEach(func);
-  });
-}
+// function proc_htmx(sel, func) {
+//   htmx.onLoad((elt) => {
+//     const elements = any(sel, elt, false);
+//     if (elt.matches && elt.matches(sel)) elements.unshift(elt);
+//     elements.forEach(func);
+//   });
+// }
 
 proc_htmx(".preventdbclick", (elt) => {
   elt.addEventListener("mousedown", (event) => {
@@ -95,38 +95,82 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
 
 // Setup Dialog Scripts
 
-proc_htmx("[data-ref=dialog]", (dialog) => {
-  const overlay = dialog.querySelector("[data-ref=dialog-overlay]");
-  const trigger = dialog.querySelector("[data-ref=dialog-trigger]");
-  const portal = dialog.querySelector("[data-ref=dialog-portal]");
+proc_htmx('[data-ref=dialog]', dialog => {
+  const trigger = dialog.querySelector('[data-ref=dialog-trigger]');
+  const portal = dialog.querySelector('[data-ref=dialog-portal]')
+  const dialog_opts = {
+      backdrop: 'dynamic',
+      backdropClasses:
+          'backdrop data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 z-40 fixed inset-0 bg-black/80',
+      closable: true,
+      onShow: (e) => {
+          dialog.dataset.state = 'open';
+          e._backdropEl.dataset.state = 'open';
+      },
+      onHide: () => {
+          dialog.dataset.state = 'closed';
+      },
+  };
 
-  function openDialog() {
-    portal.dataset.state = "open";
-    portal.style.display = "block";
+  if (!Modal.prototype.customHideImplemented) {
+      Modal.prototype.customHide = function() {
+          if (this.isVisible) {
+              this._backdropEl.dataset.state = 'closed';
+              setTimeout(() => {
+                  this._targetEl.classList.add('hidden');
+                  this._targetEl.classList.remove('flex');
+                  this._targetEl.setAttribute('aria-hidden', 'true');
+                  this._targetEl.removeAttribute('aria-modal');
+                  this._targetEl.removeAttribute('role');
+                  this._destroyBackdropEl();
+                  this._isHidden = true;
+
+                  document.body.classList.remove('overflow-hidden');
+
+                  if (this._options.closable) {
+                      this._removeModalCloseEventListeners();
+                  }
+              }, 100);
+
+              this._options.onHide(this);
+          }
+      };
+      Modal.prototype.hide = Modal.prototype.customHide;
+      Modal.prototype.customHideImplemented = true;
   }
 
-  function toggleClose() {
-    portal.dataset.state = "closed";
+  const d = new Modal(portal, dialog_opts);
+
+  trigger.addEventListener('click', (e) => {
+    e.preventDefault;
+    d.show();
+  })
+
+  dialog.querySelectorAll('.dialog-close-button').forEach(btn => {
+      btn.addEventListener('click', () => d.hide());
+  })
+});
+
+htmx.on('htmx:beforeHistorySave', function() {
+  if (FlowbiteInstances.getInstances('Modal')) {
+      const modalInstances = FlowbiteInstances.getInstances('Modal');
+      Object.values(modalInstances).forEach(modal => {
+          if (!modal._isHidden) modal.hide();
+          modal.destroyAndRemoveInstance();
+      });
   }
+});
 
-  trigger.addEventListener("click", openDialog);
-
-  overlay.addEventListener("mousedown", toggleClose);
-
-  portal.addEventListener("animationend", () => {
-    if (portal.dataset.state === "closed") {
-      portal.style.display = "none";
-    }
+htmx.on("htmx:historyRestore", () => {
+  document.querySelectorAll('[data-ref=dialog]').forEach(modal => {
+      modal.dataset.state = 'closed';
+      modal.querySelector('[data-ref=dialog-portal]').classList.add('hidden');
   });
 
-  htmx.on("htmx:historyRestore", () => {
-    toggleClose();
-    portal.style.display = "none";
-  });
-
-  document.addEventListener("click", (e) => {
-    if (e.target.closest(".dialog-close-button")) toggleClose();
-  });
+  const backdrop = document.querySelector('.backdrop');
+  if (backdrop) {
+      backdrop.remove();
+  }
 });
 
 // Setup Sheet Scripts
@@ -554,4 +598,211 @@ proc_htmx("[data-ref-scrollarea]", scrollArea => {
     document.removeEventListener('pointerup', onPointerUp);
     scrollbar.removeEventListener('wheel', onWheel);
   };
+});
+
+// Select Component Scripts
+
+proc_htmx('[data-ref=select]', select => {
+
+  const trigger = select.querySelector('[data-ref=select-trigger]');
+  const viewport = select.querySelector('[data-ref=select-viewport]');
+  const content = select.querySelector('[data-ref=select-content]');
+  const scrollUpBtn = select.querySelector('[data-ref=select-scroll-up]');
+  const scrollDownBtn = select.querySelector('[data-ref=select-scroll-down]');
+  const input = select.querySelector('input');
+  const items = Array.from(select.querySelectorAll('[data-ref=select-item]'));
+
+  trigger.addEventListener('mousedown', (event) => event.preventDefault());
+
+  let scrollInterval = null;
+  
+  const {width, height} = trigger.getBoundingClientRect();
+
+  viewport.style.minWidth = `${width}px`;
+
+  viewport.style.minHeight = `${height}px`;
+  
+  const options = {
+      placement: 'bottom-start',
+      triggerType: 'click',
+      offsetSkidding: -1,
+      offsetDistance: 5,
+      delay:0,
+      ignoreClickOutsideClass: false,
+      onHide: () => {
+        select.dataset.state = 'closed';
+      },
+      onShow: () => {
+          select.dataset.state = 'open';
+          initializeFocus();
+      },
+  };
+
+  Dropdown.prototype.show = function() {
+    this._targetEl.classList.remove('hidden');
+    updateScrollButtonVisibility();
+    this._targetEl.classList.add('flex');
+    updateOffsetSkidding();
+    this._targetEl.removeAttribute('aria-hidden');
+
+    // Enable the event listeners
+    this._popperInstance.setOptions((options) => ({
+        ...options,
+        modifiers: [
+            ...options.modifiers,
+            { name: 'eventListeners', enabled: true },
+        ],
+    }));
+
+    this._setupClickOutsideListener();
+
+    // Update its position
+    this._popperInstance.update();
+    this._visible = true;
+
+    // callback function
+    this._options.onShow(this);
+}
+
+  function updateOffsetSkidding(dropdownWidth) {
+    const triggerRect = trigger.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+
+    const leftSpace = triggerRect.left;
+    const rightSpace = viewportWidth - triggerRect.right;
+
+    let offsetSkidding = 0;
+
+    if (leftSpace < dropdownWidth && rightSpace < dropdownWidth) {
+      offsetSkidding = 0;
+    } else if (leftSpace < rightSpace) {
+      offsetSkidding = dropdownWidth / 2;
+    } else if (rightSpace < leftSpace) {
+      offsetSkidding = -(dropdownWidth / 2);
+    }
+
+    return Math.round(offsetSkidding);
+  }
+
+  const dropdown = new Dropdown(content, trigger, options);
+
+  function updateSelectedItem(item) {
+    items.forEach(i => {
+      i.dataset.checked = 'false';
+      i.setAttribute('aria-selected', 'false');
+    });
+    item.dataset.checked = 'true';
+    item.setAttribute('aria-selected', 'true');
+    const selectValue = trigger.querySelector('[data-ref="select-value"]');
+    if (selectValue) selectValue.textContent = item.textContent.trim();
+    input.value = item.getAttribute('value');
+    select.setAttribute('aria-activedescendant', item.id);
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function navigateItems(direction) {
+    const currentItem = document.activeElement.closest('[data-ref="select-item"]');
+    const currentIndex = currentItem ? items.indexOf(currentItem) : -1;
+    const nextIndex = (currentIndex + direction + items.length) % items.length;
+    items[nextIndex].focus();
+  }
+
+  function initializeFocus() {
+    const checkedItem = items.find(item => item.dataset.checked === 'true');
+    (checkedItem || items[0])?.focus({preventScroll: true});
+  }
+
+  function updateScrollButtonVisibility() {
+    if (!viewport) return;
+    const isAtTop = viewport.scrollTop === 0;
+    const isAtBottom = viewport.scrollHeight - viewport.clientHeight <= viewport.scrollTop + 1;
+    const noScroll = viewport.scrollHeight <= viewport.clientHeight;
+
+    if (scrollUpBtn) scrollUpBtn.style.display = isAtTop || noScroll ? 'none' : 'flex';
+    if (scrollDownBtn) scrollDownBtn.style.display = isAtBottom || noScroll ? 'none' : 'flex';
+  }
+
+  function startScrolling(direction) {
+    stopScrolling();
+    scrollContent(direction);
+    scrollInterval = setInterval(() => scrollContent(direction), 30);
+  }
+
+  function stopScrolling() {
+    if (scrollInterval) {
+      clearInterval(scrollInterval);
+      scrollInterval = null;
+    }
+  }
+
+  function scrollContent(direction) {
+    if (viewport) {
+      viewport.scrollTop += direction === 'up' ? -20 : 20;
+      updateScrollButtonVisibility();
+    }
+  }
+
+  trigger.addEventListener('keydown', (event) => {
+    if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
+      event.preventDefault();
+        dropdown.toggle();
+      } else {
+        navigateItems(event.key === 'ArrowUp' ? -1 : 1);
+      }
+  });
+
+
+  content.addEventListener('keydown', (event) => {
+    if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      event.preventDefault();
+      navigateItems(event.key === 'ArrowDown' ? 1 : -1);
+    } else if (event.key === 'Escape') {
+      dropdown.hide();
+      trigger.focus();
+    }
+  });
+
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      updateSelectedItem(item);
+      dropdown.hide();
+      trigger.focus();
+    });
+    item.addEventListener('keydown', (event) => {
+      if (['Enter', ' '].includes(event.key)) {
+        event.preventDefault();
+        updateSelectedItem(item);
+        dropdown.hide();
+        trigger.focus();
+      }
+    });
+    item.addEventListener('mouseover', () => item.focus());
+  });
+
+  const defaultValue = select.dataset.defaultValue;
+  if (defaultValue) {
+    const defaultItem = items.find(item => item.getAttribute('value') === defaultValue);
+    if (defaultItem) {
+      updateSelectedItem(defaultItem);
+    }
+  }
+
+  if (viewport) {
+    viewport.addEventListener('scroll', updateScrollButtonVisibility);
+  }
+
+  if (scrollUpBtn) {
+    scrollUpBtn.addEventListener('mouseover', () => startScrolling('up'));
+    scrollUpBtn.addEventListener('mouseleave', stopScrolling);
+  }
+
+  if (scrollDownBtn) {
+    scrollDownBtn.addEventListener('mouseover', () => startScrolling('down'));
+    scrollDownBtn.addEventListener('mouseleave', stopScrolling);
+  }
+
+  window.addEventListener('resize', () => {
+    dropdown.hide();
+    dropdown._popperInstance.update();
+  })
 });

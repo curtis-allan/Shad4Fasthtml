@@ -131,30 +131,12 @@ def source_button():
                 variant="outline",
                 cls="w-full",
             ),
-            href="https://github.com/curtis-allan/shadcn-fasthtml-framework",
+            href="https://github.com/curtis-allan/Shad4Fasthtml",
             target="_blank",
             cls="w-full",
         ),
         cls="w-full flex justify-center items-center px-2",
     )
-
-
-def carousel_items():
-    carousel_items = ()
-    for i in range(4):
-        i += 1
-        carousel_items += (
-            Card(
-                Div(cls="h-24 w-full mx-auto bg-primary/40 rounded-sm animate-pulse"),
-                title=f"Card {i}",
-                description=f"Carousel demo card #{i}",
-                footer=Badge(
-                    "@Shad4FastHtml", variant="default", cls="tracking-tighter"
-                ),
-            ),
-        )
-    return carousel_items
-
 
 @rt("/")
 def get():
@@ -235,7 +217,7 @@ def MobileNav():
                 Div(
                     Div(
                         RenderNav(),
-                        cls="overflow-auto block min-h-max no-scrollbar",
+                        cls="overflow-auto flex min-h-max no-scrollbar",
                     ),
                     cls="overflow-hidden w-full grid grow max-h-[calc(100vh-8rem)]",
                 ),
@@ -488,7 +470,6 @@ def get():
                 hx_swap="innerHTML",
                 hx_target="#progress-container",
             ),
-            H2("Complete", cls="text-lg font-semibold tracking-tight"),
             cls="flex flex-col items-center justify-center gap-4",
             id="progress-bar",
         )

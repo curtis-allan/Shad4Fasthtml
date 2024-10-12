@@ -24,6 +24,7 @@ from docs.comp_demos import (
     avatar_block,
     aspect_ratio_block,
     scroll_area_block,
+    accordion_block,
 )
 from fasthtml.common import *
 from fasthtml.components import Zero_md

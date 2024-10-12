@@ -585,6 +585,28 @@ Sheet(
     ),
     standard=True,
 )""",
+"accordion":"""
+Accordion(
+    AccordionItem(
+        AccordionTrigger("What is FastHTML?"),
+        AccordionContent(
+            P("FastHTML is a Python library for building web applications using a component-based approach, similar to React but with Python syntax.")
+        )
+    ),
+    AccordionItem(
+        AccordionTrigger("How does Shad4Fast relate to FastHTML?"),
+        AccordionContent(
+            P("Shad4Fast is a component library built on top of FastHTML, providing pre-styled UI components inspired by Shadcn UI for rapid development.")
+        )
+    ),
+    AccordionItem(
+        AccordionTrigger("What are the benefits of using Shad4Fast?"),
+        AccordionContent(
+            P("Shad4Fast offers easy-to-use, customizable UI components that are accessible and responsive, speeding up development while maintaining a professional look and feel.")
+        )
+    ),
+    cls="!w-[80%]",
+)""",
     "button2": """
 Div(
     Button("Default", variant="default"),

@@ -79,6 +79,14 @@ export default {
 								"translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0))",
 						},
 					},
+					"accordion-down": {
+						from: { height: "0" },
+						to: { height: "var(--accordion-content-height)" },
+					  },
+					  "accordion-up": {
+						from: { height: "var(--accordion-content-height)" },
+						to: { height: "0" },
+					  },
 				},
       colors: {
         border: "hsl(var(--border))",

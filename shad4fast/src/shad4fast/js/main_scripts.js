@@ -94,7 +94,7 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
 });
 
 // Setup Dialog Scripts
-
+let dialog_index = 0;
 proc_htmx('[data-ref=dialog]', dialog => {
   const trigger = dialog.querySelector('[data-ref=dialog-trigger]');
   const portal = dialog.querySelector('[data-ref=dialog-portal]')
@@ -139,7 +139,14 @@ proc_htmx('[data-ref=dialog]', dialog => {
       Modal.prototype.customHideImplemented = true;
   }
 
+  const instanceOptions = {
+    id: `dialog-${dialog_index}`,
+    override: true
+};
+
   const d = new Modal(portal, dialog_opts);
+
+  dialog_index += 1;
 
   trigger.addEventListener('click', (e) => {
     e.preventDefault;
@@ -151,26 +158,16 @@ proc_htmx('[data-ref=dialog]', dialog => {
   })
 });
 
-htmx.on('htmx:beforeHistorySave', function() {
-  if (FlowbiteInstances.getInstances('Modal')) {
-      const modalInstances = FlowbiteInstances.getInstances('Modal');
-      Object.values(modalInstances).forEach(modal => {
-          if (!modal._isHidden) modal.hide();
-          modal.destroyAndRemoveInstance();
-      });
-  }
-});
-
-htmx.on("htmx:historyRestore", () => {
-  document.querySelectorAll('[data-ref=dialog]').forEach(modal => {
-      modal.dataset.state = 'closed';
-      modal.querySelector('[data-ref=dialog-portal]').classList.add('hidden');
-  });
+htmx.on('htmx:beforeHistorySave', () => {
+  dialog_index = 0;
 
   const backdrop = document.querySelector('.backdrop');
-  if (backdrop) {
-      backdrop.remove();
-  }
+
+  if (backdrop) backdrop.remove();
+  document.querySelectorAll('[data-ref=dialog]').forEach(modal => {
+    modal.dataset.state = 'closed';
+    modal.querySelector('[data-ref=dialog-portal]').classList.add('hidden');
+});
 });
 
 // Setup Sheet Scripts
@@ -602,6 +599,7 @@ proc_htmx("[data-ref-scrollarea]", scrollArea => {
 
 // Select Component Scripts
 
+let select_index = 0;
 proc_htmx('[data-ref=select]', select => {
 
   const trigger = select.querySelector('[data-ref=select-trigger]');
@@ -684,7 +682,14 @@ proc_htmx('[data-ref=select]', select => {
     return Math.round(offsetSkidding);
   }
 
-  const dropdown = new Dropdown(content, trigger, options);
+  const instanceOptions = {
+    id: `select-${select_index}`,
+    override: true
+};
+
+  const dropdown = new Dropdown(content, trigger, options, instanceOptions);
+
+  select_index += 1;
 
   function updateSelectedItem(item) {
     items.forEach(i => {
@@ -806,3 +811,124 @@ proc_htmx('[data-ref=select]', select => {
     dropdown._popperInstance.update();
   })
 });
+
+htmx.on("htmx:beforeHistorySave", () => {
+  select_index = 0;
+
+  document.querySelectorAll("[data-ref=select]").forEach(select => {
+    select.dataset.state = 'closed';
+    select.querySelector('[data-ref=select-content]').classList.add('hidden');
+  })
+})
+
+let accordion_index = 0;
+proc_htmx('[data-ref=accordion]', accordion => {
+  const accordionItems = [];
+
+  accordion_index += 1;
+
+  Accordion.prototype.init = function() {
+    if (this._items.length && !this._initialized) {
+        // show accordion item based on click
+        this._items.forEach((item) => {
+          item.targetEl.addEventListener('animationend', () => {
+            if (!item.active) {
+              item.targetEl.classList.add('hidden');
+            }
+          })
+            if (item.active) {
+                this.open(item.id);
+            }
+
+            const clickHandler = () => {
+                this.toggle(item.id);
+            };
+
+            item.triggerEl.addEventListener('click', clickHandler);
+
+            // Store the clickHandler in a property of the item for removal later
+            item.clickHandler = clickHandler;
+        });
+        this._initialized = true;
+    }
+}
+
+Accordion.prototype.toggle = function(id) {
+  const item = this.getItem(id);
+
+  if (item.active) {
+    item.triggerEl.dataset.state = 'closed';
+      this.close(id);
+  } else {
+    item.triggerEl.dataset.state = 'open';
+      this.open(id);
+      item.targetEl.style.setProperty("--accordion-content-height", `${item.targetEl.scrollHeight}px`);
+  }
+
+  // callback function
+  this._options.onToggle(this, item);
+}
+
+Accordion.prototype.close = function(id) {
+  const item = this.getItem(id);
+
+  item.triggerEl.setAttribute('aria-expanded', 'false');
+  item.triggerEl.dataset.state = 'closed';
+  item.active = false;
+
+  // callback function
+  this._options.onClose(this, item);
+}
+
+Accordion.prototype.open = function(id) {
+  const item = this.getItem(id);
+
+  // don't hide other accordions if always open
+  if (!this._options.alwaysOpen) {
+      this._items.map((i) => {
+          if (i !== item) {
+              i.triggerEl.dataset.state = 'closed';
+              i.triggerEl.setAttribute('aria-expanded', 'false');
+              i.active = false;
+          }
+      });
+  }
+  // show active item
+  item.triggerEl.setAttribute('aria-expanded', 'true');
+  item.targetEl.classList.remove('hidden');
+  item.active = true;
+
+  // callback function
+  this._options.onOpen(this, item);
+}
+
+  accordion.querySelectorAll('[data-ref=accordion-item]').forEach((item, index) => {
+    const content = item.querySelector('[data-ref=accordion-content]');
+    const trigger = item.querySelector('[data-ref=accordion-trigger]');
+
+    accordionItems.push({id: `item-${index + 1}`, triggerEl: trigger, targetEl: content, active: false})
+  })
+
+  const instanceOptions = {
+    id: `accordion-${accordion_index}`,
+    override: true,
+};
+
+  const acc = new Accordion(accordion, accordionItems, {}, instanceOptions);
+
+});
+
+function handleAccordionClose() {
+  document.querySelectorAll('[data-ref=accordion]').forEach(accordion => {
+    accordion.querySelectorAll('[data-ref=accordion-item]').forEach((item) => {
+      const trigger = item.querySelector('[data-ref=accordion-trigger]');
+      const content = item.querySelector('[data-ref=accordion-content]');
+
+      trigger.dataset.state = 'closed';
+      trigger.setAttribute("aria-expanded", "false");
+      content.classList.add('hidden');
+    })
+  })
+}
+
+htmx.on("htmx:beforeHistorySave", () => handleAccordionClose());

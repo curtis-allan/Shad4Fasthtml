@@ -24,4 +24,4 @@ from .scroll_area import *
 from .nav import *
 from .breadcrumb import *
 from .accordion import *
-from tooltip import *
+from .tooltip import *

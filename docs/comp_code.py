@@ -590,13 +590,13 @@ Accordion(
     AccordionItem(
         AccordionTrigger("What is FastHTML?"),
         AccordionContent(
-            P("FastHTML is a Python library for building web applications using a component-based approach, similar to React but with Python syntax.")
+            P("FastHTML is a Python framework for building modern web applications.")
         )
     ),
     AccordionItem(
         AccordionTrigger("How does Shad4Fast relate to FastHTML?"),
         AccordionContent(
-            P("Shad4Fast is a component library built on top of FastHTML, providing pre-styled UI components inspired by Shadcn UI for rapid development.")
+            P("Shad4Fast is a component library built to work with FastHTML, providing pre-styled UI components designed by Shadcn.")
         )
     ),
     AccordionItem(
@@ -606,7 +606,7 @@ Accordion(
         )
     ),
     cls="!w-[80%]",
-)""",
+    )""",
     "button2": """
 Div(
     Button("Default", variant="default"),

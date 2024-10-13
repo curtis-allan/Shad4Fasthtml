@@ -657,6 +657,7 @@ Span(
     cls="flex items-center justify-center gap-2",
 )
 """,
+    )""",
     "button2": """
 Div(
     Button("Default", variant="default"),

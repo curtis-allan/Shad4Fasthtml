@@ -648,9 +648,13 @@ Breadcrumb(
 )
 """,
     "tooltip": """
-Tooltip(
-    TooltipTrigger(Button("Hover me")),
-    TooltipContent("This is a tooltip!"),
+Span(
+    P("Hover over the icon"),
+    Tooltip(
+        TooltipTrigger(Lucide("circle-help", cls="size-5 cursor-pointer")),
+        TooltipContent("This is a tooltip!"),
+    ),
+    cls="flex items-center justify-center gap-2",
 )
 """,
     "button2": """

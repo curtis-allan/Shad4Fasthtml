@@ -1,79 +1,59 @@
-
-# Breadcrumb Component
-
-The Breadcrumb component provides a navigation aid that helps users understand their current location within a hierarchical structure of the website.
-
 ## Setup
 
 Make sure the relevant packages are installed, and setup the imports as shown below.
 
 > [!NOTE]
-> If you wish to separately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
+> If you wish to seperately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
 
+```python
 from fasthtml import *
 from shad4fast import *
 
 app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
+```
 
 ---
 
 ## Usage
 
-To use the Breadcrumb component, structure your code as follows:
+Implementing the breadcrumb component is very straightforward. There are two main methods for implementing breadcrumb links. The first method, shown below, is a hard-coded approach. Structure your code as follows to render the exact layout you wish for:
 
-from shad4fast.components.breadcrumb import Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator
-
-```python
+```py
 Breadcrumb(
-    BreadcrumbItem(BreadcrumbLink("Home", href="/")),
-    BreadcrumbItem(BreadcrumbSeparator()),
-    BreadcrumbItem(BreadcrumbLink("Products", href="/products")),
-    BreadcrumbItem(BreadcrumbSeparator()),
-    BreadcrumbItem(BreadcrumbLink("Laptops", href="/products/laptops", current=True)),
-)
+    BreadcrumbList(
+        BreadcrumbItem(
+        BreadcrumbLink("Home", href="/")),
+        BreadcrumbSeparator(),
+        BreadcrumbItem(
+            BreadcrumbEllipsis(),
+        ),
+        BreadcrumbSeparator(),
+        BreadcrumbItem(
+            BreadcrumbLink("Components", href="/components"),
+        ),
+        BreadcrumbSeparator(),
+        BreadcrumbItem(
+            BreadcrumbPage("Breadcrumb"),
+        ),
+    ),
+    )
 ```
+
+Alternatively, you can the entire `req` Request object from a given route to the `req` attribute of the breadcrumb component, which will automatically generate the breadcrumb links based on the path. To implement breadcrumbs in this way, structure your code as follows:
+
+```py
+@rt('/about/sponsors/contact')
+def get(req: Request):
+    return Body(Breadcrumb(req=req))
+```
+
+This will automatically generate the breadcrumb links based on the path of the request, including an ellipsis element if the path exceeds `4` links.
 
 ---
 
-## Components
+## Parameters
 
-### Breadcrumb
-
-The main container for breadcrumb items.
-
-| Parameter | Type     | Description                          |
-| --------- | -------- | ------------------------------------ |
-| cls       | `str`    | Additional CSS classes for styling   |
-| *c        | `*args`  | Child components (BreadcrumbItems)   |
-| **kwargs  | `**kwargs` | Additional HTML attributes          |
-
-### BreadcrumbItem
-
-Container for individual breadcrumb items.
-
-| Parameter | Type     | Description                          |
-| --------- | -------- | ------------------------------------ |
-| cls       | `str`    | Additional CSS classes for styling   |
-| *c        | `*args`  | Child components (Link or Separator) |
-| **kwargs  | `**kwargs` | Additional HTML attributes          |
-
-### BreadcrumbLink
-
-The actual link within each breadcrumb item.
-
-| Parameter | Type     | Description                          |
-| --------- | -------- | ------------------------------------ |
-| href      | `str`    | URL for the link                     |
-| current   | `bool`   | Whether this is the current page     |
-| cls       | `str`    | Additional CSS classes for styling   |
-| *c        | `*args`  | Child components (usually text)      |
-| **kwargs  | `**kwargs` | Additional HTML attributes          |
-
-### BreadcrumbSeparator
-
-The separator between breadcrumb items.
-
-| Parameter | Type     | Description                          |
-| --------- | -------- | ------------------------------------ |
-| cls       | `str`    | Additional CSS classes for styling   |
-| **kwargs  | `**kwargs` | Additional HTML attributes          |
+| Parameter | Type      | Description                                                                                                                               |
+| --------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `req`     | `Request` | The request object from a given route.                                                                                                    |
+| `href`    | `str`     | Relevant to the `BreadcrumbLink` component. Specifies the URL to link to. Automatically generated if implemented via the `req` attribute. |

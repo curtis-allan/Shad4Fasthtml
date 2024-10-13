@@ -1,39 +1,47 @@
-from fasthtml.common import Div, Ol, Li, A, Span
+from fasthtml.common import Ol, Nav, Li, A, Span
+from fasthtml.common import Request
 from lucide_fasthtml import Lucide
 
-__all__ = ["Breadcrumb", "BreadcrumbItem", "BreadcrumbLink", "BreadcrumbSeparator"]
+__all__ = ["Breadcrumb", "BreadcrumbItem", "BreadcrumbLink", "BreadcrumbSeparator", "BreadcrumbEllipsis", "BreadcrumbPage", "BreadcrumbList"]
 
-breadcrumb_cls = "flex"
-breadcrumb_item_cls = "flex items-center"
-breadcrumb_link_cls = "text-sm font-medium text-muted-foreground hover:text-foreground"
-breadcrumb_separator_cls = "mx-2 text-muted-foreground"
+breadcrumb_item_cls = "inline-flex items-center gap-1.5"
+breadcrumb_link_cls = "transition-colors hover:text-foreground"
+breadcrumb_list_cls = "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5"
+breadcrumb_page_cls = "font-normal text-foreground"
+breadcrumb_ellipsis_cls = "flex h-9 w-9 items-center justify-center"
 
-def Breadcrumb(*c, cls=None, **kwargs):
-    new_cls = breadcrumb_cls
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Ol(*c, **kwargs)
+def Breadcrumb(*c, req:Request=None, **kwargs):
+    if req:
+        path = req.url.path
+        parts = path.strip('/').split('/')
+        items = [(BreadcrumbItem(BreadcrumbLink("Home", href="/")), BreadcrumbSeparator())]
+        for i, part in enumerate(parts):
+            if i == len(parts) - 1:
+                items.append(BreadcrumbItem(BreadcrumbPage(part.capitalize())))
+                break
+            else:
+                link = '/' + '/'.join(parts[:i+1])
+                items.append((BreadcrumbItem(BreadcrumbLink(part.capitalize(), href=link)), BreadcrumbSeparator()))
 
-def BreadcrumbItem(*c, cls=None, **kwargs):
-    new_cls = breadcrumb_item_cls
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Li(*c, **kwargs)
+        if len(items) >= 4:
+            items[1] = (BreadcrumbItem(BreadcrumbEllipsis()), BreadcrumbSeparator())
+        return Nav(BreadcrumbList(*items), aria_label="breadcrumb", **kwargs)
+    return Nav(*c, aria_label="breadcrumb", **kwargs)   
 
-def BreadcrumbLink(*c, href="#", current=False, cls=None, **kwargs):
-    new_cls = breadcrumb_link_cls
-    if current:
-        new_cls += " text-foreground font-semibold"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return A(*c, href=href, **kwargs)
+def BreadcrumbItem(*c, **kwargs):
+    return Li(*c,cls=f"{kwargs.pop('cls', '')} {breadcrumb_item_cls}", **kwargs)
 
-def BreadcrumbSeparator(cls=None, **kwargs):
-    new_cls = breadcrumb_separator_cls
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Span(Lucide(icon="chevron-right", cls="h-4 w-4"), **kwargs)
+def BreadcrumbLink(*c, **kwargs):
+    return A(*c, cls=f"{kwargs.pop('cls', '')} {breadcrumb_link_cls}", **kwargs)
+
+def BreadcrumbEllipsis(**kwargs):
+    return Span(Lucide(icon="ellipsis", cls="h-4 w-4"), Span("More", cls="sr-only"), cls=f"{kwargs.pop('cls', '')} {breadcrumb_ellipsis_cls}", **kwargs)
+
+def BreadcrumbSeparator(icon="chevron-right", **kwargs):
+    return Li(Lucide(icon=icon), role="presentation", aria_hidden="true", **kwargs)
+
+def BreadcrumbList(*c, **kwargs):
+    return Ol(*c, cls=f"{kwargs.pop('cls', '')} {breadcrumb_list_cls}", **kwargs)
+
+def BreadcrumbPage(*c, **kwargs):
+    return Span(*c, role="link", aria_disabled="true", aria_current="page", cls=f"{kwargs.pop('cls', '')} {breadcrumb_page_cls}", **kwargs)

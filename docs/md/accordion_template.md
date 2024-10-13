@@ -1,89 +1,48 @@
-
-# Accordion Component
-
-The Accordion component is a vertically stacked set of interactive headings that each reveal an associated section of content.
-
 ## Setup
 
 Make sure the relevant packages are installed, and setup the imports as shown below.
 
 > [!NOTE]
-> If you wish to separately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
+> If you wish to seperately import components you can do so too. Make sure to import and setup `ShadHead()` as well.
 
+```python
 from fasthtml import *
 from shad4fast import *
 
 app, rt = fast_app(pico=False, hdrs=(ShadHead(),))
+```
 
 ---
 
 ## Usage
 
-To use the Accordion component, structure your code as follows:
+Implementing an accordion is very straightforward. Simply structure your code as shown below, ensuring that each item is wrapped in an `AccordionItem` component, consisting of an `AccordionTrigger` and `AccordionContent`:
 
-from shad4fast.components.accordion import Accordion, AccordionItem, AccordionTrigger, AccordionContent
-
-```python
+```py
 Accordion(
     AccordionItem(
-        AccordionTrigger("Is it accessible?"),
+        AccordionTrigger("Heading 1"),
         AccordionContent(
-            P("Yes. It adheres to the WAI-ARIA design pattern.")
-        ),
-        value="item-1"
+            P("Content 1")
+        )
     ),
     AccordionItem(
-        AccordionTrigger("Is it styled?"),
+        AccordionTrigger("Heading 2"),
         AccordionContent(
-            P("Yes. It comes with default styles that matches the other components' aesthetic.")
-        ),
-        value="item-2"
+            P("Content 2")
+        )
+    ),
+    AccordionItem(
+        AccordionTrigger("Heading 3"),
+        AccordionContent(
+            P("Content 3")
+        )
     ),
 )
 ```
 
 ---
 
-## Components
+## Parameters
 
-### Accordion
-
-The main container for accordion items.
-
-| Parameter | Type     | Description                          |
-| --------- | -------- | ------------------------------------ |
-| cls       | `str`    | Additional CSS classes for styling   |
-| *c        | `*args`  | Child components (AccordionItems)    |
-| **kwargs  | `**kwargs` | Additional HTML attributes          |
-
-### AccordionItem
-
-Container for individual accordion items.
-
-| Parameter | Type     | Description                          |
-| --------- | -------- | ------------------------------------ |
-| value     | `str`    | Unique identifier for the item       |
-| cls       | `str`    | Additional CSS classes for styling   |
-| *c        | `*args`  | Child components (Trigger and Content)|
-| **kwargs  | `**kwargs` | Additional HTML attributes          |
-
-### AccordionTrigger
-
-The clickable header of an accordion item.
-
-| Parameter | Type     | Description                          |
-| --------- | -------- | ------------------------------------ |
-| cls       | `str`    | Additional CSS classes for styling   |
-| *c        | `*args`  | Child components (usually text)      |
-| **kwargs  | `**kwargs` | Additional HTML attributes          |
-
-### AccordionContent
-
-The content revealed when an accordion item is expanded.
-
-| Parameter | Type     | Description                          |
-| --------- | -------- | ------------------------------------ |
-| cls       | `str`    | Additional CSS classes for styling   |
-| *c        | `*args`  | Child components (content)           |
-| **kwargs  | `**kwargs` | Additional HTML attributes          |
-
+The accordion component takes the standard attributes as a default FastHTML component.

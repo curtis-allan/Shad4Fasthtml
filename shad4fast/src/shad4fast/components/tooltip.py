@@ -1,31 +1,17 @@
-from fasthtml.common import Div, Span
-
+from fasthtml.common import Div, Button
+from typing import Literal
 __all__ = ["Tooltip", "TooltipTrigger", "TooltipContent"]
 
-tooltip_cls = "relative inline-block"
-tooltip_content_cls = "absolute z-10 px-2 py-1 text-sm font-medium text-white bg-gray-900 rounded-md shadow-sm dark:bg-gray-700"
+tooltip_content_cls = "opacity-0 invisible absolute z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md transition-opacity duration-300"
 
-def Tooltip(*c, cls=None, **kwargs):
-    new_cls = tooltip_cls
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Div(*c, **kwargs)
+def Tooltip(*c, method:str='hover', **kwargs):
+    assert method in ['hover', 'click'], "Method must be either 'hover' or 'click'"
+    return Div(*c, data_ref="tooltip", data_method=method, **kwargs)
 
-def TooltipTrigger(*c, cls=None, **kwargs):
-    return Span(*c, cls=cls, **kwargs)
+def TooltipTrigger(c, **kwargs):
+    if isinstance(c, str):
+        return Button(c, data_ref="tooltip-trigger", **kwargs)
+    return c(data_ref="tooltip-trigger", **kwargs)
 
-def TooltipContent(*c, position="top", cls=None, **kwargs):
-    new_cls = tooltip_content_cls
-    if position == "top":
-        new_cls += " bottom-full left-1/2 transform -translate-x-1/2 mb-1"
-    elif position == "bottom":
-        new_cls += " top-full left-1/2 transform -translate-x-1/2 mt-1"
-    elif position == "left":
-        new_cls += " right-full top-1/2 transform -translate-y-1/2 mr-1"
-    elif position == "right":
-        new_cls += " left-full top-1/2 transform -translate-y-1/2 ml-1"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
-    return Div(*c, **kwargs)
+def TooltipContent(*c, state='closed', **kwargs):
+    return Div(*c, cls=f"{kwargs.get('cls', '')} {tooltip_content_cls}", data_state=state, data_ref="tooltip-content", **kwargs)

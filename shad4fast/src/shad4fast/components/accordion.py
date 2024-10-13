@@ -24,10 +24,7 @@ def AccordionItem(*c, cls=None, **kwargs):
     return Div(*c, data_ref="accordion-item", **kwargs)
 
 def AccordionTrigger(*c, cls=None, **kwargs):
-    new_cls = "peer group flex"
-    if cls:
-        new_cls += f" {cls}"
-    kwargs["cls"] = new_cls
+    kwargs["cls"] = f"{cls} peer group flex"
     return H3(ft_hx('button',
             *c,
             Lucide(icon="chevron-down", cls="h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180"),

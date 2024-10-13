@@ -95,79 +95,79 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
 
 // Setup Dialog Scripts
 let dialog_index = 0;
-proc_htmx('[data-ref=dialog]', dialog => {
-  const trigger = dialog.querySelector('[data-ref=dialog-trigger]');
-  const portal = dialog.querySelector('[data-ref=dialog-portal]')
+proc_htmx("[data-ref=dialog]", (dialog) => {
+  const trigger = dialog.querySelector("[data-ref=dialog-trigger]");
+  const portal = dialog.querySelector("[data-ref=dialog-portal]");
   const dialog_opts = {
-      backdrop: 'dynamic',
-      backdropClasses:
-          'backdrop data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 z-40 fixed inset-0 bg-black/80',
-      closable: true,
-      onShow: (e) => {
-          dialog.dataset.state = 'open';
-          e._backdropEl.dataset.state = 'open';
-      },
-      onHide: () => {
-          dialog.dataset.state = 'closed';
-      },
+    backdrop: "dynamic",
+    backdropClasses:
+      "backdrop data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 z-40 fixed inset-0 bg-black/80",
+    closable: true,
+    onShow: (e) => {
+      dialog.dataset.state = "open";
+      e._backdropEl.dataset.state = "open";
+    },
+    onHide: () => {
+      dialog.dataset.state = "closed";
+    },
   };
 
   if (!Modal.prototype.customHideImplemented) {
-      Modal.prototype.customHide = function() {
-          if (this.isVisible) {
-              this._backdropEl.dataset.state = 'closed';
-              setTimeout(() => {
-                  this._targetEl.classList.add('hidden');
-                  this._targetEl.classList.remove('flex');
-                  this._targetEl.setAttribute('aria-hidden', 'true');
-                  this._targetEl.removeAttribute('aria-modal');
-                  this._targetEl.removeAttribute('role');
-                  this._destroyBackdropEl();
-                  this._isHidden = true;
+    Modal.prototype.customHide = function () {
+      if (this.isVisible) {
+        this._backdropEl.dataset.state = "closed";
+        setTimeout(() => {
+          this._targetEl.classList.add("hidden");
+          this._targetEl.classList.remove("flex");
+          this._targetEl.setAttribute("aria-hidden", "true");
+          this._targetEl.removeAttribute("aria-modal");
+          this._targetEl.removeAttribute("role");
+          this._destroyBackdropEl();
+          this._isHidden = true;
 
-                  document.body.classList.remove('overflow-hidden');
+          document.body.classList.remove("overflow-hidden");
 
-                  if (this._options.closable) {
-                      this._removeModalCloseEventListeners();
-                  }
-              }, 100);
-
-              this._options.onHide(this);
+          if (this._options.closable) {
+            this._removeModalCloseEventListeners();
           }
-      };
-      Modal.prototype.hide = Modal.prototype.customHide;
-      Modal.prototype.customHideImplemented = true;
+        }, 100);
+
+        this._options.onHide(this);
+      }
+    };
+    Modal.prototype.hide = Modal.prototype.customHide;
+    Modal.prototype.customHideImplemented = true;
   }
 
   const instanceOptions = {
     id: `dialog-${dialog_index}`,
-    override: true
-};
+    override: true,
+  };
 
   const d = new Modal(portal, dialog_opts);
 
   dialog_index += 1;
 
-  trigger.addEventListener('click', (e) => {
+  trigger.addEventListener("click", (e) => {
     e.preventDefault;
     d.show();
-  })
+  });
 
-  dialog.querySelectorAll('.dialog-close-button').forEach(btn => {
-      btn.addEventListener('click', () => d.hide());
-  })
+  dialog.querySelectorAll(".dialog-close-button").forEach((btn) => {
+    btn.addEventListener("click", () => d.hide());
+  });
 });
 
-htmx.on('htmx:beforeHistorySave', () => {
+htmx.on("htmx:beforeHistorySave", () => {
   dialog_index = 0;
 
-  const backdrop = document.querySelector('.backdrop');
+  const backdrop = document.querySelector(".backdrop");
 
   if (backdrop) backdrop.remove();
-  document.querySelectorAll('[data-ref=dialog]').forEach(modal => {
-    modal.dataset.state = 'closed';
-    modal.querySelector('[data-ref=dialog-portal]').classList.add('hidden');
-});
+  document.querySelectorAll("[data-ref=dialog]").forEach((modal) => {
+    modal.dataset.state = "closed";
+    modal.querySelector("[data-ref=dialog-portal]").classList.add("hidden");
+  });
 });
 
 // Setup Sheet Scripts
@@ -433,23 +433,29 @@ proc_htmx("#toast-container", function (toast) {
 });
 
 // Scroll Area Scripts
-proc_htmx("[data-ref-scrollarea]", scrollArea => {
+proc_htmx("[data-ref-scrollarea]", (scrollArea) => {
   const viewport = scrollArea.querySelector('[data-ref="viewport"]');
   const scrollbar = scrollArea.querySelector('[data-ref="scrollbar"]');
   const thumb = scrollbar.querySelector('[data-ref="thumb"]');
-  const isVertical = scrollArea.dataset.orientation !== 'horizontal';
-  
-  let isMouseOver = false, isScrolling = false, isDragging = false, hideTimeout;
-  let scrollTimeout, state = { thumbSize: 0, thumbClickOffset: 0 };
-  
-  const debounce = (func, wait) => (...args) => {
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => func(...args), wait);
-  };
-  
+  const isVertical = scrollArea.dataset.orientation !== "horizontal";
+
+  let isMouseOver = false,
+    isScrolling = false,
+    isDragging = false,
+    hideTimeout;
+  let scrollTimeout,
+    state = { thumbSize: 0, thumbClickOffset: 0 };
+
+  const debounce =
+    (func, wait) =>
+    (...args) => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => func(...args), wait);
+    };
+
   const showThumb = () => {
     clearTimeout(hideTimeout);
-    thumb.classList.remove('hidden');
+    thumb.classList.remove("hidden");
   };
 
   const onWheel = (e) => {
@@ -465,90 +471,106 @@ proc_htmx("[data-ref-scrollarea]", scrollArea => {
 
     updateScrollbar();
   };
-  
+
   const hideThumb = () => {
     if (!isMouseOver && !isScrolling && !isDragging) {
-      hideTimeout = setTimeout(() => thumb.classList.add('hidden'), 700);
+      hideTimeout = setTimeout(() => thumb.classList.add("hidden"), 700);
     }
   };
-  
+
   const debouncedScrollEnd = debounce(() => {
     isScrolling = false;
     hideThumb();
   }, 150);
-  
+
   const updateScrollbar = () => {
-    const { clientHeight, clientWidth, scrollHeight, scrollWidth, scrollTop, scrollLeft } = viewport;
+    const {
+      clientHeight,
+      clientWidth,
+      scrollHeight,
+      scrollWidth,
+      scrollTop,
+      scrollLeft,
+    } = viewport;
     const viewportSize = isVertical ? clientHeight : clientWidth;
     const scrollSize = isVertical ? scrollHeight : scrollWidth;
     const scrollPos = isVertical ? scrollTop : scrollLeft;
     const isOverflow = scrollSize > viewportSize;
-    
+
     if (isOverflow) {
-      state.thumbSize = Math.max((viewportSize / scrollSize) * viewportSize, 20);
+      state.thumbSize = Math.max(
+        (viewportSize / scrollSize) * viewportSize,
+        20
+      );
       const trackSize = viewportSize;
       const thumbTrack = trackSize - state.thumbSize;
       const scrollRange = scrollSize - viewportSize;
       const thumbPos = (scrollPos / scrollRange) * thumbTrack;
-      
-      thumb.style[isVertical ? 'height' : 'width'] = `${state.thumbSize-2}px`;
-      thumb.style.transform = isVertical ? `translate3d(0, ${thumbPos}px, 0)` : `translate3d(${thumbPos}px, 0, 0)`;
-      
+
+      thumb.style[isVertical ? "height" : "width"] = `${state.thumbSize - 2}px`;
+      thumb.style.transform = isVertical
+        ? `translate3d(0, ${thumbPos}px, 0)`
+        : `translate3d(${thumbPos}px, 0, 0)`;
+
       if (isMouseOver || isScrolling || isDragging) showThumb();
     } else {
       hideThumb();
     }
-    
-    scrollbar.style.display = isOverflow ? 'flex' : 'none';
+
+    scrollbar.style.display = isOverflow ? "flex" : "none";
   };
-  
+
   const onScroll = () => {
     isScrolling = true;
     updateScrollbar();
     debouncedScrollEnd();
   };
-  
+
   const setScrollPosition = (clientPos) => {
     const trackRect = scrollbar.getBoundingClientRect();
     const trackStart = isVertical ? trackRect.top : trackRect.left;
     const trackLength = isVertical ? trackRect.height : trackRect.width;
     const pointerOffset = clientPos - trackStart - state.thumbClickOffset;
     const thumbTrack = trackLength - state.thumbSize;
-    const scrollRange = isVertical ? viewport.scrollHeight - viewport.clientHeight : viewport.scrollWidth - viewport.clientWidth;
+    const scrollRange = isVertical
+      ? viewport.scrollHeight - viewport.clientHeight
+      : viewport.scrollWidth - viewport.clientWidth;
     let scrollPos = (pointerOffset / thumbTrack) * scrollRange;
     scrollPos = Math.max(0, Math.min(scrollPos, scrollRange));
-    
+
     if (isVertical) {
       viewport.scrollTop = scrollPos;
     } else {
       viewport.scrollLeft = scrollPos;
     }
-    
+
     updateScrollbar();
   };
-  
-  const onPointerDown = e => {
+
+  const onPointerDown = (e) => {
     if (e.button !== 0) return;
     e.preventDefault();
     isDragging = true;
     showThumb();
     const clientPos = isVertical ? e.clientY : e.clientX;
     const thumbRect = thumb.getBoundingClientRect();
-    state.thumbClickOffset = isVertical ? clientPos - thumbRect.top : clientPos - thumbRect.left;
-    
+    state.thumbClickOffset = isVertical
+      ? clientPos - thumbRect.top
+      : clientPos - thumbRect.left;
+
     setScrollPosition(clientPos);
-    
-    document.addEventListener('pointermove', onPointerMove);
-    document.addEventListener('pointerup', onPointerUp);
+
+    document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("pointerup", onPointerUp);
   };
-  
-  const onPointerMove = e => {
+
+  const onPointerMove = (e) => {
     if (!isDragging) return;
     const clientPos = isVertical ? e.clientY : e.clientX;
     setScrollPosition(clientPos);
   };
-  
-  const onTrackPointerDown = e => {
+
+  const onTrackPointerDown = (e) => {
     if (e.button !== 0) return;
     e.preventDefault();
     isDragging = true;
@@ -556,100 +578,105 @@ proc_htmx("[data-ref-scrollarea]", scrollArea => {
     const clientPos = isVertical ? e.clientY : e.clientX;
 
     state.thumbClickOffset = state.thumbSize / 2;
-    
+
     setScrollPosition(clientPos);
-    
-    document.addEventListener('pointermove', onPointerMove);
-    document.addEventListener('pointerup', onPointerUp);
+
+    document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("pointerup", onPointerUp);
   };
-  
+
   const onPointerUp = () => {
     isDragging = false;
     hideThumb();
-    document.removeEventListener('pointermove', onPointerMove);
-    document.removeEventListener('pointerup', onPointerUp);
+    document.removeEventListener("pointermove", onPointerMove);
+    document.removeEventListener("pointerup", onPointerUp);
   };
-  
-  viewport.addEventListener('scroll', onScroll);
-  thumb.addEventListener('pointerdown', onPointerDown);
-  scrollbar.addEventListener('pointerdown', onTrackPointerDown);
-  scrollArea.addEventListener('pointerenter', () => { isMouseOver = true; updateScrollbar(); });
-  scrollArea.addEventListener('pointerleave', () => { isMouseOver = false; hideThumb(); });
-  scrollbar.addEventListener('wheel', onWheel, { passive: false });
-  
+
+  viewport.addEventListener("scroll", onScroll);
+  thumb.addEventListener("pointerdown", onPointerDown);
+  scrollbar.addEventListener("pointerdown", onTrackPointerDown);
+  scrollArea.addEventListener("pointerenter", () => {
+    isMouseOver = true;
+    updateScrollbar();
+  });
+  scrollArea.addEventListener("pointerleave", () => {
+    isMouseOver = false;
+    hideThumb();
+  });
+  scrollbar.addEventListener("wheel", onWheel, { passive: false });
+
   const resizeObserver = new ResizeObserver(debounce(updateScrollbar, 100));
   resizeObserver.observe(viewport);
   resizeObserver.observe(viewport.firstElementChild);
-  
+
   updateScrollbar();
-  thumb.classList.add('hidden');
-  
+  thumb.classList.add("hidden");
+
   return () => {
-    viewport.removeEventListener('scroll', onScroll);
-    thumb.removeEventListener('pointerdown', onPointerDown);
-    scrollbar.removeEventListener('pointerdown', onTrackPointerDown);
-    scrollArea.removeEventListener('pointerenter', () => {});
-    scrollArea.removeEventListener('pointerleave', () => {});
+    viewport.removeEventListener("scroll", onScroll);
+    thumb.removeEventListener("pointerdown", onPointerDown);
+    scrollbar.removeEventListener("pointerdown", onTrackPointerDown);
+    scrollArea.removeEventListener("pointerenter", () => {});
+    scrollArea.removeEventListener("pointerleave", () => {});
     resizeObserver.disconnect();
-    document.removeEventListener('pointermove', onPointerMove);
-    document.removeEventListener('pointerup', onPointerUp);
-    scrollbar.removeEventListener('wheel', onWheel);
+    document.removeEventListener("pointermove", onPointerMove);
+    document.removeEventListener("pointerup", onPointerUp);
+    scrollbar.removeEventListener("wheel", onWheel);
   };
 });
 
 // Select Component Scripts
 
 let select_index = 0;
-proc_htmx('[data-ref=select]', select => {
+proc_htmx("[data-ref=select]", (select) => {
+  const trigger = select.querySelector("[data-ref=select-trigger]");
+  const viewport = select.querySelector("[data-ref=select-viewport]");
+  const content = select.querySelector("[data-ref=select-content]");
+  const scrollUpBtn = select.querySelector("[data-ref=select-scroll-up]");
+  const scrollDownBtn = select.querySelector("[data-ref=select-scroll-down]");
+  const input = select.querySelector("input");
+  const items = Array.from(select.querySelectorAll("[data-ref=select-item]"));
 
-  const trigger = select.querySelector('[data-ref=select-trigger]');
-  const viewport = select.querySelector('[data-ref=select-viewport]');
-  const content = select.querySelector('[data-ref=select-content]');
-  const scrollUpBtn = select.querySelector('[data-ref=select-scroll-up]');
-  const scrollDownBtn = select.querySelector('[data-ref=select-scroll-down]');
-  const input = select.querySelector('input');
-  const items = Array.from(select.querySelectorAll('[data-ref=select-item]'));
-
-  trigger.addEventListener('mousedown', (event) => event.preventDefault());
+  trigger.addEventListener("mousedown", (event) => event.preventDefault());
 
   let scrollInterval = null;
-  
-  const {width, height} = trigger.getBoundingClientRect();
+
+  const { width, height } = trigger.getBoundingClientRect();
 
   viewport.style.minWidth = `${width}px`;
 
   viewport.style.minHeight = `${height}px`;
-  
+
   const options = {
-      placement: 'bottom-start',
-      triggerType: 'click',
-      offsetSkidding: -1,
-      offsetDistance: 5,
-      delay:0,
-      ignoreClickOutsideClass: false,
-      onHide: () => {
-        select.dataset.state = 'closed';
-      },
-      onShow: () => {
-          select.dataset.state = 'open';
-          initializeFocus();
-          updateScrollButtonVisibility();
-      },
+    placement: "bottom-start",
+    triggerType: "click",
+    offsetSkidding: -1,
+    offsetDistance: 5,
+    delay: 0,
+    ignoreClickOutsideClass: false,
+    onHide: () => {
+      select.dataset.state = "closed";
+    },
+    onShow: () => {
+      select.dataset.state = "open";
+      initializeFocus();
+      updateScrollButtonVisibility();
+    },
   };
 
-  Dropdown.prototype.show = function() {
-    this._targetEl.classList.remove('hidden');
-    this._targetEl.classList.add('flex');
+  Dropdown.prototype.show = function () {
+    this._targetEl.classList.remove("hidden");
+    this._targetEl.classList.add("flex");
     updateOffsetSkidding();
-    this._targetEl.removeAttribute('aria-hidden');
+    this._targetEl.removeAttribute("aria-hidden");
 
     // Enable the event listeners
     this._popperInstance.setOptions((options) => ({
-        ...options,
-        modifiers: [
-            ...options.modifiers,
-            { name: 'eventListeners', enabled: true },
-        ],
+      ...options,
+      modifiers: [
+        ...options.modifiers,
+        { name: "eventListeners", enabled: true },
+      ],
     }));
 
     this._setupClickOutsideListener();
@@ -660,7 +687,7 @@ proc_htmx('[data-ref=select]', select => {
 
     // callback function
     this._options.onShow(this);
-}
+  };
 
   function updateOffsetSkidding(dropdownWidth) {
     const triggerRect = trigger.getBoundingClientRect();
@@ -684,47 +711,52 @@ proc_htmx('[data-ref=select]', select => {
 
   const instanceOptions = {
     id: `select-${select_index}`,
-    override: true
-};
+    override: true,
+  };
 
   const dropdown = new Dropdown(content, trigger, options, instanceOptions);
 
   select_index += 1;
 
   function updateSelectedItem(item) {
-    items.forEach(i => {
-      i.dataset.checked = 'false';
-      i.setAttribute('aria-selected', 'false');
+    items.forEach((i) => {
+      i.dataset.checked = "false";
+      i.setAttribute("aria-selected", "false");
     });
-    item.dataset.checked = 'true';
-    item.setAttribute('aria-selected', 'true');
+    item.dataset.checked = "true";
+    item.setAttribute("aria-selected", "true");
     const selectValue = trigger.querySelector('[data-ref="select-value"]');
     if (selectValue) selectValue.textContent = item.textContent.trim();
-    input.value = item.getAttribute('value');
-    select.setAttribute('aria-activedescendant', item.id);
-    input.dispatchEvent(new Event('change', { bubbles: true }));
+    input.value = item.getAttribute("value");
+    select.setAttribute("aria-activedescendant", item.id);
+    input.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   function navigateItems(direction) {
-    const currentItem = document.activeElement.closest('[data-ref="select-item"]');
+    const currentItem = document.activeElement.closest(
+      '[data-ref="select-item"]'
+    );
     const currentIndex = currentItem ? items.indexOf(currentItem) : -1;
     const nextIndex = (currentIndex + direction + items.length) % items.length;
     items[nextIndex].focus();
   }
 
   function initializeFocus() {
-    const checkedItem = items.find(item => item.dataset.checked === 'true');
-    (checkedItem || items[0])?.focus({preventScroll: true});
+    const checkedItem = items.find((item) => item.dataset.checked === "true");
+    (checkedItem || items[0])?.focus({ preventScroll: true });
   }
 
   function updateScrollButtonVisibility() {
     if (!viewport) return;
     const isAtTop = viewport.scrollTop === 0;
-    const isAtBottom = viewport.scrollHeight - viewport.clientHeight <= viewport.scrollTop + 1;
+    const isAtBottom =
+      viewport.scrollHeight - viewport.clientHeight <= viewport.scrollTop + 1;
     const noScroll = viewport.scrollHeight <= viewport.clientHeight;
 
-    if (scrollUpBtn) scrollUpBtn.style.display = isAtTop || noScroll ? 'none' : 'flex';
-    if (scrollDownBtn) scrollDownBtn.style.display = isAtBottom || noScroll ? 'none' : 'flex';
+    if (scrollUpBtn)
+      scrollUpBtn.style.display = isAtTop || noScroll ? "none" : "flex";
+    if (scrollDownBtn)
+      scrollDownBtn.style.display = isAtBottom || noScroll ? "none" : "flex";
   }
 
   function startScrolling(direction) {
@@ -742,193 +774,244 @@ proc_htmx('[data-ref=select]', select => {
 
   function scrollContent(direction) {
     if (viewport) {
-      viewport.scrollTop += direction === 'up' ? -20 : 20;
+      viewport.scrollTop += direction === "up" ? -20 : 20;
       updateScrollButtonVisibility();
     }
   }
 
-  trigger.addEventListener('keydown', (event) => {
-    if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
+  trigger.addEventListener("keydown", (event) => {
+    if (["Enter", " ", "ArrowDown", "ArrowUp"].includes(event.key)) {
       event.preventDefault();
-        dropdown.toggle();
-      } else {
-        navigateItems(event.key === 'ArrowUp' ? -1 : 1);
-      }
+      dropdown.toggle();
+    } else {
+      navigateItems(event.key === "ArrowUp" ? -1 : 1);
+    }
   });
 
-
-  content.addEventListener('keydown', (event) => {
-    if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+  content.addEventListener("keydown", (event) => {
+    if (["ArrowDown", "ArrowUp"].includes(event.key)) {
       event.preventDefault();
-      navigateItems(event.key === 'ArrowDown' ? 1 : -1);
-    } else if (event.key === 'Escape') {
+      navigateItems(event.key === "ArrowDown" ? 1 : -1);
+    } else if (event.key === "Escape") {
       dropdown.hide();
       trigger.focus();
     }
   });
 
-  items.forEach(item => {
-    item.addEventListener('click', () => {
+  items.forEach((item) => {
+    item.addEventListener("click", () => {
       updateSelectedItem(item);
       dropdown.hide();
       trigger.focus();
     });
-    item.addEventListener('keydown', (event) => {
-      if (['Enter', ' '].includes(event.key)) {
+    item.addEventListener("keydown", (event) => {
+      if (["Enter", " "].includes(event.key)) {
         event.preventDefault();
         updateSelectedItem(item);
         dropdown.hide();
         trigger.focus();
       }
     });
-    item.addEventListener('mouseover', () => item.focus());
+    item.addEventListener("mouseover", () => item.focus());
   });
 
   const defaultValue = select.dataset.defaultValue;
   if (defaultValue) {
-    const defaultItem = items.find(item => item.getAttribute('value') === defaultValue);
+    const defaultItem = items.find(
+      (item) => item.getAttribute("value") === defaultValue
+    );
     if (defaultItem) {
       updateSelectedItem(defaultItem);
     }
   }
 
   if (viewport) {
-    viewport.addEventListener('scroll', updateScrollButtonVisibility);
+    viewport.addEventListener("scroll", updateScrollButtonVisibility);
   }
 
   if (scrollUpBtn) {
-    scrollUpBtn.addEventListener('mouseover', () => startScrolling('up'));
-    scrollUpBtn.addEventListener('mouseleave', stopScrolling);
+    scrollUpBtn.addEventListener("mouseover", () => startScrolling("up"));
+    scrollUpBtn.addEventListener("mouseleave", stopScrolling);
   }
 
   if (scrollDownBtn) {
-    scrollDownBtn.addEventListener('mouseover', () => startScrolling('down'));
-    scrollDownBtn.addEventListener('mouseleave', stopScrolling);
+    scrollDownBtn.addEventListener("mouseover", () => startScrolling("down"));
+    scrollDownBtn.addEventListener("mouseleave", stopScrolling);
   }
 
-  window.addEventListener('resize', () => {
+  window.addEventListener("resize", () => {
     dropdown.hide();
     dropdown._popperInstance.update();
-  })
+  });
 });
 
 htmx.on("htmx:beforeHistorySave", () => {
   select_index = 0;
 
-  document.querySelectorAll("[data-ref=select]").forEach(select => {
-    select.dataset.state = 'closed';
-    select.querySelector('[data-ref=select-content]').classList.add('hidden');
-  })
-})
+  document.querySelectorAll("[data-ref=select]").forEach((select) => {
+    select.dataset.state = "closed";
+    select.querySelector("[data-ref=select-content]").classList.add("hidden");
+  });
+});
 
 let accordion_index = 0;
-proc_htmx('[data-ref=accordion]', accordion => {
+proc_htmx("[data-ref=accordion]", (accordion) => {
   const accordionItems = [];
 
   accordion_index += 1;
 
-  Accordion.prototype.init = function() {
+  Accordion.prototype.init = function () {
     if (this._items.length && !this._initialized) {
-        // show accordion item based on click
-        this._items.forEach((item) => {
-          item.targetEl.addEventListener('animationend', () => {
-            if (!item.active) {
-              item.targetEl.classList.add('hidden');
-            }
-          })
-            if (item.active) {
-                this.open(item.id);
-            }
-
-            const clickHandler = () => {
-                this.toggle(item.id);
-            };
-
-            item.triggerEl.addEventListener('click', clickHandler);
-
-            // Store the clickHandler in a property of the item for removal later
-            item.clickHandler = clickHandler;
-        });
-        this._initialized = true;
-    }
-}
-
-Accordion.prototype.toggle = function(id) {
-  const item = this.getItem(id);
-
-  if (item.active) {
-    item.triggerEl.dataset.state = 'closed';
-      this.close(id);
-  } else {
-    item.triggerEl.dataset.state = 'open';
-      this.open(id);
-      item.targetEl.style.setProperty("--accordion-content-height", `${item.targetEl.scrollHeight}px`);
-  }
-
-  // callback function
-  this._options.onToggle(this, item);
-}
-
-Accordion.prototype.close = function(id) {
-  const item = this.getItem(id);
-
-  item.triggerEl.setAttribute('aria-expanded', 'false');
-  item.triggerEl.dataset.state = 'closed';
-  item.active = false;
-
-  // callback function
-  this._options.onClose(this, item);
-}
-
-Accordion.prototype.open = function(id) {
-  const item = this.getItem(id);
-
-  // don't hide other accordions if always open
-  if (!this._options.alwaysOpen) {
-      this._items.map((i) => {
-          if (i !== item) {
-              i.triggerEl.dataset.state = 'closed';
-              i.triggerEl.setAttribute('aria-expanded', 'false');
-              i.active = false;
+      // show accordion item based on click
+      this._items.forEach((item) => {
+        item.targetEl.addEventListener("animationend", () => {
+          if (!item.active) {
+            item.targetEl.classList.add("hidden");
           }
+        });
+        if (item.active) {
+          this.open(item.id);
+        }
+
+        const clickHandler = () => {
+          this.toggle(item.id);
+        };
+
+        item.triggerEl.addEventListener("click", clickHandler);
+
+        // Store the clickHandler in a property of the item for removal later
+        item.clickHandler = clickHandler;
       });
-  }
-  // show active item
-  item.triggerEl.setAttribute('aria-expanded', 'true');
-  item.targetEl.classList.remove('hidden');
-  item.active = true;
+      this._initialized = true;
+    }
+  };
 
-  // callback function
-  this._options.onOpen(this, item);
-}
+  Accordion.prototype.toggle = function (id) {
+    const item = this.getItem(id);
 
-  accordion.querySelectorAll('[data-ref=accordion-item]').forEach((item, index) => {
-    const content = item.querySelector('[data-ref=accordion-content]');
-    const trigger = item.querySelector('[data-ref=accordion-trigger]');
+    if (item.active) {
+      item.triggerEl.dataset.state = "closed";
+      this.close(id);
+    } else {
+      item.triggerEl.dataset.state = "open";
+      this.open(id);
+      item.targetEl.style.setProperty(
+        "--accordion-content-height",
+        `${item.targetEl.scrollHeight}px`
+      );
+    }
 
-    accordionItems.push({id: `item-${index + 1}`, triggerEl: trigger, targetEl: content, active: false})
-  })
+    // callback function
+    this._options.onToggle(this, item);
+  };
+
+  Accordion.prototype.close = function (id) {
+    const item = this.getItem(id);
+
+    item.triggerEl.setAttribute("aria-expanded", "false");
+    item.triggerEl.dataset.state = "closed";
+    item.active = false;
+
+    // callback function
+    this._options.onClose(this, item);
+  };
+
+  Accordion.prototype.open = function (id) {
+    const item = this.getItem(id);
+
+    // don't hide other accordions if always open
+    if (!this._options.alwaysOpen) {
+      this._items.map((i) => {
+        if (i !== item) {
+          i.triggerEl.dataset.state = "closed";
+          i.triggerEl.setAttribute("aria-expanded", "false");
+          i.active = false;
+        }
+      });
+    }
+    // show active item
+    item.triggerEl.setAttribute("aria-expanded", "true");
+    item.targetEl.classList.remove("hidden");
+    item.active = true;
+
+    // callback function
+    this._options.onOpen(this, item);
+  };
+
+  accordion
+    .querySelectorAll("[data-ref=accordion-item]")
+    .forEach((item, index) => {
+      const content = item.querySelector("[data-ref=accordion-content]");
+      const trigger = item.querySelector("[data-ref=accordion-trigger]");
+
+      accordionItems.push({
+        id: `item-${index + 1}`,
+        triggerEl: trigger,
+        targetEl: content,
+        active: false,
+      });
+    });
 
   const instanceOptions = {
     id: `accordion-${accordion_index}`,
     override: true,
-};
+  };
 
   const acc = new Accordion(accordion, accordionItems, {}, instanceOptions);
-
 });
 
 function handleAccordionClose() {
-  document.querySelectorAll('[data-ref=accordion]').forEach(accordion => {
-    accordion.querySelectorAll('[data-ref=accordion-item]').forEach((item) => {
-      const trigger = item.querySelector('[data-ref=accordion-trigger]');
-      const content = item.querySelector('[data-ref=accordion-content]');
+  document.querySelectorAll("[data-ref=accordion]").forEach((accordion) => {
+    accordion.querySelectorAll("[data-ref=accordion-item]").forEach((item) => {
+      const trigger = item.querySelector("[data-ref=accordion-trigger]");
+      const content = item.querySelector("[data-ref=accordion-content]");
 
-      trigger.dataset.state = 'closed';
+      trigger.dataset.state = "closed";
       trigger.setAttribute("aria-expanded", "false");
-      content.classList.add('hidden');
-    })
-  })
+      content.classList.add("hidden");
+    });
+  });
 }
 
 htmx.on("htmx:beforeHistorySave", () => handleAccordionClose());
+
+// Tooltip Scripts
+let tooltip_index = 0;
+proc_htmx("[data-ref=tooltip]", (tooltip) => {
+  const content = tooltip.querySelector("[data-ref=tooltip-content]");
+  const trigger = tooltip.querySelector("[data-ref=tooltip-trigger]");
+
+  const options = {
+    placement: "top",
+    triggerType: tooltip.dataset.method,
+  };
+
+  const instanceOptions = {
+    id: `tooltip-${tooltip_index}`,
+    override: true,
+  };
+
+  tooltip_index += 1;
+
+  const tooltip_instance = new Tooltip(
+    content,
+    trigger,
+    options,
+    instanceOptions
+  );
+
+  if (content.dataset.state === "open") {
+    tooltip_instance.show();
+  }
+});
+
+function handleTooltipClose() {
+  tooltip_index = 0;
+  document.querySelectorAll("[data-ref=tooltip]").forEach((tooltip) => {
+    const content = tooltip.querySelector("[data-ref=tooltip-content]");
+    content.dataset.state = "closed";
+    content.style.display = "none";
+  });
+}
+
+htmx.on("htmx:beforeHistorySave", () => handleTooltipClose());

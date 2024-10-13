@@ -5,7 +5,7 @@ from shad4fast import *
 from lucide_fasthtml import Lucide
 
 __all__ = [
-    "aspect_ratio_block, avatar_block, card_block,carousel_block,tabs_block,scroll_area_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, textarea_block"
+    "breadcrumb_block, aspect_ratio_block, avatar_block, card_block,carousel_block,tabs_block,scroll_area_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, textarea_block"
 ]
 
 
@@ -171,6 +171,56 @@ def accordion_block():
                 cls="!w-[80%]",
             ),
             id="accordion",
+    )
+
+# def navigation_menu_block():
+#     return Block(
+#         NavigationMenu(
+#             NavigationMenuList(
+#                 NavigationMenuItem(
+#                     NavigationMenuTrigger("Home"),
+#                     NavigationMenuTrigger("About"),
+#                     NavigationMenuTrigger("Contact"),
+#                 )
+#             )
+#         ),
+#         id="nav",
+#     )
+
+def breadcrumb_block():
+    return Block(
+        Breadcrumb(
+            BreadcrumbList(
+                BreadcrumbItem(
+                BreadcrumbLink("Home", href="/")),
+                BreadcrumbSeparator(),
+                BreadcrumbItem(
+                    BreadcrumbEllipsis(),
+                ),
+                BreadcrumbSeparator(),
+                BreadcrumbItem(
+                    BreadcrumbLink("Components", href="/components"),
+                ),
+                BreadcrumbSeparator(),
+                BreadcrumbItem(
+                    BreadcrumbPage("Breadcrumb"),
+                ),
+            ),
+        ),
+        id="breadcrumb",
+    )
+
+def tooltip_block():
+    return Block(
+        Span(
+            P("Hover over the icon"),
+            Tooltip(
+                TooltipTrigger(Lucide("circle-help", cls="size-5 cursor-pointer")),
+                TooltipContent("This is a tooltip!"),
+            ),
+            cls="flex items-center justify-center gap-2",
+        ),
+        id="tooltip",
     )
 
 

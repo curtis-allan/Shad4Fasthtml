@@ -607,6 +607,52 @@ Accordion(
     ),
     cls="!w-[80%]",
 )""",
+    "nav": """
+NavigationMenu(
+    NavigationMenuItem(NavigationMenuLink("Home", href="/")),
+    NavigationMenuItem(NavigationMenuLink("About", href="/about")),
+    NavigationMenuItem(NavigationMenuLink("Contact", href="/contact")),
+    NavigationMenuItem(
+            NavigationMenu(
+                NavigationMenuTrigger(
+                    "More",
+                    Lucide(icon="chevron-down", cls="ml-1 h-4 w-4"),
+            ),
+            NavigationMenuContent(
+                NavigationMenuItem(NavigationMenuLink("Blog", href="/blog")),
+                NavigationMenuItem(NavigationMenuLink("FAQ", href="/faq")),
+            ),
+        )
+    ),
+    cls="mr-6",
+)
+""",
+    "breadcrumb": """
+Breadcrumb(
+    BreadcrumbList(
+        BreadcrumbItem(
+        BreadcrumbLink("Home", href="/")),
+        BreadcrumbSeparator(),
+        BreadcrumbItem(
+            BreadcrumbEllipsis(),
+        ),
+        BreadcrumbSeparator(),
+        BreadcrumbItem(
+            BreadcrumbLink("Components", href="/components"),
+        ),
+        BreadcrumbSeparator(),
+        BreadcrumbItem(
+            BreadcrumbPage("Breadcrumb"),
+        ),
+    ),
+)
+""",
+    "tooltip": """
+Tooltip(
+    TooltipTrigger(Button("Hover me")),
+    TooltipContent("This is a tooltip!"),
+)
+""",
     "button2": """
 Div(
     Button("Default", variant="default"),

@@ -25,6 +25,9 @@ from docs.comp_demos import (
     aspect_ratio_block,
     scroll_area_block,
     accordion_block,
+    breadcrumb_block,
+    tooltip_block,
+    # navigation_menu_block,
 )
 from fasthtml.common import *
 from fasthtml.components import Zero_md
@@ -56,7 +59,7 @@ link_groups = {
         "textarea",
         "label",
         "table",
-        "nav",
+        # "navigation-menu",
         "accordion",
         "breadcrumb",
         "tooltip",
@@ -412,6 +415,8 @@ def get(title: str):
 
 @rt("/components/{title}")
 def get(title: str):
+    if not title:
+        return Redirect("/components/accordion")
     name = format_title(title)
     return (
         (

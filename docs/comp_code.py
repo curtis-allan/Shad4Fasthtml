@@ -122,6 +122,16 @@ ScrollArea(
     cls="w-96 whitespace-nowrap rounded-md border",
     orientation="horizontal",
 )
+""","collapsible": """
+Collapsible(
+    Div(H4("@peduarte starred 3 repositories", cls="text-sm font-semibold"), CollapsibleTrigger(),  cls="flex items-center justify-between space-x-4 px-4"),
+    Div("@radix-ui/primitives", cls="rounded-md border px-4 py-3 font-mono text-sm"),
+    CollapsibleContent(
+        Div("@radix-ui/colors", cls="rounded-md border px-4 py-3 font-mono text-sm"),
+        Div("@stitches/react", cls="rounded-md border px-4 py-3 font-mono text-sm"),
+        cls="space-y-2"),
+    cls="w-[350px] space-y-2"
+)
 """,
     "aspect_ratio2": """
  Div(

@@ -25,3 +25,4 @@ from .scroll_area import *
 from .breadcrumb import *
 from .accordion import *
 from .tooltip import *
+from .collapsible import *

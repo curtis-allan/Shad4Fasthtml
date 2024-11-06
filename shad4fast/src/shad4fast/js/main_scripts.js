@@ -65,9 +65,8 @@ proc_htmx("[data-ref=carousel]", (carousel) => {
     const currentIndex = parseInt(carousel.dataset.index, 10) || 0;
     const newIndex = (currentIndex + direction + items.length) % items.length;
     if (orientation === "vertical") {
-      content.style.transform = `translate3d(0px, -${
-        (height + 16) * newIndex
-      }px, 0px)`;
+      content.style.transform = `translate3d(0px, -${(height + 16) * newIndex
+        }px, 0px)`;
     } else {
       content.style.transform = `translate3d(-${newIndex * 100}%, 0px, 0px)`;
     }
@@ -113,7 +112,7 @@ proc_htmx("[data-ref=dialog]", (dialog) => {
   };
 
   if (!Modal.prototype.customHideImplemented) {
-    Modal.prototype.customHide = function () {
+    Modal.prototype.customHide = function() {
       if (this.isVisible) {
         this._backdropEl.dataset.state = "closed";
         setTimeout(() => {
@@ -375,7 +374,7 @@ proc_htmx("[data-ref=tabs]", (tabs) => {
 
 // Setup Toast Scripts
 
-proc_htmx("#toast-container", function (toast) {
+proc_htmx("#toast-container", function(toast) {
   let dismissTimeout;
   const closeButton = toast.querySelector(".toast-close-button");
   const duration = 6000;
@@ -448,10 +447,10 @@ proc_htmx("[data-ref-scrollarea]", (scrollArea) => {
 
   const debounce =
     (func, wait) =>
-    (...args) => {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => func(...args), wait);
-    };
+      (...args) => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => func(...args), wait);
+      };
 
   const showThumb = () => {
     clearTimeout(hideTimeout);
@@ -616,8 +615,8 @@ proc_htmx("[data-ref-scrollarea]", (scrollArea) => {
     viewport.removeEventListener("scroll", onScroll);
     thumb.removeEventListener("pointerdown", onPointerDown);
     scrollbar.removeEventListener("pointerdown", onTrackPointerDown);
-    scrollArea.removeEventListener("pointerenter", () => {});
-    scrollArea.removeEventListener("pointerleave", () => {});
+    scrollArea.removeEventListener("pointerenter", () => { });
+    scrollArea.removeEventListener("pointerleave", () => { });
     resizeObserver.disconnect();
     document.removeEventListener("pointermove", onPointerMove);
     document.removeEventListener("pointerup", onPointerUp);
@@ -664,7 +663,7 @@ proc_htmx("[data-ref=select]", (select) => {
     },
   };
 
-  Dropdown.prototype.show = function () {
+  Dropdown.prototype.show = function() {
     this._targetEl.classList.remove("hidden");
     this._targetEl.classList.add("flex");
     updateOffsetSkidding();
@@ -860,7 +859,7 @@ proc_htmx("[data-ref=accordion]", (accordion) => {
 
   accordion_index += 1;
 
-  Accordion.prototype.init = function () {
+  Accordion.prototype.init = function() {
     if (this._items.length && !this._initialized) {
       // show accordion item based on click
       this._items.forEach((item) => {
@@ -886,7 +885,7 @@ proc_htmx("[data-ref=accordion]", (accordion) => {
     }
   };
 
-  Accordion.prototype.toggle = function (id) {
+  Accordion.prototype.toggle = function(id) {
     const item = this.getItem(id);
 
     if (item.active) {
@@ -905,7 +904,7 @@ proc_htmx("[data-ref=accordion]", (accordion) => {
     this._options.onToggle(this, item);
   };
 
-  Accordion.prototype.close = function (id) {
+  Accordion.prototype.close = function(id) {
     const item = this.getItem(id);
 
     item.triggerEl.setAttribute("aria-expanded", "false");
@@ -916,7 +915,7 @@ proc_htmx("[data-ref=accordion]", (accordion) => {
     this._options.onClose(this, item);
   };
 
-  Accordion.prototype.open = function (id) {
+  Accordion.prototype.open = function(id) {
     const item = this.getItem(id);
 
     // don't hide other accordions if always open
@@ -1015,3 +1014,11 @@ function handleTooltipClose() {
 }
 
 htmx.on("htmx:beforeHistorySave", () => handleTooltipClose());
+
+// Setup Collapsible Scripts
+
+proc_htmx('[data-ref=collapse]', collapse => {
+  const trigger = collapse.querySelector('[data-ref=collapse-trigger]');
+
+  trigger.addEventListener('click', () => collapse.dataset.state = collapse.dataset.state === 'open' ? 'closed' : 'open')
+})

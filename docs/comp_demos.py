@@ -5,7 +5,7 @@ from shad4fast import *
 from lucide_fasthtml import Lucide
 
 __all__ = [
-    "breadcrumb_block, aspect_ratio_block, avatar_block, card_block,carousel_block,tabs_block,scroll_area_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, textarea_block"
+    "collapsible_block, breadcrumb_block, aspect_ratio_block, avatar_block, card_block,carousel_block,tabs_block,scroll_area_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, textarea_block"
 ]
 
 
@@ -171,6 +171,20 @@ def accordion_block():
                 cls="!w-[80%]",
             ),
             id="accordion",
+    )
+
+def collapsible_block():
+    return Block(
+        Collapsible(
+            Div(H4("@peduarte starred 3 repositories", cls="text-sm font-semibold"), CollapsibleTrigger(),  cls="flex items-center justify-between space-x-4 px-4"),
+            Div("@radix-ui/primitives", cls="rounded-md border px-4 py-3 font-mono text-sm"),
+            CollapsibleContent(
+                Div("@radix-ui/colors", cls="rounded-md border px-4 py-3 font-mono text-sm"),
+                Div("@stitches/react", cls="rounded-md border px-4 py-3 font-mono text-sm"),
+                cls="space-y-2"),
+            cls="w-[350px] space-y-2",
+        ),
+        id="collapsible"
     )
 
 # def navigation_menu_block():

@@ -42,8 +42,8 @@ def setup():
         subprocess.run(["chmod", "+x", binary_name], check=True)
     os.rename(binary_name, "tailwindcss")
 
-    globals_css_url = "https://raw.githubusercontent.com/curtis-allan/shadcn-fasthtml-framework/main/globals.css"
-    tailwind_config_url = "https://raw.githubusercontent.com/curtis-allan/shadcn-fasthtml-framework/main/tailwind.config.js"
+    globals_css_url = "https://raw.githubusercontent.com/curtis-allan/Shad4Fasthtml/main/globals.css"
+    tailwind_config_url = "https://raw.githubusercontent.com/curtis-allan/Shad4Fasthtml/main/tailwind.config.js"
 
     if not os.path.isfile("globals.css"):
         subprocess.run(["curl", "-sLO", globals_css_url], check=True)

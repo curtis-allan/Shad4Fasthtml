@@ -27,6 +27,7 @@ from docs.comp_demos import (
     accordion_block,
     breadcrumb_block,
     tooltip_block,
+    collapsible_block
     # navigation_menu_block,
 )
 from fasthtml.common import *
@@ -59,6 +60,7 @@ link_groups = {
         "textarea",
         "label",
         "table",
+        "collapsible",
         # "navigation-menu",
         "accordion",
         "breadcrumb",

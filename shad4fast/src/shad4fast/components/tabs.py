@@ -1,5 +1,5 @@
-from fasthtml.components import Div
 from fasthtml.common import ft_hx
+from fasthtml.components import Div
 
 __all__ = ["Tabs", "TabsList", "TabsTrigger", "TabsContent"]
 

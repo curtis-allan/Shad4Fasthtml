@@ -1,4 +1,5 @@
-from fasthtml.components import Div, Thead, Tbody, Tfoot, Tr, Th, Td, Caption, Table as OgTable
+from fasthtml.components import Caption, Div, Tbody, Td, Tfoot, Th, Thead, Tr
+from fasthtml.components import Table as OgTable
 
 __all__ = ["Table", "TableHeader", "TableBody", "TableRow", "TableHead", "TableCell", "TableCaption", "TableFooter"]
 

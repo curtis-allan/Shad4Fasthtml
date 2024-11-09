@@ -1,5 +1,6 @@
-from fasthtml.common import Script, Style, Link
 import os
+
+from fasthtml.common import Link, Script, Style
 
 __all__ = ["ShadHead"]
 
@@ -392,7 +393,7 @@ def ShadHead(tw_cdn=False, theme_handle=False):
     tw_output_link = Link(href="/output.css", rel="stylesheet")
 
     fb_js = Script(src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js", type="module")
-    
+
     script = Script(main_scr)
 
     headers = [

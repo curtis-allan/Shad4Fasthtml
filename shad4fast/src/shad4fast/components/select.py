@@ -1,4 +1,4 @@
-from fasthtml.common import Div, ft_hx, Span, Hr
+from fasthtml.common import Div, Hr, Span, ft_hx
 from fasthtml.xtend import Hidden
 from lucide_fasthtml import Lucide
 

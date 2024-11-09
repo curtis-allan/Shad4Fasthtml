@@ -1,4 +1,4 @@
-from fasthtml.common import Span, Input, ft_hx, Div
+from fasthtml.common import Div, Input, Span, ft_hx
 
 __all__ = ["Switch"]
 

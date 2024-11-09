@@ -132,9 +132,39 @@ Collapsible(
         cls="space-y-2"),
     cls="w-[350px] space-y-2"
 )
+""","skeleton": """
+Div(
+    Skeleton(cls="h-12 w-12 !rounded-full"),
+    Div(
+        Skeleton(cls="h-4 w-[250px]"),
+        Skeleton(cls="h-4 w-[250px]"),
+        cls="space-y-2"
+    ),
+cls="flex items-center space-x-4"
+)
+""","toggle": """
+Toggle(Lucide('bold'), aria_label="Toggle Bold")
+""","toggle2": """
+Div(
+# Function to generate rows
+def _toggle_row(inner="", variant="default", lbl:str='', icon:str='', **kwargs):
+    uid = unqid()
+    if not lbl: lbl = variant.title()
+    return Div(cls="flex gap-8 items-center justify-between py-1 border-b")(
+        H4(lbl+':', htmlFor=uid, cls="text-md font-medium tracking-tight text-muted-foreground"),
+        Toggle(Lucide(icon, cls="mr-1.5" if inner else None), inner, aria_label=f"Toggle {icon.title()}", variant=variant, id=uid, **kwargs),
+    )
+
+    _toggle_row(variant="outline", icon="italic"),
+    _toggle_row(inner="Underline", lbl="With Text", icon="underline"),
+    _toggle_row(lbl="Small", icon="italic", size="sm"),
+    _toggle_row(lbl="Large", icon="italic", size="lg"),
+    _toggle_row(lbl="Disabled", icon="italic", disabled=True),
+    cls="grid place-content-center grid-flow-row auto-rows-fr"
+)
 """,
     "aspect_ratio2": """
- Div(
+Div(
     AspectRatio(
         Img(
             src="/public/aspect2.webp",

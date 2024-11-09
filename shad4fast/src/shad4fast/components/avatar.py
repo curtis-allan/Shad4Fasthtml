@@ -1,4 +1,4 @@
-from fasthtml.common import Img, Div, Span
+from fasthtml.common import Div, Img, Span
 
 __all__ = ["Avatar", "AvatarImage", "AvatarFallback"]
 

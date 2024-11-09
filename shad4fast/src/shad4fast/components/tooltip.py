@@ -1,5 +1,6 @@
-from fasthtml.common import Div, Button
-from typing import Literal
+
+from fasthtml.common import Button, Div
+
 __all__ = ["Tooltip", "TooltipTrigger", "TooltipContent"]
 
 tooltip_content_cls = "opacity-0 invisible absolute z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md transition-opacity duration-300"

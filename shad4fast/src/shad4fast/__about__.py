@@ -1,4 +1,4 @@
 # SPDX-FileCopyrightText: 2024-present Curtis Allan <curtis@Curtiss-MacBook-Air.local>
 #
 # SPDX-License-Identifier: MIT
-__version__ = "1.3.0"
+__version__ = "1.3.1"

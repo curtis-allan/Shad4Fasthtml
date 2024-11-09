@@ -1,5 +1,4 @@
-from fasthtml.common import Ol, Nav, Li, A, Span
-from fasthtml.common import Request
+from fasthtml.common import A, Li, Nav, Ol, Request, Span
 from lucide_fasthtml import Lucide
 
 __all__ = ["Breadcrumb", "BreadcrumbItem", "BreadcrumbLink", "BreadcrumbSeparator", "BreadcrumbEllipsis", "BreadcrumbPage", "BreadcrumbList"]
@@ -26,7 +25,7 @@ def Breadcrumb(*c, req:Request=None, **kwargs):
         if len(items) >= 4:
             items[1] = (BreadcrumbItem(BreadcrumbEllipsis()), BreadcrumbSeparator())
         return Nav(BreadcrumbList(*items), aria_label="breadcrumb", **kwargs)
-    return Nav(*c, aria_label="breadcrumb", **kwargs)   
+    return Nav(*c, aria_label="breadcrumb", **kwargs)
 
 def BreadcrumbItem(*c, **kwargs):
     return Li(*c,cls=f"{kwargs.pop('cls', '')} {breadcrumb_item_cls}", **kwargs)

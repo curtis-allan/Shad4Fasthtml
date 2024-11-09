@@ -26,3 +26,5 @@ from .breadcrumb import *
 from .accordion import *
 from .tooltip import *
 from .collapsible import *
+from .skeleton import *
+from .toggle import *

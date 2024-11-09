@@ -1,5 +1,6 @@
-from fasthtml.common import Div, P, H1, Span, ft_hx
+from fasthtml.common import H1, Div, P, Span, ft_hx
 from lucide_fasthtml import Lucide
+
 from .button import Button
 
 __all__ = [

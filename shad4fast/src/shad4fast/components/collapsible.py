@@ -1,7 +1,8 @@
-from functools import partial
 from fasthtml.components import Div, Span
 from lucide_fasthtml import Lucide
+
 from .button import Button
+
 
 def CollapsibleTrigger(*c, **kwargs):
     sr = Span("Toggle", cls="sr-only")

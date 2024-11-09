@@ -1,4 +1,4 @@
-from fasthtml.components import Div, H1, P
+from fasthtml.components import H1, Div, P
 
 __all__ = ["Card", "CardHeader", "CardTitle", "CardDescription", "CardContent", "CardFooter"]
 

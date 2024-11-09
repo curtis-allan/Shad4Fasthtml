@@ -1,4 +1,4 @@
-from fasthtml.common import Div, ft_hx, H3
+from fasthtml.common import H3, Div, ft_hx
 from lucide_fasthtml import Lucide
 
 __all__ = ["Accordion", "AccordionItem", "AccordionTrigger", "AccordionContent"]

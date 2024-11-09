@@ -1,6 +1,6 @@
-from fasthtml.common import Div, Ul, Li, A
+from fasthtml.common import A, Div, Li, Ul
+
 from .button import Button
-from lucide_fasthtml import Lucide
 
 __all__ = ["Nav", "NavItem", "NavLink"]
 

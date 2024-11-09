@@ -1,4 +1,4 @@
-from fasthtml.common import Span, Input, Div, ft_hx
+from fasthtml.common import Div, Input, Span, ft_hx
 from lucide_fasthtml import Lucide
 
 __all__ = ["Checkbox"]

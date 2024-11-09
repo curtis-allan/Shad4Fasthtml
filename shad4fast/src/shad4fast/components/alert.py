@@ -1,4 +1,4 @@
-from fasthtml.components import Div, H1, P
+from fasthtml.components import H1, Div, P
 from lucide_fasthtml import Lucide
 
 __all__ = ["Alert", "AlertTitle", "AlertDescription"]

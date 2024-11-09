@@ -1,5 +1,6 @@
 from fasthtml.common import Div
 
+
 def AspectRatio(*c, ratio: any = {1/1}, **kwargs):
     ratio = str(ratio).replace("{", "").replace("}", "")
     base_style = "position: relative; width: 100%;"

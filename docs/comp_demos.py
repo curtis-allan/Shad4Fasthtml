@@ -3,9 +3,10 @@ from fasthtml.common import *
 from fasthtml.components import Zero_md
 from shad4fast import *
 from lucide_fasthtml import Lucide
+from itertools import starmap
 
 __all__ = [
-    "collapsible_block, breadcrumb_block, aspect_ratio_block, avatar_block, card_block,carousel_block,tabs_block,scroll_area_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, textarea_block"
+    "toggle_block", "skeleton_block", "collapsible_block, breadcrumb_block, aspect_ratio_block, avatar_block, card_block,carousel_block,tabs_block,scroll_area_block, select_block,ThemeToggle, alert_block, toast_block, separator_block, badge_block, progress_block, dialog_block, input_block, label_block, table_block, checkbox_block, button_block, textarea_block"
 ]
 
 
@@ -145,6 +146,53 @@ def aspect_ratio_block():
             cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
         ),
         AspectRatioAltBlock(),
+    )
+
+def skeleton_block():
+    return Block(
+        Div(
+            Skeleton(cls="h-12 w-12 !rounded-full"),
+            Div(
+                Skeleton(cls="h-4 w-[250px]"),
+                Skeleton(cls="h-4 w-[250px]"),
+                cls="space-y-2"
+            ),
+        cls="flex items-center space-x-4"
+        ),
+    id="skeleton"
+    )
+
+def toggle_block():
+    return (Block(
+        Toggle(Lucide('bold'), aria_label="Toggle Bold"),
+        id="toggle"
+    ),
+        H2(
+            "Variations",
+            cls="text-2xl font-semibold tracking-tight h-full border-b pb-1.5 mb-4",
+        ),
+        ToggleAltBlock()
+    )
+
+def _toggle_row(inner="", variant="default", lbl:str='', icon:str='', **kwargs):
+    uid = unqid()
+    if not lbl: lbl = variant.title()
+    return Div(cls="flex gap-8 items-center justify-between py-1 border-b")(
+        H4(lbl+':', htmlFor=uid, cls="text-md font-medium tracking-tight text-muted-foreground"),
+        Toggle(Lucide(icon, cls="mr-1.5" if inner else None), inner, aria_label=f"Toggle {icon.title()}", variant=variant, id=uid, **kwargs),
+    )
+
+def ToggleAltBlock():
+    return Block(
+        Div(
+            _toggle_row(variant="outline", icon="italic"),
+            _toggle_row(inner="Underline", lbl="With Text", icon="underline"),
+            _toggle_row(lbl="Small", icon="italic", size="sm"),
+            _toggle_row(lbl="Large", icon="italic", size="lg"),
+            _toggle_row(lbl="Disabled", icon="italic", disabled=True),
+        cls="grid place-content-center grid-flow-row auto-rows-fr"
+        ),
+        id="toggle2"
     )
 
 def accordion_block():

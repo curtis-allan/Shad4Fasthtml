@@ -27,7 +27,9 @@ from docs.comp_demos import (
     accordion_block,
     breadcrumb_block,
     tooltip_block,
-    collapsible_block
+    collapsible_block,
+    skeleton_block,
+    toggle_block
     # navigation_menu_block,
 )
 from fasthtml.common import *
@@ -68,6 +70,8 @@ link_groups = {
         "checkbox",
         "select",
         "sheet",
+        "skeleton",
+        "toggle",
         "scroll-area",
         "carousel",
         "slider",
@@ -218,7 +222,7 @@ def MobileNav():
                         cls="tracking-tight select-none",
                     ),
                     Badge(
-                        "v1.2",
+                        "v1.3",
                         variant="outline",
                     ),
                     cls="flex flex-col items-start w-full",
@@ -310,7 +314,7 @@ def Sidebar():
                     hx_boost="true",
                 ),
                 Span(
-                    Badge("Version 1.2", variant="outline"),
+                    Badge("Version 1.3", variant="outline"),
                 ),
                 cls="flex flex-col justify-center gap-1 items-center",
             ),

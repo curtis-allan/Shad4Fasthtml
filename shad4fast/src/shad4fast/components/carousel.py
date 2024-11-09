@@ -1,6 +1,7 @@
 from fasthtml.common import Div
-from .button import Button
 from lucide_fasthtml import Lucide
+
+from .button import Button
 
 __all__ = [
     "Carousel",

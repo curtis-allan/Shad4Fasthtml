@@ -27,9 +27,9 @@ classifiers = [
 dependencies = ["lucide_fasthtml>=0.0.6", "python-fasthtml"]
 
 [project.urls]
-Documentation = "https://github.com/curtis-allan/shadcn-fasthtml-framework#readme"
-Issues = "https://github.com/curtis-allan/shadcn-fasthtml-framework/issues"
-Source = "https://github.com/curtis-allan/shadcn-fasthtml-framework"
+Documentation = "https://github.com/curtis-allan/shad4fasthtml#readme"
+Issues = "https://github.com/curtis-allan/shad4fasthtml/issues"
+Source = "https://github.com/curtis-allan/shad4fasthtml"
 
 [tool.hatch.version]
 path = "src/shad4fast/__about__.py"
@@ -38,6 +38,10 @@ path = "src/shad4fast/__about__.py"
 extra-dependencies = [
   "mypy>=1.0.0",
 ]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/shad4fast tests}"
 
